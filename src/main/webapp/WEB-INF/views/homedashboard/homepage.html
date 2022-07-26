@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+
+    <title>Title</title>
+    <th:block th:replace="/layout/head_1 :: head_1"/>
+</head>
+<body>
+
+<div id="wrapper">
+    <th:block th:replace="/layout/navbar_custom_top_2 :: navbar_custom_top_2"/>
+
+
+    <div class="left-side-menu">
+
+        <th:block th:replace="/layout/hearder_left_3 :: hearder_left_3"/>
+
+    </div>
+
+    <div class="content-page">
+
+        <th:block th:replace="/layout/content_page_4 :: content_page_4"/>
+
+    </div>
+
+    <footer class="footer">
+
+        <th:block th:replace="/layout/footer_5 :: footer_5"/>
+
+    </footer>
+
+    <th:block th:replace="/layout/script_6 :: script_6"/>
+
+</div>
+
+</body>
+
+</html>
