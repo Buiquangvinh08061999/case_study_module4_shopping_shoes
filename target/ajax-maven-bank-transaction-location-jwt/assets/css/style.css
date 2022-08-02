@@ -1,0 +1,62 @@
+.modal-alert-danger {
+    padding: 10px 35px;
+    margin-bottom: 15px;
+    color: #842029;
+    background-color: #f8d7da;
+    border-color: #f5c2c7;
+}
+
+
+/*table tbody tr td span {*/
+/*    background: red;*/
+/*    width: 10px;*/
+/*    height: 10px;*/
+/*    display:block;*/
+/*}*/
+/*.hidespan {*/
+/*    display: none;*/
+/*}*/
+/*.showspan {*/
+/*    display: block;*/
+/*}*/
+
+table td span.select-tab {
+    border-left-width: 7px;
+    border-left-style: solid;
+    min-width: 0;
+    display: block;
+    height: 24px;
+    margin: 0 0 0 -4px;
+    padding: 0;
+}
+
+table td span.selected {
+    border-left-color: #5cb85c;
+}
+
+
+table td span.unselected {
+    border-left-color: #dfdfdf;
+}
+
+
+.show {
+    display: block !important;
+}
+
+.hide {
+    display: none;
+}
+
+
+.message{
+    color:green;
+}
+
+label.error{
+    margin-top: 5px;
+    color: #842029;
+}
+label.error {
+    display: list-item;
+}

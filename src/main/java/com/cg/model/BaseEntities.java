@@ -22,20 +22,11 @@ public  abstract class BaseEntities {
     @Column(name = "created_at")
     private Date createdAt;
 
-    @CreatedBy
-    @Column(name = "created_by")
-    private String createdBy;
-
     @UpdateTimestamp
     @Column(name = "updated_at")
     private Date updatedAt;
 
-    @LastModifiedBy
-    @Column(name = "updated_by")
-    private String updatedBy;
 
-    @Column(columnDefinition = "boolean default false")
-    private boolean deleted;
 
 
 }

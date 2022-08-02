@@ -1,9 +1,12 @@
 package com.cg.service.user;
 
+import com.cg.model.LocationRegion;
 import com.cg.model.User;
 import com.cg.model.UserPrinciple;
 import com.cg.model.dto.UserDTO;
+import com.cg.repository.LocationRegionRepository;
 import com.cg.repository.UserRepository;
+import com.cg.service.locationRegion.LocationRegionServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -22,10 +25,24 @@ public class UserServiceImpl implements IUserService{
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private LocationRegionRepository locationRegionRepository;
+
     @Override
     public List<User> findAll() {
         return userRepository.findAll();
     }
+    //Hiển thị list tất cả ra
+    @Override
+    public List<UserDTO> findAllUserDTO() {
+        return userRepository.findAllUserDTO();
+    }
+
+    @Override
+    public List<UserDTO> searchAllUser(String keywork) {
+        return userRepository.search(keywork);
+    }
+
 
     @Override
     public Optional<User> findById(Long id) {
@@ -47,14 +64,19 @@ public class UserServiceImpl implements IUserService{
         return userRepository.findByUsername(username);
     }
 
-    @Override
-    public Optional<UserDTO> findUserDTOByUsername(String username) {
-        return userRepository.findUserDTOByUsername(username);
-    }
+//    @Override
+//    public Optional<UserDTO> findUserDTOByUsername(String username) {
+//        return userRepository.findUserDTOByUsername(username);
+//    }
 
     @Override
     public User save(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        LocationRegion locationRegion = locationRegionRepository.save(user.getLocationRegion());
+
+        user.setLocationRegion(locationRegion);
+
         return userRepository.save(user);
     }
 
@@ -65,14 +87,34 @@ public class UserServiceImpl implements IUserService{
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
         Optional<User> userOptional = userRepository.findByUsername(username);
         if (!userOptional.isPresent()) {
             throw new UsernameNotFoundException(username);
         }
         return UserPrinciple.build(userOptional.get());
 //        return (UserDetails) userOptional.get();
+
+    }
+
+    @Override
+    public Boolean existsById(Long id) {
+        return userRepository.existsById(id);
+    }
+
+    @Override
+    public Boolean existsByUsername(String username) {
+        return userRepository.existsByUsername(username);
+    }
+
+    @Override
+    public Boolean existsByPhone(String phone) {
+        return userRepository.existsByPhone(phone);
     }
 
 
-
+    @Override
+    public Boolean existsByUsernameAndIdNot(String username, Long id) {
+        return userRepository.existsByUsernameAndIdNot(username, id);
+    }
 }

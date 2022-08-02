@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+
+    <title>Title</title>
+    <th:block th:replace="/layout/head_1 :: head_1"/>
+</head>
+<body>
+
+<div id="wrapper">
+    <th:block th:replace="/layout/navbar_custom_top_2 :: navbar_custom_top_2"/>
+
+
+    <div class="left-side-menu">
+
+        <th:block th:replace="/layout/hearder_left_3 :: hearder_left_3"/>
+
+    </div>
+
+
+    <div class="content-page">
+
+        <div class="content">
+            <!-- Start Content-->
+            <div class="container-fluid">
+                <!-- start page title -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="page-title-box">
+                            <div class="page-title-right">
+                                <ol class="breadcrumb m-0">
+                                    <li class="breadcrumb-item">Uplon</li>
+                                    <li class="breadcrumb-item active">Dashboard</li>
+                                </ol>
+                            </div>
+                            <h4 class="page-title">Welcome List Product</h4>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-10 d-none d-sm-block" style="margin-bottom: 20px">
+                        <form class="form-inline">
+                            <input class="form-control col-3 mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="keyword">
+                            <button class="btn btn-primary" type="submit"> <i class="fas fa-search"></i></button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-10">
+                        <h1>List of Product</h1>
+                    </div>
+                    <div class="col-2 create">
+                        <a href="/cpa/user?action=create">
+                            <button type="button" class="btn btn-success"> Create Product</button>
+                        </a>
+                    </div>
+
+                    <table class="table table-hover table-bordered">
+                        <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>username</th>
+                            <th>password</th>
+                            <th>Avarta</th>
+                            <th>Full Name</th>
+                            <th>Phone</th>
+                            <th>Email</th>
+                            <th>City</th>
+                            <th>Role</th>
+                            <th>Update</th>
+                            <th>Create</th>
+                            <th colspan="2">Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!--    <footer class="footer">-->
+
+<!--        <th:block th:replace="/layout/footer_5 :: footer_5"/>-->
+
+<!--    </footer>-->
+
+
+
+    <th:block th:replace="/layout/script_6 :: script_6"/>
+
+</div>
+
+
+</body>
+
+</html>

@@ -4,101 +4,145 @@
     <meta charset="UTF-8">
     <title>Title</title>
 
-    <link rel="stylesheet" href="/assets/css/login.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,300">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="/assets/css/loginnew.css">
     <link rel="stylesheet" href="/assets/css/sweetalert2.min.css">
+    <style>
+        .btn_login{
+            border: none;
+            outline: none;
+            height: 2.5em;
+            background: rgb(141, 14, 130);
+            color: white;
+            font-size: 1em;
+            border-radius: 1.5rem;
 
+            width: 100%;
+            margin-bottom: 2em;
+        }
+
+        .btn_login:hover{
+            background-color: rgb(221,75,209);
+            cursor: pointer;
+            color: white;
+        }
+    </style>
 </head>
 <body>
 
 
-<div class="cont_principal">
-    <div class="cont_centrar">
+<!--<div class="cotn_principal">-->
+<!--    <div class="cont_centrar">-->
 
-        <div class="cont_login">
-            <div class="cont_info_log_sign_up">
-                <div class="col_md_login">
-                    <div class="cont_ba_opcitiy">
-                        <h2>LOGIN</h2>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                        <button class="btn_login" onclick="cambiar_login()">LOGIN</button>
-                    </div>
-                </div>
-                <div class="col_md_sign_up">
-                    <div class="cont_ba_opcitiy">
-                        <h2>SIGN UP</h2>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+<!--        <div class="cont_login">-->
+<!--            <div class="cont_info_log_sign_up">-->
+<!--                <div class="col_md_login">-->
+<!--                    <div class="cont_ba_opcitiy">-->
+<!--                        <h2>LOGIN</h2>-->
+<!--                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>-->
+<!--                        <button class="btn_login" onclick="cambiar_login()">LOGIN</button>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="col_md_sign_up">-->
+<!--                    <div class="cont_ba_opcitiy">-->
+<!--                        <h2>SIGN UP</h2>-->
+<!--                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>-->
 
-                        <button class="btn_sign_up" onclick="cambiar_sign_up()">SIGN UP</button>
-                    </div>
-                </div>
-            </div>
+<!--                        <button class="btn_sign_up" onclick="cambiar_sign_up()">SIGN UP</button>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
 
-            <div class="cont_back_info">
-                <div class="cont_img_back_grey">
-                    <img src="/assets/img/anh1.jpg" alt="" />
-                </div>
-            </div>
+<!--            <div class="cont_back_info">-->
+<!--                <div class="cont_img_back_grey">-->
+<!--                    <img src="/assets/img/anh1.jpg" alt="" />-->
+<!--                </div>-->
+<!--            </div>-->
 
-            <div class="cont_forms" >
-                <div class="cont_img_back_">
-                    <img src="/assets/img/anh1.jpg" alt="" />
-                </div>
+<!--            <div class="cont_forms" >-->
+<!--                <div class="cont_img_back_">-->
+<!--                    <img src="/assets/img/anh1.jpg" alt="" />-->
+<!--                </div>-->
 
-                <div class="cont_form_login">
-                    <a href="#" onclick="ocultar_login_sign_up()" ><i class="material-icons">&#xE5C4;</i></a>
-                    <h2>LOGIN</h2>
-                    <input type="email" id="usernameLogin" placeholder="Email" />
-                    <input type="password" id="passwordLogin" placeholder="Password" />
-                    <button id="btn_login" class="btn_login" >LOGIN</button>
-                </div>
+<!--                <div class="cont_form_login">-->
+<!--                    <a href="#" onclick="ocultar_login_sign_up()" ><i class="material-icons">&#xE5C4;</i></a>-->
+<!--                    <h2>LOGIN</h2>-->
+<!--                    <input type="email" id="usernameLogin" placeholder="Email" />-->
+<!--                    <input type="password" id="passwordLogin" placeholder="Password" />-->
+<!--                    <button id="btn_login" class="btn_login" >LOGIN</button>-->
+<!--                </div>-->
 
-                <div class="cont_form_sign_up">
-                    <a href="#" onclick="ocultar_login_sign_up()"><i class="material-icons">&#xE5C4;</i></a>
-                    <h2>SIGN UP</h2>
 
-                    <select name="role" id="role" class="form-select">
-                        <option value="1">ADMIN</option>
-                        <option value="2">USER</option>
-                    </select>
+<!--                <div class="cont_form_sign_up">-->
+<!--                    <a href="#" onclick="ocultar_login_sign_up()"><i class="material-icons">&#xE5C4;</i></a>-->
+<!--                    <h2>SIGN UP</h2>-->
 
-                    <input type="email" id="usernameSignUp" name="usernameSignUp"  placeholder="Username" />
-                    <input type="password" id="passwordSignUp" name="passwordSignUp" placeholder="Password" />
-                    <input type="password" id="passwordSignUp1" placeholder="Confirm Password" />
-                    <button id="btn_sign_up" class="btn_sign_up">SIGN UP</button>
+<!--                    <select name="role" id="role" class="form-select">-->
+<!--                        <option value="1">ADMIN</option>-->
+<!--                        <option value="2">USER</option>-->
+<!--                    </select>-->
+<!--                    <input type="text" id="fullnameSignUp" name="fullnameSignUp"  placeholder="FullName" />-->
+<!--                    <input type="phone" id="phoneSignUp" name="phoneSignUp"  placeholder="Phone" />-->
+<!--                    <input type="email" id="usernameSignUp" name="usernameSignUp"  placeholder="Username" />-->
+<!--                    <input type="password" id="passwordSignUp" name="passwordSignUp" placeholder="Password" />-->
+<!--                    <input type="password" id="passwordSignUp1" placeholder="Confirm Password" />-->
+<!--                    <button id="btn_sign_up" class="btn_sign_up">SIGN UP</button>-->
 
-                </div>
+<!--                </div>-->
 
-            </div>
-        </div>
+<!--            </div>-->
+<!--        </div>-->
 
-        <div class="text-center">
-            <div class="modal-alert-danger">
+<!--        <div class="text-center">-->
+<!--            <div class="modal-alert-danger">-->
 
-            </div>
-        </div>
-    </div>
+<!--            </div>-->
+<!--        </div>-->
+
+<!--    </div>-->
+<!--</div>-->
+
+<div class="login-box">
+
+    <h3>Login</h3>
+
+        <p>Username</p>
+        <input type="email" name="" id="username" placeholder="username">
+        <p>Password</p>
+
+        <input type="password" name="" id="password"  placeholder="password">
+
+        <button id="btn_login" class="btn_login"> LOGIN</button>
+
+
+
 </div>
 
 
-<script src="/assets/js/login.js"></script>
+<div class="text-center">
+    <div class="modal-alert-danger">
+
+    </div>
+</div>
+
 <script src="/assets/js/appp.js"></script>
 <script src="/assets/js/jquery-3.6.0.min.js"></script>
 <script src="/assets/js/sweetalert2.min.js"></script>
 
 <script>
 
+
     /*Đăng Nhập*/
-    let btnLogin = $("#btn_login")
+    let btnLogin = $("#btn_login");
+
     btnLogin.on('click', function (){
-        let username = $("#usernameLogin").val()
-        let password = $("#passwordLogin").val()
+        let username = $("#username").val()
+        let password = $("#password").val()
 
         let user ={
             username: username,
             password: password,
         }
+
         $.ajax({
             "headers": {
                 "accept": "application/json",
@@ -113,8 +157,8 @@
                 App.SweetAlert.showSuccessAlert("Đăng Nhập Thành Công")
 
                 setTimeout(function () {
-                    window.location.href = "/homepage"
-                }, 3000);
+                    window.location.href = "/select/homepage"
+                }, 2000);
 
             })
 
@@ -123,72 +167,80 @@
             })
     })
 
+
     /*Đăng ký*/
-    let btnSign_up = $("#btn_sign_up");
-    btnSign_up.on("click",function (){
-        $('.modal-alert-danger').html("");
-
-        let username = $("#usernameSignUp").val()
-        let password = $("#passwordSignUp").val()
-        let passwordcp = $("#passwordSignUp1").val();
-        let roleId = $("#role").val()
-
-        let user ={
-            username: username,
-            password: password,
-            role:{
-                id : roleId
-            }
-        }
-        if(password !== passwordcp){
-            App.SweetAlert.showErrorAlert("Tạo Thất Bại Vui Lòng Nhập đúng Password trên và dưới!")
-            return;
-        }
-
-        $.ajax({
-            "headers": {
-                "accept": "application/json",
-                "content-type": "application/json"
-            },
-            "type": "POST",
-            "url": "http://localhost:8080/api/auth/register",
-            "data": JSON.stringify(user)
-        })
-
-            .done((data) => {
-                console.log(data)
-                App.SweetAlert.showSuccessAlert("Tạo Mới Thành Công")
-
-                cambiar_login()
-                $('#usernameLogin').val(user.username)
-                $('#passwordLogin').val(user.password)
-
-                clearInput()
-
-            })
-            .fail((jqXHR) => {
-                if(jqXHR.responseJSON.message){
-                    let msg = jqXHR.responseJSON.message;
-                    App.SweetAlert.showErrorAlert(msg);
-                }
-                else //Ném ra 1 tập danh sách lỗi duyệt qua for each
-                    if(jqXHR.responseJSON){
-                    $.each(jqXHR.responseJSON ,(key, item) =>{
-
-                        let str = `<label id="${key}-error" class="error" for="${key}"> ${item} </label>`;
-
-                        $('.modal-alert-danger').append(str)
-                    })
-                }
-
-            })
-    });
-
-    function clearInput(){
-        $("#usernameSignUp").val("")
-        $("#passwordSignUp").val("")
-        $("#passwordSignUp1").val("")
-    }
+    // let btnSign_up = $("#btn_sign_up");
+    // btnSign_up.on("click",function (){
+    //
+    //     $('.modal-alert-danger').html("");
+    //     let fullname = $("#fullnameSignUp").val()
+    //     let phone = $("#phoneSignUp").val()
+    //     let username = $("#usernameSignUp").val()
+    //     let password = $("#passwordSignUp").val()
+    //     let passwordcp = $("#passwordSignUp1").val();
+    //     let roleId = $("#role").val()
+    //
+    //     let user ={
+    //         fullname: fullname,
+    //         phone: phone,
+    //         username: username,
+    //         password: password,
+    //         role:{
+    //             id : roleId
+    //         }
+    //     }
+    //     if(password !== passwordcp){
+    //         App.SweetAlert.showErrorAlert("Tạo Thất Bại Vui Lòng Nhập đúng Password trên và dưới!")
+    //         return;
+    //     }
+    //
+    //     $.ajax({
+    //         "headers": {
+    //             "accept": "application/json",
+    //             "content-type": "application/json"
+    //         },
+    //         "type": "POST",
+    //         "url": "http://localhost:8080/api/auth/register",
+    //         "data": JSON.stringify(user)
+    //     })
+    //
+    //         .done((data) => {
+    //             console.log(data)
+    //             App.SweetAlert.showSuccessAlert("Tạo Mới Thành Công")
+    //
+    //             cambiar_login()
+    //             $('#usernameLogin').val(user.username)
+    //             $('#passwordLogin').val(user.password)
+    //
+    //             clearInput()
+    //
+    //         })
+    //         .fail((jqXHR) => {
+    //             if(jqXHR.responseJSON.message){
+    //                 let msg = jqXHR.responseJSON.message;
+    //                 App.SweetAlert.showErrorAlert(msg);
+    //             }
+    //             else //Ném ra 1 tập danh sách lỗi duyệt qua for each
+    //                 if(jqXHR.responseJSON){
+    //                 $.each(jqXHR.responseJSON ,(key, item) =>{
+    //
+    //                     let str = `<label id="${key}-error" class="error" for="${key}"> ${item} </label>`;
+    //
+    //                     $('.modal-alert-danger').append(str)
+    //                 })
+    //             }
+    //
+    //         })
+    // });
+    //
+    //
+    // function clearInput(){
+    //     $("#usernameSignUp").val("")
+    //     $("#passwordSignUp").val("")
+    //     $("#passwordSignUp1").val("")
+    //     $("#fullnameSignUp").val("")
+    //     $("#phoneSignUp").val("")
+    // }
 
 
 

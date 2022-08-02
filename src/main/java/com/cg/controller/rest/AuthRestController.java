@@ -5,6 +5,7 @@ import com.cg.exception.EmailExistsException;
 import com.cg.model.JwtResponse;
 import com.cg.model.Role;
 import com.cg.model.User;
+import com.cg.model.dto.RoleDTO;
 import com.cg.model.dto.UserDTO;
 import com.cg.service.jwt.JwtService;
 import com.cg.service.role.IRoleService;
@@ -50,22 +51,31 @@ public class AuthRestController {
     private AppUtil appUtils;
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody UserDTO userDTO, BindingResult bindingResult) {
+    public ResponseEntity<?> register(@RequestBody UserDTO userDTO, BindingResult bindingResult) {
 
-        if (bindingResult.hasErrors())
+        if (bindingResult.hasErrors()) {
             return appUtils.mapErrorToResponse(bindingResult);
-
-        Optional<UserDTO> optUser = userService.findUserDTOByUsername(userDTO.getUsername());
-
-        if (optUser.isPresent()) {
-            throw new EmailExistsException("Email Đã tồn tại!");
         }
 
+//        RoleDTO roleDTO = new RoleDTO();
+//        roleDTO.setId(1L);
+//
+//        UserDTO userDTO = new UserDTO();
+//        userDTO.setFullname("ADMIN");
+//        userDTO.setUsername("admin@co.cc");
+//        userDTO.setPassword("123");
+//        userDTO.setRole(roleDTO);
+
+//        Optional<UserDTO> optUser = userService.findUserDTOByUsername(userDTO.getUsername());
+
+//        if (optUser.isPresent()) {
+//            throw new EmailExistsException("Email Đã tồn tại!");
+//        }
 
         Optional<Role> optRole = roleService.findById(userDTO.getRole().getId());
 
         if (!optRole.isPresent()) {
-            throw new DataInputException("Invalid account role");
+            throw new DataInputException("Vai trò tài khoản không hợp lệ");
         }
 
         try {
@@ -82,7 +92,9 @@ public class AuthRestController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User user) {
         Authentication authentication = authenticationManager.authenticate(
+
                 new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
+
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 

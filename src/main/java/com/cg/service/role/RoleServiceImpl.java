@@ -40,6 +40,7 @@ public class RoleServiceImpl implements IRoleService{
         roleRepository.deleteById(id);
     }
 
+
     @Override
     public Role findByName(String name) {
         return roleRepository.findByName(name);

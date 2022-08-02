@@ -17,11 +17,13 @@
 
     </div>
 
+
     <div class="content-page">
 
         <th:block th:replace="/layout/content_page_4 :: content_page_4"/>
 
     </div>
+
 
     <footer class="footer">
 
@@ -32,7 +34,20 @@
     <th:block th:replace="/layout/script_6 :: script_6"/>
 
 </div>
+<script>
+    $('#logout').on('click', function (){
+        let confim = confirm("Bạn có chắc muốn thoát ứng dụng không!")
+        if(confim === true){
 
+            App.SweetAlert.showSuccessAlert("Đăng Xuất Thành Công")
+            setTimeout(function () {
+                window.location.href = "/"
+            }, 3000);
+
+        }
+    })
+
+</script>
 </body>
 
 </html>

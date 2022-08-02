@@ -1,9 +1,11 @@
 package com.cg.model;
 
+import com.cg.model.dto.UserDTO;
 import lombok.*;
 import lombok.experimental.Accessors;
 
 import javax.persistence.*;
+import java.util.Set;
 
 
 @Getter
@@ -25,10 +27,44 @@ public class User extends BaseEntities {
     @Column(nullable = false)
     private String password;
 
+    @Column(name = "full_name", nullable = false)
+    private String fullname;
+
+    private String phone;
+
+//    @Column(name = "is_actice", columnDefinition = "boolean default false")
+//    private boolean isActice;
+
+    @Column(name = "url_image")
+    private String urlImage;
+
+    @Column(columnDefinition = "boolean default false")
+    private boolean deleted;
+
+    @OneToOne
+    @JoinColumn(name ="location_region_id" )
+    private LocationRegion locationRegion;
+
 
     @ManyToOne
     @JoinColumn(name = "role_id")
     private Role role;
+
+
+    @OneToMany(targetEntity = Order.class, mappedBy = "user")
+    private Set<Order> orders;
+
+
+    public UserDTO toUserDTO(){
+        return new UserDTO()
+                .setId(id)
+                .setUsername(username)
+                .setPassword(password)
+                .setFullname(fullname)
+                .setPhone(phone)
+                .setLocationRegion(locationRegion.toLocationRegionDTO())
+                .setRole(role.toRoleDTO());
+    }
 
 
 

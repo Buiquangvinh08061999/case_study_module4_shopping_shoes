@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+
+    <title>Title</title>
+    <th:block th:replace="/layout/head_1 :: head_1"/>
+    <link rel="stylesheet" href="/assets/css/bootstrap.minb.css">
+
+
+
+</head>
+
+<body>
+
+ <div id="wrapper">
+    <th:block th:replace="/layout/navbar_custom_top_2 :: navbar_custom_top_2"/>
+
+
+    <div class="left-side-menu">
+
+        <th:block th:replace="/layout/hearder_left_3 :: hearder_left_3"/>
+
+    </div>
+
+
+    <div class="content-page">
+
+        <div class="content">
+            <!-- Start Content-->
+            <div class="container-fluid">
+                <!-- start page title -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="page-title-box">
+                            <div class="page-title-right">
+                                <ol class="breadcrumb m-0">
+                                    <li class="breadcrumb-item">Uplon</li>
+                                    <li class="breadcrumb-item active">Dashboard</li>
+                                </ol>
+                            </div>
+                            <h4 class="page-title">Welcome List User</h4>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-10 d-none d-sm-block" style="margin-bottom: 20px">
+                        <form class="form-inline">
+                            <input class="form-control col-3 mr-sm-2" type="search" placeholder="Search" aria-label="Search" id="searchUser" name="keyword">
+                            <button class="btn btn-primary" id="btn-search" type="button">  <i class="fas fa-search"></i></button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-10">
+                        <h1>List of user</h1>
+                    </div>
+                    <div class="col-2 create">
+                            <button type="button" class="btn btn-success create-modal"> Create User</button>
+                    </div>
+
+                    <table id="tbListUsers" class="table table-hover table-bordered">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Id</th>
+                                <th>Username</th>
+                                <th>Full Name</th>
+                                <th>Phone</th>
+                                <th>Province</th>
+                                <th>District</th>
+                                <th>Ward</th>
+                                <th>Address</th>
+                                <th>Role</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+   </div>
+
+
+     <th:block th:replace="/layout/script_6 :: script_6"/>
+
+
+ </div>
+
+ <div class="footer" style="position: fixed; right: 0; bottom: 0">
+
+
+ </div>
+
+
+ <th:block th:replace="/user/modal_create :: modal_create"/>
+
+ <th:block th:replace="/user/modal_update :: modal_update"/>
+
+ <th:block th:replace="/user/footer :: footer"/>
+
+ <script>
+
+     let locationRegion = new LocationRegion();
+     let role = new Role();
+     let user = new User();
+
+     let userId = null;
+     //Mở tab thêm mới ra
+     $('.create-modal').on('click', function () {
+         $('#modalCreateUser').modal('show')
+     })
+
+     function handleShowUpdate() {
+         $('button.update-modal').on('click', function () {
+             console.log(userId);
+             $.ajax({
+                 header: {
+                     "accept": "application/json",
+                     "content-type": "application/json"
+                 },
+                 type: "GET",
+                 url: "http://localhost:8080/api/customers/" + userId ,
+             })
+
+             .done((data) => {
+                 user = data;
+                 locationRegion = user.locationRegion;
+                 role = user.role;
+
+                 $('#fullnameUp').val(user.fullname);
+                 $('#usernameUp').val(user.username);
+                 $('#phoneUp').val(user.phone);
+                 $('#roleUp').val(user.role);
+
+
+                 $('#modalUpdateUser').modal('show')
+             });
+
+         })
+     }
+
+
+     //Hiển thị thông báo có muốn thoát không
+     $('#logout').on('click', function (){
+         let confim = confirm("Bạn có chắc muốn thoát ứng dụng không!")
+         if(confim === true){
+
+             App.SweetAlert.showSuccessAlert("Đăng Xuất Thành Công")
+             setTimeout(function () {
+                 window.location.href = "/"
+             }, 3000);
+
+         }
+     })
+     /*Khi click vào hiển thị thanh edit và delete*/
+     function handleShowFooter() {
+         $('#tbListUsers tbody tr').on('click', function () {
+
+             let id = $(this).attr("id");
+             /*Trỏ theo id của từng thằng để lấy ra thông tin update*/
+             userId = id.replace("tr_", "");
+
+             console.log(userId);
+
+             $("#tbListUsers tbody tr td span").removeClass("selected").addClass("unselected");
+             $(`#${id} span`).removeClass("unselected").addClass("selected");
+
+             let temFooter = $.validator.format($.trim($('#tempFooter').val().toString()))
+             $('.footer').html(temFooter)
+
+             handleShowUpdate();
+
+         })
+     }
+
+     function drawProvinces() {
+         return $.ajax({
+             header: {
+                 "accept": "application/json",
+                 "content-type": "application/json"
+             },
+             type: "GET",
+             url: "https://vapi.vnappmob.com/api/province/",
+         })
+             .done((data) => {
+                 $.each(data.results, (i, item) => {
+                     let str = `<option value="${item.province_id}"> ${item.province_name} </option> `;
+
+                     $('#province').prepend(str);
+
+                 })
+             })
+             .fail((jqXHR) => {
+                 console.log(jqXHR);
+             })
+     }
+
+     function drawDistricts(provinceId) {
+         return $.ajax({
+             headers: {
+                 "accept": "application/json",
+                 "content-type": "application/json"
+             },
+             type: "GET",
+             url: "https://vapi.vnappmob.com/api/province/district/" + provinceId,
+         })
+             .done((data) => {
+                 $('#district').html('');
+                 $.each(data.results, (i, item) => {
+
+                     let str = `<option value="${item.district_id}"> ${item.district_name} </option>`;
+                     $('#district').prepend(str);
+                 })
+             })
+             .fail((jqXHR) => {
+                 console.log(jqXHR);
+             })
+     }
+
+     function drawWards(districtId) {
+         return $.ajax({
+             headers: {
+                 "accept": "application/json",
+                 "content-type": "application/json"
+             },
+             type: "GET",
+             url: "https://vapi.vnappmob.com/api/province/ward/" + districtId,
+         })
+             .done((data) => {
+                 $('#ward').html('');
+
+                 $.each(data.results, (i, item) => {
+                     let str = `<option value="${item.ward_id}">${item.ward_name}</option>`;
+
+                     $('#ward').prepend(str);
+                 })
+             })
+             .fail((jqXHR) => {
+                 console.log(jqXHR);
+             })
+     }
+
+     /*Hàm xử lí tỉnh lấy theo id của tĩnh xử lí chuỗi liên tục*/
+     drawProvinces().then(() => {
+         let provinceId = $('#province').val();
+         drawDistricts(provinceId).then(() => {
+             let districtId = $('#district').val()
+             drawWards(districtId)
+         })
+     });
+
+     // Sự kiện thay đổi tỉnh khi tạo mới, huyện và xã sẻ thay đổi dựa theo Tỉnh
+     $('#province').on('change', function () {
+         let provinceId = $('#province').val();
+         drawDistricts(provinceId).then(() => {
+             let districtId = $('#district').val()
+             drawWards(districtId)
+         })
+     })
+
+     $('#district').on('change', function () {
+         let districtId = $('#district').val()
+         drawWards(districtId)
+     })
+
+
+     function getAllUser(){
+         $.ajax({
+             header: {
+                 "accept": "application/json",
+                 "content-type": "application/json"
+             },
+             type: "GET",
+             url: "http://localhost:8080/api/customers",
+         })
+         .done((data) => {
+            $.each(data ,(i, item)=>{
+                user = item;
+                locationRegion = user.locationRegion;
+                role = user.role;
+
+                let str =`
+                 <tr id="tr_${user.id}">
+                        <td><span id="span_${user.id}" class="select-tab unselected"></td>
+                        <td>${user.id}</td>
+                        <td>${user.username}</td>
+                        <td>${user.fullname}</td>
+                        <td>${user.phone}</td>
+                        <td>${locationRegion.provinceName}</td>
+                        <td>${locationRegion.districtName}</td>
+                        <td>${locationRegion.wardName}</td>
+                        <td>${locationRegion.address}</td>
+                        <td>${role.code}</td>
+                 </tr>
+                `;
+
+                $('#tbListUsers tbody').prepend(str);
+
+                handleShowFooter();
+            })
+         })
+
+         .fail((jqXHR) => {
+             console.log(jqXHR)
+         })
+     }
+     getAllUser();
+
+     $('#searchUser').on('input', function (){
+         let word = $('#searchUser').val();
+         search(word);
+     })
+
+     function search(word){
+         $.ajax({
+             header: {
+                 "accept": "application/json",
+                 "content-type": "application/json"
+             },
+             type: "GET",
+             url: "http://localhost:8080/api/customers/search/" + word,
+         })
+         .done((data) => {
+             $('#tbListUsers tbody').html('')
+
+             $.each(data, (i, item) => {
+                 user = item;
+                 locationRegion = user.locationRegion;
+                 role = user.role;
+                 let str = `
+                 <tr id="tr_${user.id}">
+                        <td><span id="span_${user.id}" class="select-tab unselected"></td>
+                        <td>${user.id}</td>
+                        <td>${user.username}</td>
+                        <td>${user.fullname}</td>
+                        <td>${user.phone}</td>
+                        <td>${locationRegion.provinceName}</td>
+                        <td>${locationRegion.districtName}</td>
+                        <td>${locationRegion.wardName}</td>
+                        <td>${locationRegion.address}</td>
+                        <td>${role.code}</td>
+
+                 </tr>
+                `;
+
+                 $('#tbListUsers tbody').prepend(str);
+
+                 handleShowFooter();
+             })
+         })
+
+         .fail((jqXHR) => {
+             console.log(jqXHR)
+         })
+     }
+
+
+     let btnCreateCustomer = $("#btnCreateCustomer");
+     btnCreateCustomer.on("click",function () {
+         locationRegion.provinceId = $('#province').val();
+         locationRegion.provinceName = $('#province :selected').text();
+         locationRegion.districtId = $('#district').val();
+         locationRegion.districtName = $('#district :selected').text();
+         locationRegion.wardId = $('#ward').val();
+         locationRegion.wardName = $('#ward :selected').text();
+         locationRegion.address = $('#address').val();
+         role.id = $('#role').val();
+         role.code = $('#role :selected').text();
+         user.fullname = $("#fullname").val();
+         user.username = $("#username").val();
+         user.password = $("#ipnPassword").val();
+         user.phone = $("#phone").val();
+         user.locationRegion = locationRegion;
+         user.role = role;
+         $.ajax({
+             "headers": {
+                 "accept": "application/json",
+                 "content-type": "application/json"
+             },
+             "type": "POST",
+             "url": "http://localhost:8080/api/customers/create",
+             "data": JSON.stringify(user)
+         })
+             .done((data) => {
+                 console.log(data)
+                 user = data;
+                 locationRegion = user.locationRegion;
+                 role = user.role;
+                 let str =`
+                 <tr id="tr_${user.id}">
+                        <td><span id="span_${user.id}" class="select-tab unselected"></td>
+                        <td>${user.id}</td>
+                        <td>${user.username}</td>
+                        <td>${user.fullname}</td>
+                        <td>${user.phone}</td>
+                        <td>${locationRegion.provinceName}</td>
+                        <td>${locationRegion.districtName}</td>
+                        <td>${locationRegion.wardName}</td>
+                        <td>${locationRegion.address}</td>
+                        <td>${role.code}</td>
+                 </tr>
+                `;
+
+                 $('#tbListUsers tbody').prepend(str);
+
+                 App.SweetAlert.showSuccessAlert("Tạo Mới Thành Công")
+                 $('#modalCreateUser').modal('hide')
+
+                 clearInput();
+
+                 handleShowFooter();
+             })
+             .fail((jqXHR) => {
+                 console.log(jqXHR)
+                 $('#modalCreateUser .modal-alert-danger').html('').removeClass('hide').addClass('show');
+
+                 if (jqXHR.responseJSON.message) {
+                     let msg = jqXHR.responseJSON.message;
+
+                     let str = `<label id="message-error" class="error" for="message">${msg}</label>`;
+
+                     $('#modalCreateUser .modal-alert-danger').append(str);
+
+                 }else if (jqXHR.responseJSON) {
+                     $.each(jqXHR.responseJSON, (key, item) => {
+                         let str = `<label id="${key}-error" class="error" for="${key}"> ${item} </label>`;
+
+                         $('#modalCreateUser .modal-alert-danger').append(str);
+                     })
+                 }
+
+
+
+
+             })
+     });
+
+     /*Clear mới tất cả khi thêm mới*/
+     function clearInput(){
+         $("#frmCreateCustomer input").val("");
+     }
+
+
+
+
+     const ipnElement = document.querySelector('#ipnPassword')
+     const btnElement = document.querySelector('#btnPassword')
+
+     btnElement.addEventListener('click', function () {
+         const currentType = ipnElement.getAttribute('type')
+
+         ipnElement.setAttribute(
+             'type',
+             currentType === 'password' ? 'text' : 'password'
+         )
+     })
+
+ </script>
+
+</body>
+
+</html>
