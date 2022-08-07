@@ -1,6 +1,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 
 <th:block th:fragment="modal_create">
+
     <div id="modalCreateUser" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
         <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
@@ -15,13 +16,13 @@
                         <fieldset class="row g-3">
 
                             <div class="col-md-3">
-                                <label class="form-label">Full Name</label>
-                                <input type="text" class="form-control" id="fullname" name="fullname">
+                                <label class="form-label">User Name</label>
+                                <input type="email" class="form-control" id="username" name="username" placeholder="txr@gmail.com">
                             </div>
 
                             <div class="col-md-3">
-                                <label class="form-label">User Name</label>
-                                <input type="email" class="form-control" id="username" name="username">
+                                <label class="form-label">Full Name</label>
+                                <input type="text" class="form-control" id="fullname" name="fullname" placeholder="Bui Quang Vinh">
                             </div>
 
                             <div class="col-sm-3">

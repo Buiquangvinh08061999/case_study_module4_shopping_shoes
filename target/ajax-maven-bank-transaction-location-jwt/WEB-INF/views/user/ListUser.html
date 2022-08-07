@@ -65,6 +65,7 @@
                             <tr>
                                 <th>#</th>
                                 <th>Id</th>
+                                <th>Avatar</th>
                                 <th>Username</th>
                                 <th>Full Name</th>
                                 <th>Phone</th>
@@ -73,7 +74,6 @@
                                 <th>Ward</th>
                                 <th>Address</th>
                                 <th>Role</th>
-
                             </tr>
                         </thead>
                         <tbody>
@@ -116,36 +116,6 @@
          $('#modalCreateUser').modal('show')
      })
 
-     function handleShowUpdate() {
-         $('button.update-modal').on('click', function () {
-             console.log(userId);
-             $.ajax({
-                 header: {
-                     "accept": "application/json",
-                     "content-type": "application/json"
-                 },
-                 type: "GET",
-                 url: "http://localhost:8080/api/customers/" + userId ,
-             })
-
-             .done((data) => {
-                 user = data;
-                 locationRegion = user.locationRegion;
-                 role = user.role;
-
-                 $('#fullnameUp').val(user.fullname);
-                 $('#usernameUp').val(user.username);
-                 $('#phoneUp').val(user.phone);
-                 $('#roleUp').val(user.role);
-
-
-                 $('#modalUpdateUser').modal('show')
-             });
-
-         })
-     }
-
-
      //Hiển thị thông báo có muốn thoát không
      $('#logout').on('click', function (){
          let confim = confirm("Bạn có chắc muốn thoát ứng dụng không!")
@@ -162,7 +132,9 @@
      function handleShowFooter() {
          $('#tbListUsers tbody tr').on('click', function () {
 
-             let id = $(this).attr("id");
+             /*Trỏ theo id của từng thằng để lấy ra thông tin update*/
+            let id = $(this).attr("id")
+
              /*Trỏ theo id của từng thằng để lấy ra thông tin update*/
              userId = id.replace("tr_", "");
 
@@ -175,6 +147,8 @@
              $('.footer').html(temFooter)
 
              handleShowUpdate();
+
+             handleConfimDelete()
 
          })
      }
@@ -193,7 +167,7 @@
                      let str = `<option value="${item.province_id}"> ${item.province_name} </option> `;
 
                      $('#province').prepend(str);
-
+                     $('#provinceUp').prepend(str);
                  })
              })
              .fail((jqXHR) => {
@@ -212,10 +186,12 @@
          })
              .done((data) => {
                  $('#district').html('');
+                 $('#districtUp').html('');
                  $.each(data.results, (i, item) => {
-
                      let str = `<option value="${item.district_id}"> ${item.district_name} </option>`;
+
                      $('#district').prepend(str);
+                     $('#districtUp').prepend(str);
                  })
              })
              .fail((jqXHR) => {
@@ -234,11 +210,13 @@
          })
              .done((data) => {
                  $('#ward').html('');
+                 $('#wardUp').html('');
 
                  $.each(data.results, (i, item) => {
                      let str = `<option value="${item.ward_id}">${item.ward_name}</option>`;
 
                      $('#ward').prepend(str);
+                     $('#wardUp').prepend(str);
                  })
              })
              .fail((jqXHR) => {
@@ -255,7 +233,7 @@
          })
      });
 
-     // Sự kiện thay đổi tỉnh khi tạo mới, huyện và xã sẻ thay đổi dựa theo Tỉnh
+     //1.Sự kiện thay đổi tỉnh khi tạo Create, tỉnh cha huyện , huyện cha xã (theo cơ chế này để khi click sẽ thay đổi theo)
      $('#province').on('change', function () {
          let provinceId = $('#province').val();
          drawDistricts(provinceId).then(() => {
@@ -263,9 +241,21 @@
              drawWards(districtId)
          })
      })
-
      $('#district').on('change', function () {
          let districtId = $('#district').val()
+         drawWards(districtId)
+     })
+
+     //1.Sự kiện thay đổi tỉnh khi Update, tỉnh cha huyện , huyện cha xã (theo cơ chế này để khi click sẽ thay đổi theo)
+     $('#provinceUp').on('change', function () {
+         let provinceId = $('#provinceUp').val();
+         drawDistricts(provinceId).then(()=>{
+             let districtId = $('#districtUp').val()
+             drawWards(districtId)
+         })
+     })
+     $('#districtUp').on('change', function (){
+         let districtId = $('#districtUp').val();
          drawWards(districtId)
      })
 
@@ -289,6 +279,7 @@
                  <tr id="tr_${user.id}">
                         <td><span id="span_${user.id}" class="select-tab unselected"></td>
                         <td>${user.id}</td>
+                        <td><img src="/assets/img/${user.urlImage}" alt="" style="width: 90px; height:70px ; border-radius:50%"> </td>
                         <td>${user.username}</td>
                         <td>${user.fullname}</td>
                         <td>${user.phone}</td>
@@ -337,8 +328,9 @@
                  <tr id="tr_${user.id}">
                         <td><span id="span_${user.id}" class="select-tab unselected"></td>
                         <td>${user.id}</td>
+                        <td><img src="/assets/img/${user.urlImage}" alt="" style="width: 90px ; height:70px ; border-radius:50%"></td>
                         <td>${user.username}</td>
-                        <td>${user.fullname}</td>
+                        <td>${user.fullname}</td>"
                         <td>${user.phone}</td>
                         <td>${locationRegion.provinceName}</td>
                         <td>${locationRegion.districtName}</td>
@@ -372,12 +364,14 @@
          locationRegion.address = $('#address').val();
          role.id = $('#role').val();
          role.code = $('#role :selected').text();
-         user.fullname = $("#fullname").val();
          user.username = $("#username").val();
+         user.fullname = $("#fullname").val();
          user.password = $("#ipnPassword").val();
          user.phone = $("#phone").val();
+
          user.locationRegion = locationRegion;
          user.role = role;
+
          $.ajax({
              "headers": {
                  "accept": "application/json",
@@ -396,8 +390,10 @@
                  <tr id="tr_${user.id}">
                         <td><span id="span_${user.id}" class="select-tab unselected"></td>
                         <td>${user.id}</td>
+                        <td><img src="/assets/img/${user.urlImage}" alt=""style="width: 90px; height:70px ; border-radius:50%"></td>
                         <td>${user.username}</td>
                         <td>${user.fullname}</td>
+
                         <td>${user.phone}</td>
                         <td>${locationRegion.provinceName}</td>
                         <td>${locationRegion.districtName}</td>
@@ -410,6 +406,7 @@
                  $('#tbListUsers tbody').prepend(str);
 
                  App.SweetAlert.showSuccessAlert("Tạo Mới Thành Công")
+                 unbindAll();
                  $('#modalCreateUser').modal('hide')
 
                  clearInput();
@@ -427,6 +424,7 @@
 
                      $('#modalCreateUser .modal-alert-danger').append(str);
 
+
                  }else if (jqXHR.responseJSON) {
                      $.each(jqXHR.responseJSON, (key, item) => {
                          let str = `<label id="${key}-error" class="error" for="${key}"> ${item} </label>`;
@@ -434,9 +432,6 @@
                          $('#modalCreateUser .modal-alert-danger').append(str);
                      })
                  }
-
-
-
 
              })
      });
@@ -446,12 +441,155 @@
          $("#frmCreateCustomer input").val("");
      }
 
+     function unbindAll() {
+         $("#tbListUsers tbody tr").off();
+     }
+
+
+     function handleShowUpdate() {
+         $('button.edit').on('click', function () {
+             console.log(userId);
+             $.ajax({
+                 header: {
+                     "accept": "application/json",
+                     "content-type": "application/json"
+                 },
+                 type: "GET",
+                 url: "http://localhost:8080/api/customers/" + userId ,
+             })
+
+                 .done((data) => {
+                     user = data;
+                     locationRegion = user.locationRegion;
+                     role = user.role;
+
+                     $('#usernameUp').val(user.username);
+                     $('#fullnameUp').val(user.fullname);
+                     $('#phoneUp').val(user.phone);
+
+
+                     $('#provinceUp').val(locationRegion.provinceId);
+
+                     drawDistricts(locationRegion.provinceId).then(() => {
+                         $('#districtUp').val(locationRegion.districtId);
+
+                         drawWards(locationRegion.districtId).then(() => {
+                             $('#wardUp').val(locationRegion.wardId);
+                         });
+
+                     });
+
+                     $('#addressUp').val(locationRegion.address);
+
+                     $('#modalUpdateUser').modal('show')
+
+                 });
+
+         })
+     }
+        /*Khi cập thì dùng thuộc tính replaceWith để sửa lại các thông tin */
+     $('#btnUpdateUser').on('click',()=>{
+             locationRegion.provinceId = $('#provinceUp').val();
+             locationRegion.provinceName = $('#provinceUp :selected').text();
+             locationRegion.districtId = $('#districtUp').val();
+             locationRegion.districtName = $('#districtUp :selected').text();
+             locationRegion.wardId = $('#wardUp').val();
+             locationRegion.wardName = $('#wardUp :selected').text();
+             locationRegion.address = $('#addressUp').val();
+
+             role.id = $('#role').val();
+             role.code = $('#role :selected').text();
+
+             user.id = userId;
+
+             user.username = $("#usernameUp").val();
+             user.fullname = $("#fullnameUp").val();
+             user.phone = $("#phoneUp").val();
+
+
+             user.locationRegion = locationRegion;
+             user.role = role;
+             $.ajax({
+                 "headers": {
+                     "accept": "application/json",
+                     "content-type": "application/json"
+                 },
+                 "type": "PUT",
+                 "url": "http://localhost:8080/api/customers/update",
+                 "data": JSON.stringify(user)
+             })
+                 .done((data)=>{
+                     user = data;
+                     locationRegion = user.locationRegion;
+                     role = user.role;
+
+                     let currentRow = $('#tr_'+ user.id);
+                     let str =`
+                         <tr id="tr_${user.id}">
+                                <td><span id="span_${user.id}" class="select-tab unselected"></td>
+                                <td>${user.id}</td>
+                                <td><img src="/assets/img/${user.urlImage}" alt="" style="width: 90px; height:70px ; border-radius:50%"> </td>
+                                <td>${user.username}</td>
+                                <td>${user.fullname}</td>
+                                <td>${user.phone}</td>
+                                <td>${locationRegion.provinceName}</td>
+                                <td>${locationRegion.districtName}</td>
+                                <td>${locationRegion.wardName}</td>
+                                <td>${locationRegion.address}</td>
+                                <td>${role.code}</td>
+                         </tr>
+                        `;
+
+                     currentRow.replaceWith(str)
+
+                     App.SweetAlert.showSuccessAlert("Cập Nhật Thành Công")
+
+                     unbindAll();
+                     $('#modalUpdateUser').modal('hide');
+
+                     handleShowFooter();
+
+                 })
+                 .fail((jqXHR) =>{
+                     console.log(jqXHR)
+                 })
+         });
+
+
+     /*Hàm xóa mềm theo id,*/
+    function handleConfimDelete() {
+        $('button.deleted').on('click', function () {
+            App.SweetAlert.showConfirmDelete()
+                .then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            "headers": {
+                                "accept": "application/json",
+                                "content-type": "application/json"
+                            },
+                            "type": "DELETE",
+                            "url": "http://localhost:8080/api/customers/delete/" + userId,
+                            "data": JSON.stringify(user)
+                        })
+                        .done((data) => {
+                            $('#tr_' + userId).remove();
+                            App.SweetAlert.showSuccessAlert("Xóa Thành Công")
+                        })
+                        .fail((error) => {
+                            console.log(error)
+                                App.SweetAlert.showErrorAlert('Xóa thất bại');
+                            });
+                    }
+                })
+          })
+    }
+
+
 
 
 
      const ipnElement = document.querySelector('#ipnPassword')
      const btnElement = document.querySelector('#btnPassword')
-
      btnElement.addEventListener('click', function () {
          const currentType = ipnElement.getAttribute('type')
 

@@ -4,6 +4,7 @@
 
     <title>Title</title>
     <th:block th:replace="/layout/head_1 :: head_1"/>
+    <link rel="stylesheet" href="/assets/css/bootstrap.minb.css">
 </head>
 <body>
 
@@ -52,30 +53,23 @@
                         <h1>List of Product</h1>
                     </div>
                     <div class="col-2 create">
-                        <a href="/cpa/user?action=create">
-                            <button type="button" class="btn btn-success"> Create Product</button>
-                        </a>
+                            <button type="button" class="btn btn-success create-modal">Create Product</button>
                     </div>
 
-                    <table class="table table-hover table-bordered">
+                    <table id="tbListProducts" class="table table-hover table-bordered">
                         <thead>
-                        <tr>
-                            <th>Id</th>
-                            <th>username</th>
-                            <th>password</th>
-                            <th>Avarta</th>
-                            <th>Full Name</th>
-                            <th>Phone</th>
-                            <th>Email</th>
-                            <th>City</th>
-                            <th>Role</th>
-                            <th>Update</th>
-                            <th>Create</th>
-                            <th colspan="2">Action</th>
-                        </tr>
+                            <tr>
+                                <th>#</th>
+                                <th>Id</th>
+                                <th>Avatar</th>
+                                <th>Name</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Describe</th>
+                                <th>TitleCatogory</th>
+                            </tr>
                         </thead>
                         <tbody>
-
 
                         </tbody>
                     </table>
@@ -84,18 +78,168 @@
         </div>
     </div>
 
-<!--    <footer class="footer">-->
-
-<!--        <th:block th:replace="/layout/footer_5 :: footer_5"/>-->
-
-<!--    </footer>-->
-
 
 
     <th:block th:replace="/layout/script_6 :: script_6"/>
 
 </div>
 
+<div class="footer" style="position: fixed; right: 0; bottom: 0">
+
+
+</div>
+
+<th:block th:replace="/product/footer :: footer"/>
+
+<th:block th:replace="/product/modal_create :: modal_create"/>
+
+<script>
+
+    let product = new Product();
+    let category = new Category();
+
+    let productId = null;
+    $('.create-modal').on('click', function (){
+        $('#modalCreateProduct').modal('show')
+    })
+
+    //Hiển thị thông báo có muốn thoát không
+    $('#logout').on('click', function (){
+        let confim = confirm("Bạn có chắc muốn thoát ứng dụng không!")
+        if(confim === true){
+
+            App.SweetAlert.showSuccessAlert("Đăng Xuất Thành Công")
+            setTimeout(function () {
+                window.location.href = "/"
+            }, 3000);
+        }
+    })
+
+    /*Khi click vào hiển thị thanh edit và delete*/
+    function handleShowFooter() {
+        $('#tbListProducts tbody tr').on('click', function () {
+
+            /*Trỏ theo id của từng thằng để lấy ra thông tin update*/
+            let id = $(this).attr("id")
+
+            /*Trỏ theo id của từng thằng để lấy ra thông tin update*/
+            productId = id.replace("tr_", "");
+
+            console.log(productId);
+            $("#tbListProducts tbody tr td span").removeClass("selected").addClass("unselected");
+            $(`#${id} span`).removeClass("unselected").addClass("selected");
+
+            let temFooter = $.validator.format($.trim($('#tempFooter').val().toString()))
+            $('.footer').html(temFooter)
+        })
+    }
+
+    function getAllUser(){
+        $.ajax({
+            header: {
+                "accept": "application/json",
+                "content-type": "application/json"
+            },
+            type: "GET",
+            url: "http://localhost:8080/api/products",
+        })
+            .done((data) => {
+                $.each(data ,(i, item)=>{
+                    product = item;
+                    category = product.category;
+
+                    let str =`
+                     <tr id="tr_${product.id}">
+                             <td><span id="span_${product.id}" class="select-tab unselected"></td>
+                            <td>${product.id}</td>
+                            <td></td>
+                            <td>${product.name}</td>
+                            <td>${product.price}</td>
+                            <td>${product.quantity}</td>
+                            <td>${product.describe}</td>
+                            <td>${category.title}</td>
+                     </tr>
+                `;
+                    $('#tbListProducts tbody').prepend(str);
+
+
+                    handleShowFooter();
+                })
+            })
+
+            .fail((jqXHR) => {
+                console.log(jqXHR)
+            })
+    }
+    getAllUser();
+
+    let btnCreateProduct = $('#btnCreateProduct');
+    btnCreateProduct.on('click', function (){
+
+        product.name = $('#username').val();
+        product.price = $('#price').val();
+        product.quantity = $('#quantity').val();
+        product.describe = $('#describe').val();
+
+        category.id = $('#category').val();
+        category.title = $('#category :selected').text()
+
+        product.category = category;
+
+        $.ajax({
+            "headers": {
+                "accept": "application/json",
+                "content-type": "application/json"
+            },
+            "type": "POST",
+            "url": "http://localhost:8080/api/products/create",
+            "data": JSON.stringify(product)
+        })
+            .done((data) => {
+                console.log(data)
+                product = data;
+                category = product.category;
+
+                let str =`
+                 <tr id="tr_${product.id}">
+                        <td><span id="span_${product.id}" class="select-tab unselected"></td>
+                        <td>${product.id}</td>
+                        <td></td>
+                        <td>${product.name}</td>
+                        <td>${product.price}</td>
+                        <td>${product.quantity}</td>
+                        <td>${product.describe}</td>
+                        <td>${category.title}</td>
+                 </tr>
+                `;
+                $('#tbListProducts tbody').prepend(str);
+
+                App.SweetAlert.showSuccessAlert("Tạo Mới Thành Công")
+                $('#modalCreateProduct').modal('hide')
+
+                clearInput()
+
+                handleShowFooter();
+            })
+
+            .fail((jqXHR) => {
+                console.log(jqXHR)
+            })
+    })
+
+    /*Clear mới tất cả khi thêm mới*/
+    function clearInput(){
+        $("#frmCreateProduct input").val("");
+    }
+
+
+
+
+
+
+
+
+</script>
 
 </body>
 

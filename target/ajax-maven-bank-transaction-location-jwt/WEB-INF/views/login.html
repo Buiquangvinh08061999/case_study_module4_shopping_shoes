@@ -129,7 +129,7 @@
 <script src="/assets/js/sweetalert2.min.js"></script>
 
 <script>
-
+    let userLogin = new User();
 
     /*Đăng Nhập*/
     let btnLogin = $("#btn_login");
@@ -153,6 +153,7 @@
             "data": JSON.stringify(user)
         })
             .done((data) => {
+                userLogin = data;
                 console.log(data)
                 App.SweetAlert.showSuccessAlert("Đăng Nhập Thành Công")
 
@@ -163,9 +164,11 @@
             })
 
             .fail((jqXHR) => {
-                App.SweetAlert.showErrorAlert("Đăng Nhập Thất Bại Tài Khoản Không Hợp Lệ")
+                App.SweetAlert.showErrorAlert("Đăng Nhập Thất Bại Tài Khoản Không Tồn Tại")
             })
     })
+
+
 
 
     /*Đăng ký*/

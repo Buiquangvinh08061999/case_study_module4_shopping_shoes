@@ -34,10 +34,11 @@ public class UserServiceImpl implements IUserService{
     }
     //Hiển thị list tất cả ra
     @Override
-    public List<UserDTO> findAllUserDTO() {
-        return userRepository.findAllUserDTO();
+    public List<UserDTO> findAllUserDTOByDeletedIsFalse() {
+        return userRepository.findAllUserDTOByDeletedIsFalse();
     }
 
+    //Hàm search
     @Override
     public List<UserDTO> searchAllUser(String keywork) {
         return userRepository.search(keywork);
@@ -81,6 +82,15 @@ public class UserServiceImpl implements IUserService{
     }
 
     @Override
+    public User saveUpdate(User user) {
+        LocationRegion locationRegion = locationRegionRepository.save(user.getLocationRegion());
+
+        user.setLocationRegion(locationRegion);
+
+        return userRepository.save(user);
+    }
+
+    @Override
     public void remove(Long id) {
         userRepository.deleteById(id);
     }
@@ -111,7 +121,6 @@ public class UserServiceImpl implements IUserService{
     public Boolean existsByPhone(String phone) {
         return userRepository.existsByPhone(phone);
     }
-
 
     @Override
     public Boolean existsByUsernameAndIdNot(String username, Long id) {

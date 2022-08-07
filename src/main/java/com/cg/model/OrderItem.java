@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 @Entity
 @Table(name = "order_items")
 @Accessors(chain = true)
-public class OrderItem extends BaseProduct{
+public class OrderItem{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

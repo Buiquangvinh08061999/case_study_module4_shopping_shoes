@@ -20,6 +20,17 @@ class App {
             })
         }
 
+        static showConfirmDelete() {
+            return Swal.fire({
+                title: 'Are you sure to deactive the selected customer ?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085D6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, deactive it!',
+            });
+        }
+
     }
 }
 
@@ -36,13 +47,14 @@ class LocationRegion {
     }
 }
 class User {
-    constructor(id, username, password, fullName, phone, urlImage, locationRegion, role) {
+    constructor(id, username, password, fullName, phone, urlImage, deleted = 0, locationRegion, role) {
         this.id = id;
         this.username= username;
         this.password = password
         this.fullName = fullName;
         this.phone = phone;
         this.urlImage = urlImage;
+        this.deleted = deleted
         this.locationRegion = locationRegion;
         this.role = role;
     }
@@ -55,13 +67,14 @@ class Role {
 }
 
 class Product {
-    constructor(id, price, quantity, title, stopSelling, urlImage, category) {
+    constructor(id, urlImage, name, price, quantity, describe,deleted = 0, category) {
         this.id = id;
+        this.urlImage = urlImage;
+        this.name = name;
         this.price = price;
         this.quantity = quantity;
-        this.title = title;
-        this.stopSelling = stopSelling;
-        this.urlImage = urlImage;
+        this.describe = describe;
+        this.deleted = deleted
         this.category = category;
     }
 }

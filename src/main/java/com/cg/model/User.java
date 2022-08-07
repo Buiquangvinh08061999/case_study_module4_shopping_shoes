@@ -45,7 +45,6 @@ public class User extends BaseEntities {
     @JoinColumn(name ="location_region_id" )
     private LocationRegion locationRegion;
 
-
     @ManyToOne
     @JoinColumn(name = "role_id")
     private Role role;
@@ -61,6 +60,7 @@ public class User extends BaseEntities {
                 .setUsername(username)
                 .setPassword(password)
                 .setFullname(fullname)
+                .setUrlImage(urlImage)
                 .setPhone(phone)
                 .setLocationRegion(locationRegion.toLocationRegionDTO())
                 .setRole(role.toRoleDTO());

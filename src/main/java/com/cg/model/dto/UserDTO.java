@@ -33,24 +33,27 @@ public class UserDTO{
     private String username;
 
 
-    @NotBlank(message = "Password là bắt buộc")
-    @NotEmpty(message = "Password không được để trống")
-    @Size(min = 3, message = "Password tối thiểu 3 đến 30 kí tự")
-    @Size(max = 30, message = "Password tối thiểu 3 đến 30 kí tự")
+//    @NotBlank(message = "Password là bắt buộc")
+//    @NotEmpty(message = "Password không được để trống")
+//    @Size(min = 3, message = "Password tối thiểu 3 đến 30 kí tự")
+//    @Size(max = 30, message = "Password tối thiểu 3 đến 30 kí tự")
     private String password;
 
 
     @NotBlank(message = "FullName là bắt buộc")
     @NotEmpty(message = "FullName không được để trống")
-    @Pattern(regexp = "^[a-zA-Z]+$", message = "FullName phải là chữ , không có kí tự đặt biệt và số")
+//    @Pattern(regexp = "^[a-zA-Z]+$", message = "FullName phải là chữ , không có kí tự đặt biệt và số")
     private String fullname;
 
 
     @NotBlank(message = "Phone là bắt buộc")
     @NotEmpty(message = "Phone không được để trống")
-    @Pattern(regexp = "^[0][1-9][0-9]{8,9}|[+84][1-9][0-9]{10,11}$", message = "Phone không bao gồm dấu cách,chữ,kí tự đặc biệt,Phone gồm 10 đến 11 số và bắt đầu là số 0 và +84")
+//    @Pattern(regexp = "^[0][1-9][0-9]{8,9}|[+84][1-9][0-9]{10,11}$", message = "Phone không bao gồm dấu cách,chữ,kí tự đặc biệt,Phone gồm 10 đến 11 số và bắt đầu là số 0 và +84")
     private String phone;
 
+    private String urlImage;
+
+    private boolean deleted;
 
     @Valid
     private LocationRegionDTO locationRegion;
@@ -58,38 +61,30 @@ public class UserDTO{
     @Valid
     private RoleDTO role;
 
-
-    public UserDTO(Long id, String username, String password, String fullname, String phone, LocationRegion locationRegion, Role role) {
+    public UserDTO(Long id, String username, String password, String fullname, String phone, String urlImage, LocationRegion locationRegion, Role role) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.fullname = fullname;
         this.phone = phone;
+        this.urlImage = urlImage;
         this.locationRegion = locationRegion.toLocationRegionDTO();
         this.role = role.toRoleDTO();
 
     }
+
     //Search theo trường bỏ ẩn password
-    public UserDTO(Long id, String username, String fullname, String phone, LocationRegion locationRegion, Role role) {
+    public UserDTO(Long id, String username, String fullname, String phone, String urlImage, LocationRegion locationRegion, Role role) {
         this.id = id;
         this.username = username;
         this.fullname = fullname;
         this.phone = phone;
+        this.urlImage = urlImage;
         this.locationRegion = locationRegion.toLocationRegionDTO();
         this.role = role.toRoleDTO();
 
     }
 
-    public UserDTO(Long id, String username) {
-        this.id = id;
-        this.username = username;
-    }
-    public UserDTO(Long id, String username,String fullname, String phone) {
-        this.id = id;
-        this.username = username;
-        this.fullname = fullname;
-        this.phone = phone;
-    }
 
     public User toUser() {
         return new User()
@@ -97,6 +92,7 @@ public class UserDTO{
                 .setUsername(username)
                 .setPassword(password)
                 .setFullname(fullname)
+                .setUrlImage(urlImage)
                 .setPhone(phone)
                 .setLocationRegion(locationRegion.toLocationRegion())
                 .setRole(role.toRole());

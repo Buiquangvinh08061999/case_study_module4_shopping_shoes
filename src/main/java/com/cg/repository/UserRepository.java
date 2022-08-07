@@ -24,11 +24,15 @@ public interface UserRepository extends JpaRepository<User, Long> {
 //    Optional<UserDTO> findUserDTOByUsername(String username);
 
     /*Hiển thị list danh sách ra*/
-    @Query("SELECT NEW com.cg.model.dto.UserDTO(u.id, u.username, u.password , u.fullname , u.phone , u.locationRegion, u.role) FROM User AS u ")
-    List<UserDTO> findAllUserDTO();
+    @Query("SELECT NEW com.cg.model.dto.UserDTO(u.id, u.username, u.password , u.fullname , u.phone , u.urlImage, u.locationRegion, u.role) FROM User AS u WHERE u.deleted = false")
+    List<UserDTO> findAllUserDTOByDeletedIsFalse();
 
 
-    @Query("SELECT NEW com.cg.model.dto.UserDTO(u.id, u.username , u.fullname , u.phone, u.locationRegion, u.role) FROM User AS u JOIN LocationRegion AS loca ON loca.id = u.locationRegion.id JOIN Role AS r ON r.id = u.role.id WHERE CONCAT(u.id, u.username, u.fullname , u.phone, loca.provinceName, loca.districtName, loca.wardName, loca.address, r.code) LIKE %?1% ")
+
+    @Query("SELECT NEW com.cg.model.dto.UserDTO(u.id, u.username , u.fullname , u.phone, u.urlImage, u.locationRegion , u.role) FROM User AS u " +
+            "JOIN LocationRegion AS loca ON loca.id = u.locationRegion.id " +
+            "JOIN Role AS r ON r.id = u.role.id " +
+            "WHERE u.deleted = false AND CONCAT(u.id, u.username, u.fullname , u.phone, u.urlImage, loca.provinceId ,loca.provinceName , r.code) LIKE %?1% ")
     List<UserDTO> search(String keywork);
 
 

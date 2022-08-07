@@ -23,6 +23,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/customers")
+
 public class CustomerRestController {
 
     @Autowired
@@ -38,13 +39,13 @@ public class CustomerRestController {
     @GetMapping
     public ResponseEntity<?> getAllUserDTO(){
 
-        List<UserDTO> userDTO = userService.findAllUserDTO();
+        List<UserDTO> userDTO = userService.findAllUserDTOByDeletedIsFalse();
 
         return new ResponseEntity<>(userDTO , HttpStatus.OK);
     }
 
     @GetMapping("/search/{word}")
-    public ResponseEntity<?> getAllUserDTO(@PathVariable String word){
+    public ResponseEntity<?> getSearchUserDTO(@PathVariable String word){
 
         List<UserDTO> userDTO = userService.searchAllUser(word);
 
@@ -65,19 +66,23 @@ public class CustomerRestController {
             return appUtils.mapErrorToResponse(bindingResult);
         }
 
+        userDTO.setId(0L);
+        userDTO.getLocationRegion().setId(0L);
+        userDTO.setUrlImage("user.png");
+
         Boolean existsById  = userService.existsById(userDTO.getId());
         if (existsById) {
-            throw new EmailExistsException("Id Đã tồn tại vui lòng nhập lại!");
+            throw new EmailExistsException("ID đã tồn tại vui lòng nhập lại!");
         }
 
         Boolean existsByUsername  = userService.existsByUsername(userDTO.getUsername());
         if (existsByUsername) {
-            throw new EmailExistsException("Username Đã tồn tại vui lòng nhập lại!");
+            throw new EmailExistsException("Username đã tồn tại vui lòng nhập lại!");
         }
 
         Boolean existsByPhone = userService.existsByPhone(userDTO.getPhone());
         if (existsByPhone) {
-            throw new EmailExistsException("Số điện thoại đã tồn tại");
+            throw new EmailExistsException("Phone đã tồn tại");
         }
 
         Optional<Role> role = roleService.findById(userDTO.getRole().getId());
@@ -86,22 +91,75 @@ public class CustomerRestController {
             throw new EmailExistsException("ID ROLE không tồn tại!");
         }
 
-        userDTO.setId(0L);
-        userDTO.getLocationRegion().setId(0L);
-
         try{
-            User newUser = userService.save(userDTO.toUser());
+            User user = userDTO.toUser();
+            User newUser = userService.save(user);
 
             return new ResponseEntity<>(newUser.toUserDTO(), HttpStatus.CREATED);
 
         }catch (DataIntegrityViolationException e){
-            throw new DataInputException("Account information is not valid, please ");
+            throw new DataInputException("Thông tin tài khoản không hợp lệ ");
         }
 
     }
 
+    @PutMapping("/update")
+    public ResponseEntity<?> doUpdate(@RequestBody UserDTO userDTO, BindingResult bindingResult){
+
+        if(bindingResult.hasFieldErrors()){
+            return appUtils.mapErrorToResponse(bindingResult);
+        }
+
+        Boolean exitsById = userService.existsById(userDTO.getId());
+        if(!exitsById){
+            throw new EmailExistsException("ID không tồn tại!");
+        }
+
+//        Boolean exitsByUserName = userService.existsByUsername(userDTO.getUsername());
+//        if(exitsByUserName){
+//            throw new EmailExistsException("UserName đã tồn tại!");
+//        }
+//
+//        Boolean existsByPhone = userService.existsByPhone(userDTO.getPhone());
+//        if (existsByPhone) {
+//            throw new EmailExistsException("Phone đã tồn tại");
+//        }
+//
+//        Optional<Role> roleId = roleService.findById(userDTO.getRole().getId());
+//        if(!roleId.isPresent()){
+//            throw new EmailExistsException("ID ROLE không tồn tại!");
+//        }
+        userDTO.getLocationRegion().setId(0L);
+
+        try {
+            User updateUser = userService.saveUpdate(userDTO.toUser());
+            return new ResponseEntity<>(updateUser.toUserDTO(), HttpStatus.ACCEPTED);
+
+        }catch (DataIntegrityViolationException e){
+            throw new DataInputException("Thông tin tài khoản không hợp lệ");
+        }
+    }
+
+    //Hàm xóa mềm theo id
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> getAllUserDTO(@PathVariable Long id){
+
+       Optional<User> user = userService.findById(id);
+
+       if(user.isPresent()){
+
+            user.get().setDeleted(true);
+
+            userService.save(user.get());
+
+           return new ResponseEntity<>(HttpStatus.ACCEPTED);
+
+       }else {
+           throw new DataInputException("Thông tin không hợp lệ");
+       }
 
 
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getCustomerById(@PathVariable long id) {
@@ -114,40 +172,4 @@ public class CustomerRestController {
         return new ResponseEntity<>(userOptional.get().toUserDTO(),  HttpStatus.OK);
     }
 
-    @PostMapping("/update")
-    public ResponseEntity<?> doUpdate(@Validated @RequestBody UserDTO userDTO, BindingResult bindingResult){
-
-        if (bindingResult.hasErrors()) {
-            return appUtils.mapErrorToResponse(bindingResult);
-        }
-
-        Boolean exitsById = userService.existsById(userDTO.getId());
-
-        if (!exitsById) {
-            throw new ResourceNotFoundException("Id Không tồn tại!");
-        }
-
-        Boolean exitsByUsername = userService.existsByUsernameAndIdNot(userDTO.getUsername() , userDTO.getId());
-
-        if(exitsByUsername){
-            throw new DataInputException("UserName đã tồn tại");
-        }
-
-        Optional<Role> role = roleService.findById(userDTO.getRole().getId());
-        if(!role.isPresent()){
-            throw new EmailExistsException("ID ROLE không tồn tại!");
-        }
-
-        userDTO.getLocationRegion().setId(0L);
-
-        try{
-            User updateUser = userService.save(userDTO.toUser());
-
-            return new ResponseEntity<>(updateUser.toUserDTO(), HttpStatus.ACCEPTED);
-
-        }catch (DataIntegrityViolationException e){
-            throw new DataInputException("Account information is not valid, please ");
-        }
-
-    }
 }

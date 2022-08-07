@@ -13,9 +13,10 @@ import java.util.Optional;
 
 public interface IUserService extends IGeneralService<User>, UserDetailsService {
 
-    List<UserDTO> findAllUserDTO();
+    List<UserDTO> findAllUserDTOByDeletedIsFalse();
 
     List<UserDTO> searchAllUser(String keywork);
+
 
     User getByUsername(String username);
 
@@ -32,4 +33,5 @@ public interface IUserService extends IGeneralService<User>, UserDetailsService 
 
     Boolean existsByUsernameAndIdNot(String username, Long id);
 
+    User saveUpdate(User user);
 }
