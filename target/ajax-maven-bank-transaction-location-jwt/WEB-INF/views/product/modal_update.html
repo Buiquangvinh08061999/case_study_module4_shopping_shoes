@@ -1,0 +1,73 @@
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<th:block th:fragment="modal_update">
+    <div id="modalUpdateProduct" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Update Product information</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="modal-alert-danger hide"></div>
+
+                    <form id="frmUpdateProduct" method="post">
+                        <fieldset class="row g-3">
+
+                            <div class="col-md-3">
+                                <label class="form-label">Name</label>
+                                <input type="text" class="form-control" id="usernameUp" name="usernameUp" placeholder="txr@gmail.com">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">UrlImage</label>
+                                <input type="text" class="form-control" id="urlImageUp" name="urlImageUp">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">Price</label>
+                                <input type="text" class="form-control" id="priceUp" name="priceUp">
+                            </div>
+
+<!--                            <div class="col-md-3">-->
+<!--                                <label class="form-label">QuanTity</label>-->
+<!--                                <input type="number" class="form-control" id="quantityUp" name="quantityUp">-->
+<!--                            </div>-->
+
+                            <div class="col-md-3">
+                                <label class="form-label">Describe</label>
+                                <input type="text" class="form-control" id="describeUp" name="describeUp">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">TitleCategory</label>
+                                <select name="categoryUp" id="categoryUp" class="form-select">
+                                    <option value="1">GIÀY VANS</option>
+<!--                                    <option value="2">GIÀY ADIDAS</option>-->
+<!--                                    <option value="3">GIÀY PUMA</option>-->
+<!--                                    <option value="4">GIÀY NIKE</option>-->
+<!--                                    <option value="5">GIÀY GUCCI</option>-->
+<!--                                    <option value="6">GIÀY VANS</option>-->
+                                </select>
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+                <div class="modal-footer">
+
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" id="btnUpdateProduct" class="btn btn-outline-primary">
+                        <i class="fa fa-plus" aria-hidden="true"></i>
+                        Update Product
+                    </button>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</th:block>
+
+

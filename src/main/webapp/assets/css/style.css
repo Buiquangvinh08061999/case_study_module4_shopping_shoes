@@ -49,6 +49,7 @@ table td span.unselected {
 }
 
 
+
 .message{
     color:green;
 }
@@ -57,6 +58,7 @@ label.error{
     margin-top: 5px;
     color: #842029;
 }
+
 label.error {
     display: list-item;
 }

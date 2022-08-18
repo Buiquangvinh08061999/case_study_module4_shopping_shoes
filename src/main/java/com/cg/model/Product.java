@@ -11,6 +11,7 @@ import lombok.experimental.Accessors;
 import javax.persistence.*;
 import javax.validation.constraints.Digits;
 import java.math.BigDecimal;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -48,6 +49,9 @@ public class Product extends BaseEntities{
     private Category category;
 
 
+    @OneToMany(mappedBy = "product")
+    private Set<CartItem> cartItems;
+
 
     public ProductDTO toProductDTO(){
         return new ProductDTO()
@@ -57,6 +61,8 @@ public class Product extends BaseEntities{
                 .setPrice(price.toString())
                 .setQuantity(String.valueOf(quantity))
                 .setDescribe(describe)
+                .setCreatedAt(getCreatedAt())
+                .setUpdatedAt(getUpdatedAt())
                 .setCategory(category.toCategoryDTO());
     }
 

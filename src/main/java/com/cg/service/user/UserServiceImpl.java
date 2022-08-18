@@ -106,7 +106,6 @@ public class UserServiceImpl implements IUserService{
 //        return (UserDetails) userOptional.get();
 
     }
-
     @Override
     public Boolean existsById(Long id) {
         return userRepository.existsById(id);
@@ -123,7 +122,14 @@ public class UserServiceImpl implements IUserService{
     }
 
     @Override
-    public Boolean existsByUsernameAndIdNot(String username, Long id) {
-        return userRepository.existsByUsernameAndIdNot(username, id);
+    public Boolean existsByUsernameAndIdIsNot(String username, Long id) {
+        return userRepository.existsByUsernameAndIdIsNot(username, id);
     }
+
+    @Override
+    public Boolean existsByPhoneAndIdIsNot(String phone, Long id) {
+        return userRepository.existsByPhoneAndIdIsNot(phone, id);
+    }
+
+
 }

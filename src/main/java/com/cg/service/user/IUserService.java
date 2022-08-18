@@ -27,11 +27,16 @@ public interface IUserService extends IGeneralService<User>, UserDetailsService 
     /*Update tìm theo ID*/
     Boolean existsById(Long id);
 
+    //Dùng cho create;
     Boolean existsByUsername(String username);
-
     Boolean existsByPhone(String phone);
 
-    Boolean existsByUsernameAndIdNot(String username, Long id);
 
     User saveUpdate(User user);
+
+
+
+    //Dùng cho update, cho update lại tên cũ và sdt cũ, nhưng ko cho lặp lại ở các ID khác;
+    Boolean existsByUsernameAndIdIsNot(String username, Long id);
+    Boolean existsByPhoneAndIdIsNot(String phone, Long id);
 }

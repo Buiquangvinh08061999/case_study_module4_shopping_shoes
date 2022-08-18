@@ -27,28 +27,29 @@ public class Order extends BaseEntities{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @CreationTimestamp
-    @Column(name = "delivery_date")
-    private Date deliveryDate;
 
     @CreationTimestamp
     @Column(name = "order_date")
     private Date orderDate;
 
+    @Column(name = "delivery_date")
+    private String deliveryDate;
+
     @Digits(integer = 12, fraction = 0)
     @Column(name = "grand_total")
     private BigDecimal grandTotal;
 
-    @Column(columnDefinition = "boolean default false")
-    private boolean deleted;
+    @Column(name = "is_pending",columnDefinition = "boolean default true")
+    private boolean isPending;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
+
     /*Số 2*/
     /*Làm cách này với quan hệ một nhiều*/
-    @OneToMany(targetEntity = OrderItem.class, mappedBy = "order" , fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "order")
     private Set<OrderItem> orderItems;
 
 

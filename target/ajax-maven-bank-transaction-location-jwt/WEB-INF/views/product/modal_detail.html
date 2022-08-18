@@ -1,0 +1,70 @@
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<th:block th:fragment="modal_detail">
+    <div id="modalDetail" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Update information</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-alert-danger hide"></div>
+                    <form id="frmDetail" method="post">
+                        <fieldset class="row g-3">
+                            <div class="row ">
+                                <div class="col-md-6 justify-content-between">
+                                    <table>
+                                        <tbody class="table table-hover">
+                                        <tr>
+                                            <th>Name: </th>
+                                            <td id="nameDet" name="nameDet"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Price: </th>
+                                            <td id="priceDet" name="priceDet"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Describe: </th>
+                                            <td id="describeDet" name="describeDet"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>TitleCategory: </th>
+                                            <td id="categoryDet" name="categoryDet"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Created At: </th>
+                                            <td id="createdAtDet" name="createdAtDet"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Updated At: </th>
+                                            <td id="updatedAtDet" name="updatedAtDet"></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div style="border: 20px;">
+                                        <div class="row" id="urlImageDet">
+                                            <!--                                            <img class="rounded-circle" id="urlImageDet" name="urlImageDet" style="width: 350px;" src="${''}" alt="">-->
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </fieldset>
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</th:block>

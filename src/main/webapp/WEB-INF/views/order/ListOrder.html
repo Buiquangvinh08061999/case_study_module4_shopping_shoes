@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <th:block th:replace="/order/head:: head" />
+</head>
+<body>
+
+<div class="container">
+    <th:block th:replace="/order/menu :: menu" />
+
+    <div class="container--content">
+        <div class="content content--product--first">
+
+        </div>
+
+
+    </div> <!--end container-content-->
+
+</div> <!--end container-->
+
+
+<th:block th:replace="/order/temp_block_product :: temp_block_product" />
+
+<th:block th:replace="/order/temp_block_product_info :: temp_block_product_info" />
+
+<th:block th:replace="/order/2_1cart_modal :: 2_1cart_modal" />
+
+<!--Chưa rõ nó dùng để làm gì-->
+<th:block th:replace="/order/2_2product_info :: 2_2product_info" />
+
+<!--Chỉ biết nó nằm trong phần cart nhưng chưa hiểu nghiệp vụ-->
+<th:block th:replace="/order/2_3tem_block_product_cart :: 2_3temp_block_product_cart" />
+
+<th:block th:replace="/layout/script_6 :: script_6"/>
+
+<script>
+
+    let product = new Product();
+
+    let cart = new Cart();
+
+    let user = new User();
+
+    let cartItem = new CartItem();
+
+
+    /*Mặc định khi thêm mới bên Product thì nó sẽ tự vẽ trong phần body(content ở giữa) hiển thị sản phẩm ra*/
+    function getAllProduct(){
+        $.ajax({
+            header: {
+                "accept": "application/json",
+                "content-type": "application/json"
+            },
+            type: "GET",
+            url: "http://localhost:8080/api/products",
+        })
+            .done((data) => {
+                $.each(data ,(i, item)=>{
+                    product = item;
+
+                    let str =`
+                     <div class="content--product">
+                        <div class="content--product--top">
+                            <img src="${product.urlImage}" alt="" width="200" height="200">
+                            <h4 id ="btnShowInfoProduct_${product.id}" data-id = "${product.id}">Xem Ngay</h4>
+                        </div>
+
+                        <div class="content--product--bottom">
+                            <p style="color: #2e23a9">${product.name}</p>
+                            <p></p>
+                            <p style="color: #d0021c">${new Intl.NumberFormat('vi-VN', {
+                                style: 'currency',
+                                currency: 'VND'
+                            }).format(product.price)}</p>
+
+                            <p class="add--cart" data-id="${product.id}">Thêm Vào Giỏ Hàng</p>
+                        </div>
+                    </div>
+                `;
+                    $('.content--product--first').prepend(str);
+
+                })
+            })
+
+            .fail((jqXHR) => {
+                console.log(jqXHR)
+            })
+    }
+    getAllProduct();
+
+
+
+
+
+</script>
+</body>
+</html>

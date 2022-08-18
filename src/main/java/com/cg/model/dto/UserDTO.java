@@ -3,6 +3,7 @@ package com.cg.model.dto;
 import com.cg.model.LocationRegion;
 import com.cg.model.Role;
 import com.cg.model.User;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import lombok.experimental.Accessors;
 import org.jetbrains.annotations.NotNull;
@@ -13,6 +14,7 @@ import org.springframework.validation.Validator;
 import javax.persistence.Column;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
+import java.util.Date;
 
 
 @Getter
@@ -25,29 +27,19 @@ public class UserDTO{
     private Long id;
 
     @NotBlank(message = "Username là bắt buộc")
-//    @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\\\.[A-Za-z]{2,3}$", message = "Vui lòng nhập đúng định dạng UserName VD(txr@gmail.com)")
-    @NotEmpty(message = "Username không được để trống")
     @Email(message = "Vui lòng nhập đúng định dạng UserName VD(txr@gmail.com)")
     @Size(min = 13, message = "Username tối thiểu 13 đến 30 kí tự")
     @Size(max = 30, message = "Username tối thiểu 13 đến 30 kí tự")
     private String username;
 
-
-//    @NotBlank(message = "Password là bắt buộc")
-//    @NotEmpty(message = "Password không được để trống")
-//    @Size(min = 3, message = "Password tối thiểu 3 đến 30 kí tự")
-//    @Size(max = 30, message = "Password tối thiểu 3 đến 30 kí tự")
     private String password;
 
-
     @NotBlank(message = "FullName là bắt buộc")
-    @NotEmpty(message = "FullName không được để trống")
-//    @Pattern(regexp = "^[a-zA-Z]+$", message = "FullName phải là chữ , không có kí tự đặt biệt và số")
+    @Pattern(regexp = "^[a-zA-Z\\s]*$", message = "FullName phải là chữ , không có kí tự đặt biệt và số")
     private String fullname;
 
 
     @NotBlank(message = "Phone là bắt buộc")
-    @NotEmpty(message = "Phone không được để trống")
 //    @Pattern(regexp = "^[0][1-9][0-9]{8,9}|[+84][1-9][0-9]{10,11}$", message = "Phone không bao gồm dấu cách,chữ,kí tự đặc biệt,Phone gồm 10 đến 11 số và bắt đầu là số 0 và +84")
     private String phone;
 
@@ -61,17 +53,26 @@ public class UserDTO{
     @Valid
     private RoleDTO role;
 
-    public UserDTO(Long id, String username, String password, String fullname, String phone, String urlImage, LocationRegion locationRegion, Role role) {
+    @JsonFormat(pattern = "HH:mm - dd/MM/yyyy", timezone = "Asia/Ho_Chi_Minh")
+    private Date createdAt;
+
+    @JsonFormat(pattern = "HH:mm - dd/MM/yyyy", timezone = "Asia/Ho_Chi_Minh")
+    private Date updatedAt;
+
+
+    public UserDTO(Long id, String username, String password, String fullname, String phone, String urlImage,Date createdAt, Date updatedAt, LocationRegion locationRegion, Role role) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.fullname = fullname;
         this.phone = phone;
         this.urlImage = urlImage;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
         this.locationRegion = locationRegion.toLocationRegionDTO();
         this.role = role.toRoleDTO();
-
     }
+
 
     //Search theo trường bỏ ẩn password
     public UserDTO(Long id, String username, String fullname, String phone, String urlImage, LocationRegion locationRegion, Role role) {
@@ -97,6 +98,8 @@ public class UserDTO{
                 .setLocationRegion(locationRegion.toLocationRegion())
                 .setRole(role.toRole());
     }
+
+
 
 //    @Override
 //    public boolean supports( Class<?> clazz) {

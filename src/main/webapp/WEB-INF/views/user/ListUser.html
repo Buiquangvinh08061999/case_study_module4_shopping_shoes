@@ -47,7 +47,7 @@
                     <div class="col-10 d-none d-sm-block" style="margin-bottom: 20px">
                         <form class="form-inline">
                             <input class="form-control col-3 mr-sm-2" type="search" placeholder="Search" aria-label="Search" id="searchUser" name="keyword">
-                            <button class="btn btn-primary" id="btn-search" type="button">  <i class="fas fa-search"></i></button>
+                            <button class="btn btn-primary" id="btn-search" type="button"> <i class="fas fa-search"></i></button>
                         </form>
                     </div>
                 </div>
@@ -60,7 +60,7 @@
                             <button type="button" class="btn btn-success create-modal"> Create User</button>
                     </div>
 
-                    <table id="tbListUsers" class="table table-hover table-bordered">
+                    <table id="tbListUsers" class="table table-hover table-bordered" style="text-align: center">
                         <thead>
                             <tr>
                                 <th>#</th>
@@ -102,6 +102,8 @@
 
  <th:block th:replace="/user/modal_update :: modal_update"/>
 
+ <th:block th:replace="/user/modal_detail :: modal_detail"/>
+
  <th:block th:replace="/user/footer :: footer"/>
 
  <script>
@@ -114,6 +116,12 @@
      //Mở tab thêm mới ra
      $('.create-modal').on('click', function () {
          $('#modalCreateUser').modal('show')
+
+         /*Mở ra addClass'hide' để ẩn các lỗi nếu dữ liệu vào fail*/
+         $('#modalCreateUser .modal-alert-danger').html('').removeClass('show').addClass('hide');
+
+         /*Khi mở ra clear lại dữ liệu hết*/
+         clearInput()
      })
 
      //Hiển thị thông báo có muốn thoát không
@@ -131,7 +139,6 @@
      /*Khi click vào hiển thị thanh edit và delete*/
      function handleShowFooter() {
          $('#tbListUsers tbody tr').on('click', function () {
-
              /*Trỏ theo id của từng thằng để lấy ra thông tin update*/
             let id = $(this).attr("id")
 
@@ -148,7 +155,9 @@
 
              handleShowUpdate();
 
-             handleConfimDelete()
+             handleShowDetail()
+
+             handleConfirmDelete()
 
          })
      }
@@ -303,19 +312,21 @@
      }
      getAllUser();
 
-     $('#searchUser').on('input', function (){
-         let word = $('#searchUser').val();
-         search(word);
+
+
+     $('#btn-search').on('click', function (){
+         let keyword = $('#searchUser').val();
+         search(keyword);
      })
 
-     function search(word){
+     function search(keyword){
          $.ajax({
              header: {
                  "accept": "application/json",
                  "content-type": "application/json"
              },
              type: "GET",
-             url: "http://localhost:8080/api/customers/search/" + word,
+             url: "http://localhost:8080/api/customers/search/" + keyword,
          })
          .done((data) => {
              $('#tbListUsers tbody').html('')
@@ -393,7 +404,6 @@
                         <td><img src="/assets/img/${user.urlImage}" alt=""style="width: 90px; height:70px ; border-radius:50%"></td>
                         <td>${user.username}</td>
                         <td>${user.fullname}</td>
-
                         <td>${user.phone}</td>
                         <td>${locationRegion.provinceName}</td>
                         <td>${locationRegion.districtName}</td>
@@ -416,6 +426,19 @@
              .fail((jqXHR) => {
                  console.log(jqXHR)
                  $('#modalCreateUser .modal-alert-danger').html('').removeClass('hide').addClass('show');
+                 if (jqXHR.status === 401) {
+
+                     let msg = "Vui lòng đăng nhập !!";
+
+                     let str = `<label id="message-error" class="error" for="message">${msg}</label>`;
+
+                     $('#modalCreateUser .modal-alert-danger').append(str);
+                 }
+
+                 if (jqXHR.status === 403) {
+                     window.location.href = "/select/403"
+                 }
+
 
                  if (jqXHR.responseJSON.message) {
                      let msg = jqXHR.responseJSON.message;
@@ -445,7 +468,6 @@
          $("#tbListUsers tbody tr").off();
      }
 
-
      function handleShowUpdate() {
          $('button.edit').on('click', function () {
              console.log(userId);
@@ -457,7 +479,6 @@
                  type: "GET",
                  url: "http://localhost:8080/api/customers/" + userId ,
              })
-
                  .done((data) => {
                      user = data;
                      locationRegion = user.locationRegion;
@@ -476,13 +497,13 @@
                          drawWards(locationRegion.districtId).then(() => {
                              $('#wardUp').val(locationRegion.wardId);
                          });
-
                      });
 
                      $('#addressUp').val(locationRegion.address);
 
                      $('#modalUpdateUser').modal('show')
 
+                     $('#modalUpdateUser .modal-alert-danger').html('').removeClass('show').addClass('hide');
                  });
 
          })
@@ -505,7 +526,6 @@
              user.username = $("#usernameUp").val();
              user.fullname = $("#fullnameUp").val();
              user.phone = $("#phoneUp").val();
-
 
              user.locationRegion = locationRegion;
              user.role = role;
@@ -552,12 +572,83 @@
                  })
                  .fail((jqXHR) =>{
                      console.log(jqXHR)
+                     $('#modalUpdateUser .modal-alert-danger').html('').removeClass('hide').addClass('show');
+                     if (jqXHR.status === 401) {
+                         let msg = "Vui lòng đăng nhập !!";
+
+                         let str = `<label id="message-error" class="error" for="message">${msg}</label>`;
+
+                         $('#modalUpdateUser .modal-alert-danger').append(str);
+                     }
+
+                     if (jqXHR.status === 403) {
+                         window.location.href = "/select/403"
+                     }
+
+                     if (jqXHR.responseJSON.message) {
+                         let msg = jqXHR.responseJSON.message;
+
+                         let str = `<label id="message-error" class="error" for="message">${msg}</label>`;
+
+                         $('#modalUpdateUser .modal-alert-danger').append(str);
+
+
+                     }else if (jqXHR.responseJSON) {
+                         $.each(jqXHR.responseJSON, (key, item) => {
+                             let str = `<label id="${key}-error" class="error" for="${key}"> ${item} </label>`;
+
+                             $('#modalUpdateUser .modal-alert-danger').append(str);
+                         })
+                     }
                  })
          });
 
+     function handleShowDetail() {
+         $('button.detail').on('click', function () {
+
+             $.ajax({
+                 header: {
+                     "accept": "application/json",
+                     "content-type": "application/json"
+                 },
+                 type: "GET",
+                 url: "http://localhost:8080/api/customers/" + userId ,
+             })
+             .done((data) => {
+                 $('#urlImageDet').html("");
+                 user = data;
+                 locationRegion = user.locationRegion;
+                 role = user.role;
+
+                 $('#usernameDet').text(user.username)
+                 $('#fullnameDet').text(user.fullname)
+                 $('#phoneDet').text(user.phone)
+                 $('#provinceDet').text(user.locationRegion.provinceName)
+                 $('#districtDet').text(user.locationRegion.districtName)
+                 $('#wardDet').text(user.locationRegion.wardName)
+                 $('#addressDet').text(user.locationRegion.address)
+                 $('#roleDet').text(user.role.code)
+
+                 $('#createdAtDet').text(user.createdAt)
+
+                 $('#updatedAtDet').text(user.updatedAt)
+
+                 let str =`
+                    <img style="width: 350px;" src="/assets/img/${user.urlImage}" alt="">
+                 `;
+
+                 $('#urlImageDet').prepend(str);
+
+                 $('#modalDetail').modal('show')
+             })
+
+         })
+     }
+
+
 
      /*Hàm xóa mềm theo id,*/
-    function handleConfimDelete() {
+    function handleConfirmDelete() {
         $('button.deleted').on('click', function () {
             App.SweetAlert.showConfirmDelete()
                 .then((result) => {
@@ -575,10 +666,17 @@
                             $('#tr_' + userId).remove();
                             App.SweetAlert.showSuccessAlert("Xóa Thành Công")
                         })
-                        .fail((error) => {
-                            console.log(error)
-                                App.SweetAlert.showErrorAlert('Xóa thất bại');
+                        .fail((jqXHR) => {
+
+                            if (jqXHR.status === 403) {
+                                window.location.href = "/select/403"
+                            }
+
+                            App.SweetAlert.showErrorAlert('Xóa thất bại');
+
                             });
+
+
                     }
                 })
           })

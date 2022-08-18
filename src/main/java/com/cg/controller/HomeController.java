@@ -17,6 +17,7 @@ public class HomeController {
         return modelAndView;
     }
 
+
     @GetMapping("/ListUser")
     public ModelAndView showListUser(){
         ModelAndView modelAndView = new ModelAndView();
@@ -25,11 +26,30 @@ public class HomeController {
     }
 
 
+
     @GetMapping("/ListProduct")
     public ModelAndView showListProduct(){
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("/product/ListProduct");
         return modelAndView;
     }
+
+
+    @GetMapping("/ListOrder")
+    public ModelAndView showListOrder(){
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("/order/ListOrder");
+        return modelAndView;
+    }
+
+//    @GetMapping("/ListCart")
+//    public ModelAndView showListCart(){
+//        ModelAndView modelAndView = new ModelAndView();
+//        modelAndView.setViewName("/order/ListOrder");
+//        return modelAndView;
+//    }
+
+
+
 
 }

@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.experimental.Accessors;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.Set;
 
 
@@ -15,6 +16,7 @@ import java.util.Set;
 @Entity
 @Table(name = "users")
 @Accessors(chain = true)
+
 public class User extends BaseEntities {
 
     @Id
@@ -50,8 +52,13 @@ public class User extends BaseEntities {
     private Role role;
 
 
-    @OneToMany(targetEntity = Order.class, mappedBy = "user")
+    @OneToMany(mappedBy = "user")
     private Set<Order> orders;
+
+
+    @OneToMany(mappedBy = "user")
+    private Set<Cart> carts;
+
 
 
     public UserDTO toUserDTO(){
@@ -62,9 +69,16 @@ public class User extends BaseEntities {
                 .setFullname(fullname)
                 .setUrlImage(urlImage)
                 .setPhone(phone)
+                .setCreatedAt(getCreatedAt())
+                .setUpdatedAt(getUpdatedAt())
                 .setLocationRegion(locationRegion.toLocationRegionDTO())
                 .setRole(role.toRoleDTO());
     }
+
+
+
+
+
 
 
 

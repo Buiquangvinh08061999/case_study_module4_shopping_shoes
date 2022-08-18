@@ -23,10 +23,17 @@ public class OrderItem{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
+    private String title;
+
+    @Digits(integer = 12, fraction = 0)
+    private BigDecimal price;
+
+    private int quantity;
+
     @Digits(integer = 12, fraction = 0)
     @Column(name = "total_price")
     private BigDecimal totalPrice;
-
 
     /*Số 2*/
     /*Làm cách này với quan hệ một nhiều*/

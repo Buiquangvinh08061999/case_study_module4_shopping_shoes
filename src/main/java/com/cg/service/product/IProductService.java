@@ -11,4 +11,8 @@ public interface IProductService extends IGeneralService<Product> {
     List<ProductDTO> findAllProductDTO();
 
     Boolean existsByName(String name);
+
+//    Boolean existByUrlImage(String urlImage);
+
+    List<ProductDTO> searchAllProduct(String keywork);
 }

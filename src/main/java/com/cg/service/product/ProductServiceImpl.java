@@ -60,4 +60,11 @@ public class ProductServiceImpl implements IProductService {
     public Boolean existsByName(String name) {
         return productRepository.existsByName(name);
     }
+
+    @Override
+    public List<ProductDTO> searchAllProduct(String keywork) {
+        return productRepository.search(keywork);
+    }
+
+
 }

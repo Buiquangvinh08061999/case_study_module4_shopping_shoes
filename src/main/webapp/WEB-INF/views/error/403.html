@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <th:block th:replace="/layout/head_1 :: head_1"/>
+</head>
+
+<body class="authentication-bg">
+
+<div class="account-pages pt-5 my-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="text-center">
+                    <div class="text-error">4<i class="ion ion-md-sad mx-2"></i>3</div>
+                    <h3 class="text-uppercase text-white"> Insufficient access</h3>
+
+                    <p class="text-white mt-4">
+                        Bạn là USER  không đủ quyền để xử lí các tác vụ này. Vui lòng quay lại!
+                    </p>
+                    <br>
+                    <a class="btn btn-pink waves-effect waves-light" href="/select/homepage"> Return Home</a>
+                </div>
+
+            </div> <!-- end col -->
+        </div>
+        <!-- end row -->
+    </div>
+    <!-- end container -->
+</div>
+<!-- end page -->
+
+
+<th:block th:replace="/layout/script_6 :: script_6"/>
+
+</body>
+</html>

@@ -24,7 +24,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 //    Optional<UserDTO> findUserDTOByUsername(String username);
 
     /*Hiển thị list danh sách ra*/
-    @Query("SELECT NEW com.cg.model.dto.UserDTO(u.id, u.username, u.password , u.fullname , u.phone , u.urlImage, u.locationRegion, u.role) FROM User AS u WHERE u.deleted = false")
+    @Query("SELECT NEW com.cg.model.dto.UserDTO(u.id, u.username, u.password , u.fullname , u.phone , u.urlImage,  u.createdAt, u.updatedAt,  u.locationRegion,  u.role ) FROM User AS u WHERE u.deleted = false")
     List<UserDTO> findAllUserDTOByDeletedIsFalse();
 
 
@@ -40,6 +40,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 //    List<UserDTO> search(String keywork);
 
 
-    Boolean existsByUsernameAndIdNot(String username, Long id);
+    Boolean existsByUsernameAndIdIsNot(String username, Long id);
 
+    Boolean existsByPhoneAndIdIsNot(String phone, Long id);
 }

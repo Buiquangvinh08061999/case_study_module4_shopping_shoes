@@ -44,50 +44,6 @@ public class AuthRestController {
     @Autowired
     private IUserService userService;
 
-    @Autowired
-    private IRoleService roleService;
-
-    @Autowired
-    private AppUtil appUtils;
-
-    @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody UserDTO userDTO, BindingResult bindingResult) {
-
-        if (bindingResult.hasErrors()) {
-            return appUtils.mapErrorToResponse(bindingResult);
-        }
-
-//        RoleDTO roleDTO = new RoleDTO();
-//        roleDTO.setId(1L);
-//
-//        UserDTO userDTO = new UserDTO();
-//        userDTO.setFullname("ADMIN");
-//        userDTO.setUsername("admin@co.cc");
-//        userDTO.setPassword("123");
-//        userDTO.setRole(roleDTO);
-
-//        Optional<UserDTO> optUser = userService.findUserDTOByUsername(userDTO.getUsername());
-
-//        if (optUser.isPresent()) {
-//            throw new EmailExistsException("Email Đã tồn tại!");
-//        }
-
-        Optional<Role> optRole = roleService.findById(userDTO.getRole().getId());
-
-        if (!optRole.isPresent()) {
-            throw new DataInputException("Vai trò tài khoản không hợp lệ");
-        }
-
-        try {
-            userService.save(userDTO.toUser());
-
-            return new ResponseEntity<>(HttpStatus.CREATED);
-
-        } catch (DataIntegrityViolationException e) {
-            throw new DataInputException("Account information is not valid, please check the information again");
-        }
-    }
-
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User user) {

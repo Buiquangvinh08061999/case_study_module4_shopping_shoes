@@ -12,6 +12,7 @@ import lombok.experimental.Accessors;
 import javax.persistence.*;
 import java.util.Set;
 
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -19,6 +20,7 @@ import java.util.Set;
 @Entity
 @Table(name = "categories")
 @Accessors(chain = true)
+
 public class Category {
 
     @Id

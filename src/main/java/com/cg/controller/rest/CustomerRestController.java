@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +23,7 @@ import java.util.Optional;
 
 
 @RestController
+
 @RequestMapping("/api/customers")
 
 public class CustomerRestController {
@@ -59,21 +61,21 @@ public class CustomerRestController {
 
     @PostMapping("/create")
     public ResponseEntity<?> doCreate(@Validated @RequestBody UserDTO userDTO, BindingResult bindingResult){
-
 //        new UserDTO().validate(userDTO , bindingResult);
-
         if (bindingResult.hasFieldErrors()) {
             return appUtils.mapErrorToResponse(bindingResult);
         }
 
         userDTO.setId(0L);
         userDTO.getLocationRegion().setId(0L);
+
         userDTO.setUrlImage("user.png");
 
         Boolean existsById  = userService.existsById(userDTO.getId());
         if (existsById) {
             throw new EmailExistsException("ID đã tồn tại vui lòng nhập lại!");
         }
+
 
         Boolean existsByUsername  = userService.existsByUsername(userDTO.getUsername());
         if (existsByUsername) {
@@ -103,8 +105,24 @@ public class CustomerRestController {
 
     }
 
+    //Hàm hiển thị dữ liệu Edit theo id, tìm theo id để đổ dữ liệu về
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getCustomerById(@PathVariable long id) {
+
+        Optional<User> userOptional = userService.findById(id);
+
+        if (!userOptional.isPresent()) {
+            throw new ResourceNotFoundException("Invalid customer ID");
+        }
+
+        return new ResponseEntity<>(userOptional.get().toUserDTO(),  HttpStatus.OK);
+    }
+
+
+    //Hàm xử lí nút edit , chúng ta put dữ liệu lên lại sau khi đã có có dữ liệu từ Edit(Id phía trên)
     @PutMapping("/update")
-    public ResponseEntity<?> doUpdate(@RequestBody UserDTO userDTO, BindingResult bindingResult){
+//    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    public ResponseEntity<?> doUpdate(@Validated @RequestBody UserDTO userDTO, BindingResult bindingResult){
 
         if(bindingResult.hasFieldErrors()){
             return appUtils.mapErrorToResponse(bindingResult);
@@ -115,25 +133,26 @@ public class CustomerRestController {
             throw new EmailExistsException("ID không tồn tại!");
         }
 
-//        Boolean exitsByUserName = userService.existsByUsername(userDTO.getUsername());
-//        if(exitsByUserName){
-//            throw new EmailExistsException("UserName đã tồn tại!");
-//        }
-//
-//        Boolean existsByPhone = userService.existsByPhone(userDTO.getPhone());
-//        if (existsByPhone) {
-//            throw new EmailExistsException("Phone đã tồn tại");
-//        }
-//
-//        Optional<Role> roleId = roleService.findById(userDTO.getRole().getId());
-//        if(!roleId.isPresent()){
-//            throw new EmailExistsException("ID ROLE không tồn tại!");
-//        }
+        Boolean exitsByUserName = userService.existsByUsernameAndIdIsNot(userDTO.getUsername(), userDTO.getId());
+        if(exitsByUserName){
+            throw new EmailExistsException("UserName đã tồn tại!");
+        }
+
+        Boolean existsByPhone = userService.existsByPhoneAndIdIsNot(userDTO.getPhone(), userDTO.getId());
+        if (existsByPhone) {
+            throw new EmailExistsException("Phone đã tồn tại");
+        }
+
+        Optional<Role> roleId = roleService.findById(userDTO.getRole().getId());
+        if(!roleId.isPresent()){
+            throw new EmailExistsException("ID ROLE không tồn tại!");
+        }
         userDTO.getLocationRegion().setId(0L);
 
         try {
+
             User updateUser = userService.saveUpdate(userDTO.toUser());
-            return new ResponseEntity<>(updateUser.toUserDTO(), HttpStatus.ACCEPTED);
+            return new ResponseEntity<> (updateUser.toUserDTO(), HttpStatus.ACCEPTED);
 
         }catch (DataIntegrityViolationException e){
             throw new DataInputException("Thông tin tài khoản không hợp lệ");
@@ -142,6 +161,7 @@ public class CustomerRestController {
 
     //Hàm xóa mềm theo id
     @DeleteMapping("/delete/{id}")
+//    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<?> getAllUserDTO(@PathVariable Long id){
 
        Optional<User> user = userService.findById(id);
@@ -159,17 +179,6 @@ public class CustomerRestController {
        }
 
 
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getCustomerById(@PathVariable long id) {
-        Optional<User> userOptional = userService.findById(id);
-
-        if (!userOptional.isPresent()) {
-            throw new ResourceNotFoundException("Invalid customer ID");
-        }
-
-        return new ResponseEntity<>(userOptional.get().toUserDTO(),  HttpStatus.OK);
     }
 
 }

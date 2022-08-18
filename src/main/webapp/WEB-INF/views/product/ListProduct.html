@@ -42,8 +42,8 @@
                 <div class="row">
                     <div class="col-10 d-none d-sm-block" style="margin-bottom: 20px">
                         <form class="form-inline">
-                            <input class="form-control col-3 mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="keyword">
-                            <button class="btn btn-primary" type="submit"> <i class="fas fa-search"></i></button>
+                            <input class="form-control col-3 mr-sm-2" type="search" placeholder="Search" aria-label="Search" id="searchProduct" name="keyword">
+                            <button class="btn btn-primary" id="btn-search-product" type="button"> <i class="fas fa-search"></i></button>
                         </form>
                     </div>
                 </div>
@@ -55,8 +55,11 @@
                     <div class="col-2 create">
                             <button type="button" class="btn btn-success create-modal">Create Product</button>
                     </div>
+                    <div id="divFail">
+                        <div></div>
+                    </div>
 
-                    <table id="tbListProducts" class="table table-hover table-bordered">
+                    <table id="tbListProducts" class="table table-hover table-bordered" style="text-align: center">
                         <thead>
                             <tr>
                                 <th>#</th>
@@ -64,9 +67,8 @@
                                 <th>Avatar</th>
                                 <th>Name</th>
                                 <th>Price</th>
-                                <th>Quantity</th>
                                 <th>Describe</th>
-                                <th>TitleCatogory</th>
+                                <th>TitleCategory</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -92,15 +94,23 @@
 <th:block th:replace="/product/footer :: footer"/>
 
 <th:block th:replace="/product/modal_create :: modal_create"/>
-
+<th:block th:replace="/product/modal_update :: modal_update"/>
+<th:block th:replace="/product/modal_detail :: modal_detail"/>
 <script>
 
     let product = new Product();
     let category = new Category();
 
     let productId = null;
+
     $('.create-modal').on('click', function (){
         $('#modalCreateProduct').modal('show')
+
+        /*Mở ra addClass'hide' để ẩn các lỗi nếu dữ liệu vào fail*/
+        $('#modalCreateProduct .modal-alert-danger').html('').removeClass('show').addClass('hide');
+
+        /*Khi mở ra clear lại dữ liệu hết*/
+        clearInput();
     })
 
     //Hiển thị thông báo có muốn thoát không
@@ -118,7 +128,6 @@
     /*Khi click vào hiển thị thanh edit và delete*/
     function handleShowFooter() {
         $('#tbListProducts tbody tr').on('click', function () {
-
             /*Trỏ theo id của từng thằng để lấy ra thông tin update*/
             let id = $(this).attr("id")
 
@@ -131,10 +140,17 @@
 
             let temFooter = $.validator.format($.trim($('#tempFooter').val().toString()))
             $('.footer').html(temFooter)
+
+            handleShowUpdate();
+
+            handleShowDetail();
+
+            handleConfirmDelete();
+
         })
     }
 
-    function getAllUser(){
+    function getAllProduct(){
         $.ajax({
             header: {
                 "accept": "application/json",
@@ -150,42 +166,43 @@
 
                     let str =`
                      <tr id="tr_${product.id}">
-                             <td><span id="span_${product.id}" class="select-tab unselected"></td>
+                            <td><span id="span_${product.id}" class="select-tab unselected"></td>
                             <td>${product.id}</td>
-                            <td></td>
+                            <td><img src="${product.urlImage}" alt="" style="width: 90px; height:70px ; border-radius:50%"> </td>
                             <td>${product.name}</td>
-                            <td>${product.price}</td>
-                            <td>${product.quantity}</td>
+                            <td>${new Intl.NumberFormat('vi-VN', {
+                                        style: 'currency',
+                                        currency: 'VND'
+                            }).format(product.price)}</td>
                             <td>${product.describe}</td>
                             <td>${category.title}</td>
                      </tr>
                 `;
                     $('#tbListProducts tbody').prepend(str);
 
-
                     handleShowFooter();
                 })
             })
-
             .fail((jqXHR) => {
                 console.log(jqXHR)
             })
     }
-    getAllUser();
+    getAllProduct();
+
+
 
     let btnCreateProduct = $('#btnCreateProduct');
     btnCreateProduct.on('click', function (){
 
         product.name = $('#username').val();
+        product.urlImage = $('#urlImage').val();
         product.price = $('#price').val();
-        product.quantity = $('#quantity').val();
         product.describe = $('#describe').val();
 
         category.id = $('#category').val();
         category.title = $('#category :selected').text()
 
         product.category = category;
-
         $.ajax({
             "headers": {
                 "accept": "application/json",
@@ -204,10 +221,13 @@
                  <tr id="tr_${product.id}">
                         <td><span id="span_${product.id}" class="select-tab unselected"></td>
                         <td>${product.id}</td>
-                        <td></td>
+                        <td><img src="${product.urlImage}" alt="" style="width: 90px; height:70px ; border-radius:50%"> </td>
                         <td>${product.name}</td>
-                        <td>${product.price}</td>
-                        <td>${product.quantity}</td>
+                        <td>${new Intl.NumberFormat('vi-VN', {
+                            style: 'currency',
+                            currency: 'VND'
+                        }).format(product.price)}</td>
+
                         <td>${product.describe}</td>
                         <td>${category.title}</td>
                  </tr>
@@ -215,6 +235,7 @@
                 $('#tbListProducts tbody').prepend(str);
 
                 App.SweetAlert.showSuccessAlert("Tạo Mới Thành Công")
+
                 $('#modalCreateProduct').modal('hide')
 
                 clearInput()
@@ -224,13 +245,295 @@
 
             .fail((jqXHR) => {
                 console.log(jqXHR)
+
+                $('#modalCreateProduct .modal-alert-danger').html('').removeClass('hide').addClass('show');
+
+                if (jqXHR.status === 401) {
+                    let msg = "Vui lòng đăng nhập !!";
+
+                    let str = `<label id="message-error" class="error" for="message">${msg}</label>`;
+
+                    $('#modalCreateProduct .modal-alert-danger').append(str);
+                }
+                //Nếu lỗi 403 thì chuyển qua trang lỗi
+                if (jqXHR.status === 403) {
+                    window.location.href = "/select/403"
+                }
+
+
+                if (jqXHR.responseJSON.message) {
+
+                    let msg = jqXHR.responseJSON.message;
+
+                    let str = `<label id="message-error" class="error" for="message"> ${msg} </label>`;
+
+                    $('#modalCreateProduct .modal-alert-danger').append(str);
+
+
+                }else if (jqXHR.responseJSON) {
+                    $.each(jqXHR.responseJSON, (key, item) => {
+                        let str = `<label id="${key}-error" class="error" for="${key}"> ${item} </label>`;
+
+                        $('#modalCreateProduct .modal-alert-danger').append(str);
+                    })
+                }
+
             })
     })
+
 
     /*Clear mới tất cả khi thêm mới*/
     function clearInput(){
         $("#frmCreateProduct input").val("");
     }
+
+    //Hiển thị dữ liệu của Id ra, phai viet ham tim Id o rest CustomerController
+    function handleShowUpdate() {
+        $('button.edit').on('click', function () {
+            console.log(productId)
+            $.ajax({
+                "headers": {
+                    "accept": "application/json",
+                    "content-type": "application/json"
+                },
+                "type": "GET",
+                "url": "http://localhost:8080/api/products/" + productId,
+            })
+            .done((data)=>{
+                product = data;
+                category = product.category;
+
+                $('#usernameUp').val(product.name);
+                $('#urlImageUp').val(product.urlImage);
+                $('#priceUp').val(product.price);
+                $('#describeUp').val(product.describe);
+
+                //Chỉ cần lấy theo id thì Nó sẽ tự hiển thị tên giày ra
+                $('#categoryUp').val(category.id);
+
+                $('#modalUpdateProduct').modal('show');
+
+                $('#modalUpdateProduct .modal-alert-danger').html('').removeClass('show').addClass('hide');
+            })
+        })
+    }
+
+    let btnUpdateProduct = $('#btnUpdateProduct')
+    $('#btnUpdateProduct').on('click', function (){
+        product.name = $('#usernameUp').val();
+        product.urlImage = $('#urlImageUp').val();
+        product.price = $('#priceUp').val();
+        product.describe = $('#describeUp').val();
+
+        category.id = $('#categoryUp').val();
+        category.title = $('#categoryUp :selected').text()
+
+        product.category = category;
+        $.ajax({
+            "headers": {
+                "accept": "application/json",
+                "content-type": "application/json"
+            },
+            "type": "PUT",
+            "url": "http://localhost:8080/api/products/update",
+            "data": JSON.stringify(product)
+        })
+        .done((data) => {
+            console.log(data)
+            product = data;
+            category = product.category;
+
+            let currentRow = $('#tr_'+ productId);
+
+            let str =`
+                 <tr id="tr_${product.id}">
+                        <td><span id="span_${product.id}" class="select-tab unselected"></td>
+                        <td>${product.id}</td>
+                        <td><img src="${product.urlImage}" alt="" style="width: 90px; height:70px ; border-radius:50%"> </td>
+                        <td>${product.name}</td>
+                        <td>${new Intl.NumberFormat('vi-VN', {
+                                style: 'currency',
+                                currency: 'VND'
+                            }).format(product.price)}</td>
+
+                        <td>${product.describe}</td>
+                        <td>${category.title}</td>
+                 </tr>
+                `;
+
+            currentRow.replaceWith(str)
+
+            App.SweetAlert.showSuccessAlert("Cập Nhật Thành Công")
+            $('#modalUpdateProduct').modal('hide');
+
+            handleShowFooter();
+
+        })
+        .fail((jqXHR) =>{
+            console.log(jqXHR)
+            $('#modalUpdateProduct .modal-alert-danger').html('').removeClass('hide').addClass('show');
+            if (jqXHR.status === 401) {
+                let msg = "Vui lòng đăng nhập !!";
+                let str = `<label id="message-error" class="error" for="message">${msg}</label>`;
+
+                $('#modalUpdateProduct .modal-alert-danger').append(str);
+            }
+            //Nếu lỗi 403 thì chuyển qua trang lỗi
+            if (jqXHR.status === 403) {
+                    window.location.href = "/select/403"
+            }
+
+            if (jqXHR.responseJSON.message) {
+
+                let msg = jqXHR.responseJSON.message;
+
+                let str = `<label id="message-error" class="error" for="message">${msg}</label>`;
+
+                $('#modalUpdateProduct .modal-alert-danger').append(str);
+
+            }else if (jqXHR.responseJSON) {
+                $.each(jqXHR.responseJSON, (key, item) => {
+                    let str = `<label id="${key}-error" class="error" for="${key}"> ${item} </label>`;
+
+                    $('#modalUpdateProduct .modal-alert-danger').append(str);
+                })
+            }
+        })
+    })
+
+    function handleShowDetail() {
+        $('button.detail').on('click', function () {
+            $.ajax({
+                header: {
+                    "accept": "application/json",
+                    "content-type": "application/json"
+                },
+                type: "GET",
+                url: "http://localhost:8080/api/products/" + productId,
+            })
+                .done((data) => {
+                    $('#urlImageDet').html("");
+                    product = data;
+                    category = product.category;
+
+                    $('#nameDet').text(product.name)
+
+                    $('#priceDet').text(`${new Intl.NumberFormat('vi-VN', {
+                        style: 'currency',
+                        currency: 'VND'
+                    }).format(product.price)}`)
+
+                    $('#describeDet').text(product.describe)
+                    $('#categoryDet').text(product.category.title)
+
+                    $('#createdAtDet').text(product.createdAt)
+
+                    $('#updatedAtDet').text(product.updatedAt)
+
+                    let str =`
+                    <img style="width: 255px;" src="${product.urlImage}" alt="">
+                 `;
+
+                    $('#urlImageDet').prepend(str);
+
+                    $('#modalDetail').modal('show')
+                })
+
+        })
+    }
+
+
+    $('#btn-search-product').on('click', function (){
+        let keyword = $('#searchProduct').val();
+        search(keyword);
+    })
+
+    function search(keyword) {
+        $.ajax({
+            header: {
+                "accept": "application/json",
+                "content-type": "application/json"
+            },
+            type: "GET",
+            url: "http://localhost:8080/api/products/search/" + keyword,
+        })
+            .done((data) => {
+
+                $('#tbListProducts tbody').html('')
+
+                $.each(data, (i, item) => {
+                    product = item;
+                    category = product.category;
+
+                    let str =`
+                     <tr id="tr_${product.id}">
+                            <td><span id="span_${product.id}" class="select-tab unselected"></td>
+                            <td>${product.id}</td>
+                            <td><img src="${product.urlImage}" alt="" style="width: 90px; height:70px ; border-radius:50%"> </td>
+                            <td>${product.name}</td>
+                            <td>${new Intl.NumberFormat('vi-VN', {
+                                style: 'currency',
+                                currency: 'VND'
+                            }).format(product.price)}</td>
+
+                            <td>${product.describe}</td>
+                            <td>${category.title}</td>
+                     </tr>
+                `;
+                    $('#tbListProducts tbody').prepend(str);
+
+
+                    handleShowFooter();
+                })
+            })
+
+            .fail((jqXHR) => {
+                console.log(jqXHR)
+                // $('#divFail div').html('');
+                //
+                // let str =`<h3>Không có kết quả tìm kiếm này!</h3>`
+                // $('#divFail div').prepend(str);
+            })
+    }
+
+
+    /*Hàm xóa mềm theo id,*/
+    function handleConfirmDelete() {
+        $('button.deleted').on('click', function () {
+            App.SweetAlert.showConfirmDelete()
+                .then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            "headers": {
+                                "accept": "application/json",
+                                "content-type": "application/json"
+                            },
+                            "type": "DELETE",
+                            "url": "http://localhost:8080/api/products/delete/" + productId,
+                            "data": JSON.stringify(product)
+                        })
+                        .done((data) => {
+                            $('#tr_' + productId).remove();
+                            App.SweetAlert.showSuccessAlert("Xóa Thành Công")
+
+                        })
+                        .fail((jqXHR) => {
+
+                            //Nếu lỗi 403 thì chuyển qua trang lỗi
+                            if (jqXHR.status === 403) {
+                                window.location.href = "/select/403"
+                            }
+
+                            App.SweetAlert.showErrorAlert('Xóa thất bại');
+
+
+                        });
+
+                    }
+                })
+        })
+    }
+
 
 
 
