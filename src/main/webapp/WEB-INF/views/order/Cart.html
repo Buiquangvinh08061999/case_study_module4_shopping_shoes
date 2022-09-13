@@ -3,8 +3,221 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <th:block th:replace="/order/head:: head" />
 </head>
 <body>
+
+<div class="container">
+    <th:block th:replace="/order/menu :: menu" />
+    <div class="content--cart">
+
+        <div class="content--cart--product">
+            <h3>Giỏ Hàng Của Tôi</h3>
+
+            <div class="content--cart--product--list">
+
+            </div>
+
+        </div>
+
+        <div class="content--cart--money">
+
+            <div class="content--cart--money--bottom">
+                <h4>Tổng Tiền Đơn Hàng : </h4>
+                <span> </span>
+
+                <a href="javascript: void(0);"class="create_order" > <i class="fa-solid fa-sack-dollar" style="font-size: 21px; color: #e3ff00"></i>
+                    Thanh Toán
+                </a>
+
+                <br><br>
+                <a href="/select/ListOrder" class="end">
+                    Tiếp tục mua sắm
+                </a>
+
+            </div>
+
+
+        </div>
+
+
+
+    </div> <!--end content--cart-->
+</div> <!--end container-->
+
+<th:block th:replace="/layout/script_6 :: script_6"/>
+
+<script>
+
+    let user = new User();
+    let product = new Product();
+    let cart = new Cart();
+    let cartItem = new CartItem();
+    let userId = null;
+
+
+    function showCart() {
+        let userId = $('.show_cart').attr('id');
+        console.log(userId)
+        $.ajax({
+            headers: {
+                "accept": "application/json",
+                "content-type": "application/json"
+            },
+            type: "GET",
+            url: "http://localhost:8080/api/carts/" + userId,
+        })
+        .done((data) => {
+            if (data.noCart) {
+                App.IziToast.showSuccessAlert(data.noCart);
+            } else {
+                let grandTotal = 0;
+                $.each(data, (i, item) => {
+                    cartItem = item;
+                    cartItem.totalPrice = App.formatNumberSpace(cartItem.totalPrice);
+                    cartItem.price = App.formatNumberSpace(cartItem.price);
+
+                    grandTotal = App.formatNumberSpace(cartItem.cart.grandTotal);
+
+                    let str =
+                        `<div class="content--cart--product--list--first  cart--product--${cartItem.product.id}">
+                                <div class="content--cart--product--list--first--left">
+                                    <img src="${cartItem.product.urlImage}" alt="" width="70" height="70">
+                                </div>
+
+                                <div class="content--cart--product--list--first--center">
+                                    <h5>${cartItem.title}</h5>
+                                    <span>Giá : </span>
+                                    <span>${cartItem.price + " đ"}</span>
+                                </div>
+
+                                <div class="content--cart--product--list--first--right">
+                                    <span>Tổng : </span>
+                                    <span class ="total--price_{5}">${cartItem.totalPrice + " đ"}</span>
+                                    <div class="quantity">
+                                        <p>Số lượng : ${cartItem.quantity} </p>
+                                    </div>
+                                </div>
+
+                                <a href="javascript: void(0);" data-id = "${cartItem.product.id}"><i class="fa fa-times" aria-hidden="true"></i></a>
+                         </div>`;
+
+                    $('.content--cart--product--list').prepend(str);
+
+                    doRemoveShowProductCart();
+
+                    doCreateOrder();
+              })
+
+                /*Lấy ra được tổng tiền của cart(grandTotal)*/
+                $('.content--cart--money--bottom span').text(`${grandTotal} đ`);
+            }
+        })
+        .fail((jqXHR) => {
+            if (jqXHR.status === 401) {
+                App.IziToast.showErrorAlert("Vui Lòng Đăng Nhập Để Xem Giỏ Hàng Của Bạn");
+            } else {
+
+            }
+        })
+    }
+    showCart();
+
+    /*Xử lí kích vào nút xóa, ở phần ShowProductCart*/
+    /*Lấy id ở menu.html vì ta đã truyền userDTO id đó vào*/
+    function doRemoveShowProductCart(){
+        $('.content--cart--product--list--first a').on('click', function (){
+
+            let userId = $('.add_cart').attr('id');
+            let productId = $(this).data("id");
+
+            cart.userId = userId;
+            cart.productId = productId;
+            cart.quantity = 0;
+
+            console.log(userId + " us")
+            console.log(productId + " product")
+            $.ajax({
+                headers: {
+                    "accept": "application/json",
+                    "content-type": "application/json"
+                },
+                type: "POST",
+                url: "http://localhost:8080/api/carts/remove-cart-item",
+                data: JSON.stringify(cart)
+            })
+            .done((data) => {
+                $(`.cart--product--${productId}`).remove()
+
+                App.IziToast.showSuccessAlert(data.success)
+
+                let grandTotal;
+                grandTotal = App.formatNumberSpace(data.cartInfo.grandTotal);
+
+                $('.content--cart--money--bottom span').text(`${grandTotal} đ`);
+            })
+            .fail((jqXHR)=>{
+                if (jqXHR.status === 401) {
+                    App.IziToast.showErrorAlert("Vui Lòng Đăng Nhập Để Xem Giỏ Hàng Của Bạn");
+                }
+
+            })
+
+        })
+    }
+
+    function doCreateOrder(){
+        $('.create_order').on('click', function (){
+            let order = new Order();
+
+            let userId = $('.add_cart').attr('id');
+            order.userId = userId;
+
+            console.log(userId +"userId")
+            $.ajax({
+                headers: {
+                    "accept": "application/json",
+                    "content-type": "application/json"
+                },
+                type: "POST",
+                url: "http://localhost:8080/api/orders/add",
+                data: JSON.stringify(order)
+            })
+            .done((data) => {
+                App.IziToast.showSuccessAlert(data.success);
+
+                /*Khi thành công thì xóa hết bảng hiển thị sản phẩm*/
+                $('.content--cart--product--list').html("");
+
+                $('.content--cart--money--bottom span').text(`0 đ`)
+            })
+
+            .fail((jqXHR) => {
+                if (jqXHR.status === 401)  {
+                    App.IziToast.showErrorAlert("Vui Lòng Đăng Nhập Để Xem Giỏ Hàng Của Bạn");
+                }else {
+                    if(jqXHR.responseJSON.message){
+
+                        let msg = jqXHR.responseJSON.message;
+                        App.IziToast.showErrorAlert(msg);
+
+                    }else if(jqXHR.responseJSON){
+                        $.each(jqXHR.responseJSON,(key,item) =>{
+                            App.IziToast.showErrorAlert(item);
+                        })
+                    }
+                }
+            })
+
+        })
+    }
+
+
+
+
+</script>
+
+
 
 </body>
 </html>

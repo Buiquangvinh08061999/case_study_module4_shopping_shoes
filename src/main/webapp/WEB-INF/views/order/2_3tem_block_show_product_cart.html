@@ -1,11 +1,12 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 
-<th:block th:fragment="2_3temp_block_product_cart">
+<th:block th:fragment="2_3tem_block_show_product_cart">
 
-    <textarea id="tempBlockProductCart" class="hide">
-         <div class="cart--info--content--product cart--product--{4}">
+    <textarea id="tempBlockShowProductCart" class="hide">
+
+         <div class="cart--info--content--product   cart--product--{4}">
             <div class="cart--info--content--product--left">
-                <img src="assets/img/{0}" alt="">
+                <img src="{0}" alt="">
             </div>
             <div class="cart--info--content--product--right">
                 <p>{1}</p>
@@ -13,13 +14,15 @@
                 <span>Số Lượng :</span>
                 <div class="quantity">
                     <input type="number" min="1" max="9" step="1" value="{3}" class = "input_{4}">
+
                     <div class="quantity-nav">
                         <div class="quantity-button quantity-up" data-id = "{4}">+</div>
                         <div class="quantity-button quantity-down" data-id = "{4}">-</div>
                     </div>
                 </div>
             </div>
-            <a href="javascript: void(0);" data-id = "{4}"><i class="fa fa-times" aria-hidden="true"></i></a>
+
+            <a href="javascript: void(0);" data-id = "{4}"><i class="fa fa-times remove" aria-hidden="true"></i></a>
         </div>
     </textarea>
 
