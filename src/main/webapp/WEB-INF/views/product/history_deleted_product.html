@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+
+    <title>Title</title>
+    <th:block th:replace="/layout/head_1 :: head_1"/>
+    <link rel="stylesheet" href="/assets/css/bootstrap.minb.css">
+</head>
+<body>
+
+<div id="wrapper">
+    <th:block th:replace="/layout/navbar_custom_top_2 :: navbar_custom_top_2"/>
+
+    <div class="left-side-menu">
+
+        <th:block th:replace="/layout/hearder_left_3 :: hearder_left_3"/>
+
+    </div>
+
+
+    <div class="content-page">
+
+        <div class="content">
+            <!-- Start Content-->
+            <div class="container-fluid">
+                <!-- start page title -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="page-title-box">
+                            <div class="page-title-right">
+                                <ol class="breadcrumb m-0">
+                                    <li class="breadcrumb-item">Uplon</li>
+                                    <li class="breadcrumb-item active">Dashboard</li>
+                                </ol>
+                            </div>
+                            <h4 class="page-title">Welcome List Product</h4>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col-6">
+                        <h3>History Product</h3>
+                    </div>
+                    <div class="col-6 ">
+                        <a href="/select/ListProduct" class="btn btn-outline-primary"><span>Black ListProduct</span></a>
+                    </div>
+                </div>
+
+                    <table id="tbListProducts" class="table table-hover table-bordered" style="text-align: center">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Avatar</th>
+                            <th>Name</th>
+                            <th>Price</th>
+                            <th>Describe</th>
+                            <th>TitleCategory</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <th:block th:replace="/layout/script_6 :: script_6"/>
+
+</div>
+
+<script >
+
+    let product = new Product();
+    let category = new Category();
+
+    function getAllHistoryProduct(){
+        $.ajax({
+            headers: {
+                "accept": "application/json",
+                "content-type": "application/json"
+            },
+            type: "GET",
+            url: "http://localhost:8080/api/products/historyProduct",
+        })
+        .done((data) => {
+            $.each(data ,(i, item)=>{
+                product = item;
+                category = product.category
+                console.log(product)
+                let str =`
+                     <tr id="tr_${product.id}">
+                            <td>${product.id}</td>
+                            <td><img src="${product.urlImage}" alt="" style="width: 90px; height:70px ; border-radius:50%"> </td>
+                            <td>${product.name}</td>
+                            <td>${new Intl.NumberFormat('vi-VN', {
+                                style: 'currency',
+                                currency: 'VND'
+                            }).format(product.price)}</td>
+                            <td>${product.describe}</td>
+                            <td>${category.title}</td>
+
+                            <td>
+                                <button type="button" data-id="${product.id}" class="btn btn-outline-primary restore"> Khôi Phục </button>
+                            </td>
+                     </tr>
+                    `;
+
+                $('#tbListProducts tbody').append(str);
+
+            })
+            handleConfirmRestore(); /*Phải gọi lại nút này, thì class restore mới nhận được, còn không cơ chế nó sẽ ngang hàng, nên khi chưa vẽ ra thì k click được*/
+        })
+        .fail((jqXHR) => {
+            console.log(jqXHR)
+        })
+    }
+    getAllHistoryProduct();
+
+
+    /*Thông báo nội dung cần khôi phục không, xác nhận để khôi phục*/
+    function handleConfirmRestore() {
+        $('button.restore').on('click', function (){
+            let productId = $(this).data("id") /*Lấy id*/
+            console.log(productId)
+            App.SweetAlert.showConfirmRestore()
+                .then((result) => {
+                    if (result.isConfirmed) {
+
+                        $.ajax({
+                            "headers": {
+                                "accept": "application/json",
+                                "content-type": "application/json"
+                            },
+                            "type": "POST",
+                            "url": "http://localhost:8080/api/products/restore/" + productId,
+                            "data": JSON.stringify(product)
+                        })
+                        .done((data) => {
+                            console.log(data)
+                            $('#tr_' + productId).remove(); /*Khi thành công thì xóa sản phẩm đó ra khỏi list luôn, k cần load lại trang*/
+
+                            App.SweetAlert.showSuccessAlert("Khôi Phục Sản Phẩm ID " + productId + " Thành Công")
+
+                        })
+                        .fail((jqXHR) => {
+                            console.log(jqXHR)
+                        })
+                    }
+                })
+        })
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+
+
+</body>
+
+</html>

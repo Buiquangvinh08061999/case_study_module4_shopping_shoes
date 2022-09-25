@@ -6,7 +6,7 @@ class App {
                 title: t,
                 position: 'top-end',
                 showConfirmButton: false,
-                timer: 1500
+                timer: 2000
             })
         }
 
@@ -16,10 +16,11 @@ class App {
                 title: 'Warning',
                 position: 'top-end',
                 text: t,
-                timer: 1500
+                timer: 2000
             })
         }
 
+        /*Hiển thị xóa*/
         static showConfirmDelete() {
             return Swal.fire({
                 title: 'Are you sure to deactive the selected customer ?',
@@ -28,6 +29,19 @@ class App {
                 confirmButtonColor: '#3085D6',
                 cancelButtonColor: '#d33',
                 confirmButtonText: 'Yes, deactive it!',
+
+            });
+        }
+
+        /*Hiển thị khôi phục(Restore) nên tắt icon*/
+        static showConfirmRestore() {
+            return Swal.fire({
+                title: 'Are you sure to Restore?',
+                icon: 'success',
+                showCancelButton: true,
+                confirmButtonColor: '#3085D6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, restore it!',
             });
         }
     }
@@ -36,20 +50,25 @@ class App {
         static showErrorAlert(m) {
             iziToast.error({
                 title: 'Error',
-                position: 'topRight',
+                position: 'topLeft',
                 message: m,
             });
         }
         static showSuccessAlert(m) {
             iziToast.success({
                 title: 'Success',
-                position: 'topRight',
+                position: 'topLeft',
                 message: m,
             });
         }
     }
 
-
+    static formatNumberSpace(x) {
+        if (x == null) {
+            return x;
+        }
+        return x.toString().replace(/ /g, "").replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    }
 }
 
 class LocationRegion {
@@ -75,9 +94,7 @@ class User {
         this.deleted = deleted
         this.locationRegion = locationRegion;
         this.role = role;
-
         this.createdAt = createdAt;
-
         this.updatedAt = updatedAt;
 
     }
@@ -100,7 +117,6 @@ class Product {
         this.deleted = deleted
         this.category = category;
         this.createdAt = createdAt;
-
         this.updatedAt = updatedAt;
     }
 }
@@ -120,6 +136,14 @@ class Cart {
     }
 }
 
+class CartInfo {
+    constructor(id,grandTotal,user) {
+        this.id = id;
+        this.grandTotal = grandTotal;
+        this.user = user;
+    }
+}
+
 class CartItem {
     constructor(id, price, quantity, title, totalPrice, product, cart) {
         this.id = id;
@@ -134,10 +158,28 @@ class CartItem {
 
 
 class Order {
-    constructor(userId,locationRegion,deliveryDate) {
+    constructor(userId) {
         this.userId = userId;
-        this.locationRegion = locationRegion;
-        this.deliveryDate = deliveryDate;
+    }
+}
+
+class OrderItem {
+    constructor(id, title, price, quantity,totalPrice, order) {
+        this.id = id;
+        this.title = title;
+        this.price = price;
+        this.quantity = quantity;
+        this.totalPrice = totalPrice;
+        this.order = order;
+    }
+}
+
+class OrderTest { /*day la order*/
+    constructor(id, grandTotal,createdAt, user) {
+        this.id = id;
+        this.grandTotal = grandTotal;
+        this.createdAt = createdAt;
+        this.user = user;
     }
 }
 
