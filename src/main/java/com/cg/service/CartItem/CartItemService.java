@@ -1,4 +1,17 @@
 package com.cg.service.CartItem;
 
-public interface CartItemService {
+import com.cg.model.CartItem;
+import com.cg.model.dto.CartItemDTO;
+import com.cg.service.IGeneralService;
+
+import java.util.List;
+import java.util.Optional;
+
+public interface CartItemService extends IGeneralService<CartItem> {
+
+    Optional<CartItemDTO> findCartItemDTOByCartIdAndProductId(long cartId, long productId);
+
+    List<CartItemDTO> findCartItemDTOByCartId(Long cartId);
+
+
 }
