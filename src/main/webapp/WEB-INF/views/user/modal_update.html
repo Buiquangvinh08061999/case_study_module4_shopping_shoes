@@ -15,17 +15,29 @@
                     <form id="frmUpdateCustomer" method="post">
                         <fieldset class="row g-3">
 
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <label class="form-label">User Name</label>
                                 <input type="email" class="form-control" id="usernameUp" name="usernameUp">
                             </div>
 
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <label class="form-label">Full Name</label>
                                 <input type="text" class="form-control" id="fullnameUp" name="fullnameUp">
                             </div>
+                            <!--tính năng này cho phép cập nhật mật khẩu mới, muốn dùng thì mở lại-->
+<!--                            <div class="col-sm-3">-->
+<!--                                <label>PassWord <span class="text-danger">*</span></label>-->
+<!--                                <div class="input-group mb-3">-->
+<!--                                    <input type="password" class="form-control" id="ipnPasswordUp" name="password" required placeholder="Nhập mật khẩu mới">-->
+<!--                                    <div class="input-group-append">-->
+<!--                                        <button class="btn btn-outline-secondary" type="button" id="btnPasswordUp">-->
+<!--                                            <span class="fas fa-eye"></span>-->
+<!--                                        </button>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
 
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <label class="form-label">Phone</label>
                                 <input type="tel" class="form-control" id="phoneUp" name="phoneUp">
                             </div>
@@ -54,6 +66,14 @@
                                 <input type="text" class="form-control" id="addressUp" name="addressUp">
                             </div>
 
+                            <div class="col-md-3">
+                                <label class="form-label">Role</label>
+                                <select name="roleUp" id="roleUp" class="form-select">
+                                    <!--                                    <option value="1">ADMIN</option>-->
+                                    <!--                                    <option value="2">USER</option>-->
+
+                                </select>
+                            </div>
                         </fieldset>
                     </form>
                 </div>

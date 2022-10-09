@@ -1,25 +1,108 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
     <th:block th:replace="/order/head:: head" />
+
 </head>
 <body>
 
 <div class="container">
-    <th:block th:replace="/order/menu :: menu" />
-
-    <div class="container--content">
-        <div class="content content--product--first">
+<!--    <th:block th:replace="/order/menu :: menu" />-->
+    <div class="header" th:switch="${userDTO}">
+        <div class="header--left">
+            <h1 style="margin-left: 32px"> <a href="/select/ListOrder"><img src="/assets/img/LogoShopShoe.png" alt=""></a></h1>
 
         </div>
 
+        <div class="header--center">
+            <ul class="header--center--ul">
+                <li>
+                    <b>Sắp xếp theo:</b>
+                    <select style="padding: 8px ; border-radius: 5px; font-size: 15px" id="select" name="select">
+                        <option value="value_default">Thứ tự mặc định</option>
+                        <option value="value_50_100">Giá từ 50.000đ đến 100.000đ</option>
+                        <option value="value_100_200">Giá từ 100.000đ đến 200.000đ</option>
+                        <option value="value_200_300">Giá từ 200.000đ đến 300.000đ</option>
+                        <option value="value_300_500">Giá từ 300.000đ đến 500.000đ</option>
+                    </select>
+                </li>
+                <li>            <a href="javascript:void(0);" style="color: #0995fd"  id="logOutListOrder" >
+                                        Đăng Xuất
+                                      <i class="fa-solid fa-right-from-bracket" title="LogOut" style="font-size: 20px"></i>
+                                </a>
+                </li>
+            </ul>
+        </div>
+
+        <!--Chưa dùng -->
+        <div class="header--right" th:case="null">
+            <form action="" class="header--right--form">
+                <input type="text" class="header--right--form--search" placeholder="Tìm Kiếm">
+                <button><i class="fa fa-search" aria-hidden="true"></i></button>
+                <div class="header--right--form--result hide">
+                    <div class="content--product--search">
+
+                    </div>
+                    <div class="header--right--form--result--search">
+                        <i class="fa fa-search" aria-hidden="true"></i>
+                        <p></p>
+                    </div>
+                </div>
+            </form>
+
+            <a href="/login">
+                <i class="fa fa-user-circle" aria-hidden="true"></i>
+                <span> <!--Tên được truyền vào đây--> </span>
+            </a>
+
+            <a href="javascript: void(0);" class="show_cart"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a>
+
+        </div>
+
+        <div class="header--right" th:case="*">
+            <form action="" class="header--right--form">
+                <input type="text" class="header--right--form--search" placeholder="Tìm Kiếm">
+                <button><i class="fa fa-search" aria-hidden="true"></i></button>
+
+                <div class="header--right--form--result hide">
+                    <div class="content--product--search">
+
+                    </div>
+                    <div class="header--right--form--result--search">
+                        <i class="fa fa-search" aria-hidden="true"></i>
+                        <p></p>
+                    </div>
+                </div>
+
+            </form>
+
+            <a href="#">
+                <i class="fa fa-user-circle" aria-hidden="true"></i>
+                <span th:text="${userDTO.fullName}" class="add_cart" data-th-id="${userDTO.id}"> </span>
+            </a>
+
+            <a href="javascript: void(0);" class="show_cart" data-th-id="${userDTO.id}"> <i class="fa fa-shopping-cart" aria-hidden="true"></i></a> <!--Đây là nút hình ảnh giỏ hàng, xử lí truyền theo id của user-->
+
+
+        </div>
+
+    </div>
+
+
+<!---->
+
+    <!--Phần quan trọng, hiển thị sản phẩm products-->
+    <div class="container--content">
+
+        <div class="content content--product--first">
+            <!--Phần này vẽ các sản phẩm product vào đây getAllProduct-->
+        </div>
 
     </div> <!--end container-content-->
 
 </div> <!--end container-->
-
 
 <th:block th:replace="/order/temp_block_product :: temp_block_product" />
 
@@ -31,22 +114,56 @@
 <th:block th:replace="/order/2_2product_info :: 2_2product_info" />
 
 <!--Chỉ biết nó nằm trong phần cart nhưng chưa hiểu nghiệp vụ-->
-<th:block th:replace="/order/2_3tem_block_product_cart :: 2_3temp_block_product_cart" />
+<th:block th:replace="/order/2_3tem_block_show_product_cart :: 2_3tem_block_show_product_cart" />
 
 <th:block th:replace="/layout/script_6 :: script_6"/>
 
 <script>
 
-    let product = new Product();
-
-    let cart = new Cart();
 
     let user = new User();
+    let category = new Category();
+    let product = new Product();
+
 
     let cartItem = new CartItem();
+    let cart = new Cart();
 
 
-    /*Mặc định khi thêm mới bên Product thì nó sẽ tự vẽ trong phần body(content ở giữa) hiển thị sản phẩm ra*/
+    let userId = null;
+
+    /*Hiển thị dữ liệu giỏ hàng, đưa vào phần 2_1cart_modal(bước thứ 2 show cart, khi xử lí bước 1 add cart xong, thì tiếp bước này (Chứa phần Đầu và Cuối)*/
+    <!--Phần này cũng hiển thị icon nút xóa sản phẩm, ta trỏ tới nút đó để xử lí nút xóa, và nó trỏ tới File #tempBlockShowProductCart(2_3tem_block),(Chứa phần giữa nội dung hình ảnh số lượng và các nút bấm phải vẽ lại ở đây )-->
+    let tempBlockShowProductCart = $.validator.format($.trim($('#tempBlockShowProductCart').val().toString()));
+    function addBlockShowProductCart(){
+        $('.cart--info--content').prepend($(tempBlockShowProductCart(cartItem.product.urlImage, cartItem.title, cartItem.price + " đ" ,cartItem.quantity, cartItem.product.id)))  /*cartItem.product.id truyền vào để có product Id giúp tăng giảm số lượng sản phẩm*/
+    }
+
+    /*vẽ lại trong body, hiển thị thông tin sản phẩm,sắp xếp theo giá, ra giữa bố cục, tái sử dụng nhiều lần , nên ta viết hàm để sử dụng nhiều nơi*/
+    function renderAllProduct(product, category) {
+        let str =`
+             <div class="content--product">
+                <div class="content--product--top">
+                    <img src="${product.urlImage}" alt="" width="200" height="200">
+                    <h4 id ="btnShowInfoProduct_${product.id}" data-id ="${product.id}">Xem Ngay</h4>
+                </div>
+
+                <div class="content--product--bottom">
+                    <p style="color: #2e23a9">${product.name}</p>
+                    <span style="color:#4d0a0aba;">Loại: ${category.title}</span>
+                    <p style="color: #ef1200">${new Intl.NumberFormat('vi-VN', {
+                    style: 'currency',
+                    currency: 'VND'
+                    }).format(product.price)}</p>
+                    <p class="add--cart" data-id="${product.id}">Thêm Vào Giỏ Hàng</p>
+
+                </div>
+            </div>
+        `;
+        return str;
+    }
+
+    /*Mặc định khi thêm mới bên Product thì nó sẽ tự vẽ trong phần body(content ở giữa) hiển thị sản phẩm ra, lấy lại api in chang ở product khi hiển thị sản phẩm*/
     function getAllProduct(){
         $.ajax({
             header: {
@@ -57,31 +174,19 @@
             url: "http://localhost:8080/api/products",
         })
             .done((data) => {
+                $('.content--product--first').html(""); /*Khi lựa chọn lại thì xóa tất cả, rồi vẽ lại từ đầu*/
                 $.each(data ,(i, item)=>{
                     product = item;
+                    category = product.category
+                    let str = renderAllProduct(product, category); /*hàm làm gọn code, tái sử dụng ,khi chỉ cần gọi lại hàm*/
 
-                    let str =`
-                     <div class="content--product">
-                        <div class="content--product--top">
-                            <img src="${product.urlImage}" alt="" width="200" height="200">
-                            <h4 id ="btnShowInfoProduct_${product.id}" data-id = "${product.id}">Xem Ngay</h4>
-                        </div>
-
-                        <div class="content--product--bottom">
-                            <p style="color: #2e23a9">${product.name}</p>
-                            <p></p>
-                            <p style="color: #d0021c">${new Intl.NumberFormat('vi-VN', {
-                                style: 'currency',
-                                currency: 'VND'
-                            }).format(product.price)}</p>
-
-                            <p class="add--cart" data-id="${product.id}">Thêm Vào Giỏ Hàng</p>
-                        </div>
-                    </div>
-                `;
                     $('.content--product--first').prepend(str);
-
                 })
+                /*Xử lí thêm mới*/
+                addCart();
+
+                /*Xử lí các nút kích*/
+                handleClickShowInfo()
             })
 
             .fail((jqXHR) => {
@@ -89,6 +194,455 @@
             })
     }
     getAllProduct();
+
+    /*Vẽ lại list lựa chọn theo option giá tiền , người dùng lựa vào*/
+    $('#select').on('change', function (){
+        let value = $(this).val(); /*GHI NHỚ sử dụng this lấy tất cả giá trị value ra ở đấy là (tên value, (value_sort_asc_id..v.v)*/
+        console.log(value)
+        if(value == ('value_default')) {
+            getAllProduct();
+            return;
+        }else if(value == ('value_50_100')) {
+            getAllBetWeenPrice50_100ProductDTO();
+            return;
+        }else if(value == ('value_100_200')) {
+            getAllBetWeenPrice100_200ProductDTO();
+            return;
+        }else if(value == ('value_200_300')) {
+            getAllBetWeenPrice200_300ProductDTO()
+            return;
+        }else if(value == ('value_300_500')) {
+            getAllBetWeenPrice300_500ProductDTO()
+            return;
+        }
+        else{
+            App.IziToast.showErrorAlert("Vui lòng không sửa giá trị value!")
+            return;
+        }
+    })
+
+    function getAllBetWeenPrice50_100ProductDTO(){
+        $.ajax({
+            header: {
+                "accept": "application/json",
+                "content-type": "application/json"
+            },
+            type: "GET",
+            url: "http://localhost:8080/api/products/betweenPrice50000and100000",
+        })
+        .done((data) => {
+            $('.content--product--first').html("");/*CHÚ Ý, Khi ta kích vào sắp xếp, khi nó vẽ lại phải xóa đi phần GetAllProduct trong tbody chứa Dữ Liệu ở đó đi, để đưa dữ liệu ta vừa sort vào*/
+
+            $.each(data ,(i, item)=> {
+                product = item;
+                category = product.category
+
+                let str = renderAllProduct(product, category); /*hàm làm gọn code, tái sử dụng ,khi chỉ cần gọi lại hàm*/
+
+                $('.content--product--first').prepend(str);
+
+            })
+            /*Xử lí thêm mới*/
+            addCart();
+
+            /*Xử lí các nút kích*/
+            handleClickShowInfo()
+        })
+        .fail((jqXHR) => {
+            console.log(jqXHR)
+        })
+    }
+
+    function getAllBetWeenPrice100_200ProductDTO(){
+        $.ajax({
+            header: {
+                "accept": "application/json",
+                "content-type": "application/json"
+            },
+            type: "GET",
+            url: "http://localhost:8080/api/products/betweenPrice100000and200000",
+        })
+            .done((data) => {
+                $('.content--product--first').html("");/*CHÚ Ý, Khi ta kích vào sắp xếp, khi nó vẽ lại phải xóa đi phần GetAllProduct trong tbody chứa Dữ Liệu ở đó đi, để đưa dữ liệu ta vừa sort vào*/
+
+                $.each(data ,(i, item)=> {
+                    product = item;
+                    category = product.category
+
+                    let str = renderAllProduct(product, category); /*hàm làm gọn code, tái sử dụng ,khi chỉ cần gọi lại hàm*/
+
+                    $('.content--product--first').prepend(str);
+
+                })
+                /*Xử lí thêm mới*/
+                addCart();
+
+                /*Xử lí các nút kích*/
+                handleClickShowInfo()
+            })
+            .fail((jqXHR) => {
+                console.log(jqXHR)
+            })
+    }
+
+    function getAllBetWeenPrice200_300ProductDTO(){
+        $.ajax({
+            header: {
+                "accept": "application/json",
+                "content-type": "application/json"
+            },
+            type: "GET",
+            url: "http://localhost:8080/api/products/betweenPrice200000and300000",
+        })
+            .done((data) => {
+                $('.content--product--first').html("");/*CHÚ Ý, Khi ta kích vào sắp xếp, khi nó vẽ lại phải xóa đi phần GetAllProduct trong tbody chứa Dữ Liệu ở đó đi, để đưa dữ liệu ta vừa sort vào*/
+
+                $.each(data ,(i, item)=> {
+                    product = item;
+                    category = product.category
+
+                    let str = renderAllProduct(product, category); /*hàm làm gọn code, tái sử dụng ,khi chỉ cần gọi lại hàm*/
+
+                    $('.content--product--first').prepend(str);
+
+                })
+                /*Xử lí thêm mới*/
+                addCart();
+
+                /*Xử lí các nút kích*/
+                handleClickShowInfo()
+            })
+            .fail((jqXHR) => {
+                console.log(jqXHR)
+            })
+    }
+
+    function getAllBetWeenPrice300_500ProductDTO(){
+        $.ajax({
+            header: {
+                "accept": "application/json",
+                "content-type": "application/json"
+            },
+            type: "GET",
+            url: "http://localhost:8080/api/products/betweenPrice300000and500000",
+        })
+            .done((data) => {
+                $('.content--product--first').html("");/*CHÚ Ý, Khi ta kích vào sắp xếp, khi nó vẽ lại phải xóa đi phần GetAllProduct trong tbody chứa Dữ Liệu ở đó đi, để đưa dữ liệu ta vừa sort vào*/
+
+                $.each(data ,(i, item)=> {
+                    product = item;
+                    category = product.category
+
+                    let str = renderAllProduct(product, category); /*hàm làm gọn code, tái sử dụng ,khi chỉ cần gọi lại hàm*/
+
+                    $('.content--product--first').prepend(str);
+
+                })
+                /*Xử lí thêm mới*/
+                addCart();
+
+                /*Xử lí các nút kích*/
+                handleClickShowInfo()
+            })
+            .fail((jqXHR) => {
+                console.log(jqXHR)
+            })
+    }
+
+
+
+    /*Phần addcart là đầu tiên, xong mới đến bước showcart*/
+    /*Lấy id ở menu.html vì ta đã truyền userDTO id đó vào, khi thêm sản phẩm vào, ta lấy dữ liệu userId, và productId vào, và gán lại cho các trường của cart*/
+    function addCart(){
+        $('.add--cart').on('click',function (){
+
+            let userId = $('.add_cart').attr('id'); /*lấy userid ở phần menu có class add_cart ra, còn class add--cart là khác, nó dùng để để xử lí,*/
+
+            let productId = $(this).data("id");/*lấy id của product ra ở phần vẽ lại getAllProduct, có product.id của nó ra*/
+            let quantity = 1;
+
+            console.log(userId  + "userId")
+            console.log(productId +"productId");
+
+            /*truyền các giá trị id này khớp với 3 trường trong cart ra gán nó lại, và truyền vào data:JSON, để thằng cartDTO bên api có giá trị, nếu không sẽ báo lỗi*/
+            cart.userId = userId;
+            cart.productId = productId;
+            cart.quantity = quantity;
+
+            console.log(JSON.stringify(cart) + "3 trường điều là kiểu chuỗi")
+            $.ajax({
+                headers: {
+                    "accept": "application/json",
+                    "content-type": "application/json"
+                },
+                type: "POST",
+                url: "http://localhost:8080/api/carts/add",
+                data: JSON.stringify(cart) /*bắt buộc phải truyền các trường data vào, để thằng cartDTO nhận 3 giá trị vào, 3 giá trị nhận vào kiểu chuỗi*/
+            })
+            .done((data) => {
+                console.log(data + "giá trị data")
+                if(data.successFirst){
+                    App.IziToast.showSuccessAlert(data.successFirst)
+                }
+                App.IziToast.showSuccessAlert(data.success)
+            })
+            .fail((jqXHR) => {
+                console.log(jqXHR)
+                if (jqXHR.status === 401)  {
+                    App.IziToast.showErrorAlert("Bạn Vui Lòng Đăng Nhập Để Mua Hàng");
+                }
+
+                else {
+                    if(jqXHR.responseJSON.message){
+                        let msg = jqXHR.responseJSON.message;
+                        App.IziToast.showErrorAlert(msg);
+                    }else if(jqXHR.responseJSON){
+                        $.each(jqXHR.responseJSON,(key,item) =>{
+                            App.IziToast.showErrorAlert(item);
+                        })
+                    }
+                }
+            });
+
+        })
+    }
+
+
+    /*Bước thứ 2 sau khi add_cart xong thì show sản phẩm ở đây,  Lấy id ở menu.html vì ta đã truyền userDTO id đó vào*/
+    /*nằm ở phần 2_1cart_modal*/
+    /*Phần này quan trọng, vì khi ta add--cart ta đã tính được tổng tiền ở phần cart, set lại các giá trị ở cartItem và setGrand ở cart, Ở phần đấy ta chỉ đưa ra thông báo, còn phần này ta lấy dữ liệu tất cả các trường của cart theo userId, test ở PostMan, ta lấy được tổng Grand ở cart,các thông tin của cartItem, để đưa vào hiển thị trong phần show, gồm tổng tiền của cart ở phía dưới cùng, hình ảnh cartItem ở giữa*/
+    function showCart() {
+        $('.show_cart').on('click', function () {
+            let userId = $('.show_cart').attr('id');
+            console.log(userId + "userId lấy từ data-id ở show cart")
+            $.ajax({
+                headers: {
+                    "accept": "application/json",
+                    "content-type": "application/json"
+                },
+                type: "GET",
+                url: "http://localhost:8080/api/carts/" + userId,
+            })
+                .done((data) => {
+                    if (data.noCart) {
+                        App.IziToast.showSuccessAlert(data.noCart);
+                    } else {
+                        $('.cart--info--content').html("")
+                        $('.cart--info--total span').html("")
+                        let grandTotal = 0;
+
+                        $.each(data, (i, item) => {
+                            cartItem = item;
+
+                            cartItem.price = App.formatNumberSpace(cartItem.price);
+                            grandTotal = App.formatNumberSpace(cartItem.cart.grandTotal);
+                            /*api lấy về phần cart, có chứa grand total, nhưng ở đây phần cart này thì a Phôn không làm ra 3 trường đó, nhưng vẫn có thể trỏ theo tên của nó để lấy ra*/
+
+                            addBlockShowProductCart(); /*Chú Ý hàm ở đây. nó đã vẽ lại tên, hình ảnh số lượng vào phần show cart*/
+                        })
+
+                        $('.cart--info--total span').text(`${grandTotal} đ`);  /*đã tạo biến grandTotal và gán = cho cartItem.cart.grandTotal , gọi lại ở đây để tránh vòng lặp tổng tiền ra, nếu có 2 sản phẩm trở lên, thì ta phải làm cách này, tức là gán = với tổng tiền, rồi đẩy ra để hiển thị*/
+
+                        /*Kích vào giỏ hàng sẽ hiển thị thông tin*/
+                        $('.cart').removeClass('hide').addClass('show');
+
+                        doRemoveShowProductCart();/*Xóa sản phẩm*/
+                        doIncrease();/*Tăng sản phẩm*/
+                        doReduce();/*Giảm sản phẩm*/
+                    }
+                })
+
+                .fail((jqXHR) => {
+                    if (jqXHR.status === 401) {
+                        App.IziToast.showErrorAlert("Vui Lòng Đăng Nhập Để Xem Giỏ Hàng Của Bạn");
+                    } else {
+
+                    }
+                })
+        })
+    }
+    showCart();
+
+    /*Xử lí các nút bấm ở giỏ hàng, */
+    function handleClickShowInfo(){
+        /*kích vào sẽ tắt giỏ hàng*/
+        $('#icon_close_cart').on('click',function() {
+            $('.cart').removeClass('show').addClass('hide');
+        })
+
+    }
+
+    /*Xử lí kích vào nút xóa, ở phần ShowProductCart, muốn xóa sản phẩm, ta truyền vào userId, productId ra để xử lí phần xóa*/
+    /*Lấy id ở menu.html vì ta đã truyền userDTO id đó vào*/
+    function doRemoveShowProductCart(){
+        $('.cart--info--content--product a').on('click', function (){
+            let userId = $('.add_cart').attr('id');/*lấy userid ở phần menu có class add_cart ra, còn class add--cart là khác, nó dùng để để xử lí,*/
+            let productId = $(this).data("id");/*lấy id của product ra ở phần vẽ lại getAllProduct, có product.id của nó ra*/
+
+            console.log(userId + "userId")
+            console.log(productId + "productId")
+
+            /*truyền các giá trị id này khớp với 3 trường trong cart ra gán nó lại, và truyền vào data:JSON, để thằng cartDTO bên api có giá trị, nếu không sẽ báo lỗi*/
+            cart.userId = userId;
+            cart.productId = productId;
+            cart.quantity = 0;
+
+            console.log(JSON.stringify(cart) + " 3 trường điều là kiểu chuỗi")
+            $.ajax({
+                headers: {
+                    "accept": "application/json",
+                    "content-type": "application/json"
+                },
+                type: "POST",
+                url: "http://localhost:8080/api/carts/remove-cart-item",
+                data: JSON.stringify(cart)/*bắt buộc phải truyền các trường data vào, để thằng cartDTO nhận 3 giá trị vào, 3 giá trị nhận vào kiểu chuỗi*/
+            })
+            .done((data) => {
+                /*Xóa hết hỉnh ảnh có id product đấy ra, ở phần show giỏ hàng*/
+                $(`.cart--product--${productId}`).remove()
+
+                App.IziToast.showSuccessAlert(data.success);/*hiển thị thông báo, ở hàm Map bên (url). nếu thành công thì ta in ra*/
+
+                /*Bên api/carts/remove-cart-item, có phần cartInfo là giá trị tổng tiền sau khi trừ sản phẩm xong, ta lấy nó và truyền vào đây*/
+                let grandTotal;
+                grandTotal = App.formatNumberSpace(data.cartInfo.grandTotal);
+                $('.cart--info--total span').text(`${grandTotal} đ`);
+
+            })
+            .fail((jqXHR)=>{
+                if (jqXHR.status === 401) {
+                    App.IziToast.showErrorAlert("Vui Lòng Đăng Nhập Để Xem Giỏ Hàng Của Bạn");
+                }
+
+            })
+        })
+    }
+
+    /*Hàm xử lí kích vào nút tăng số lượng, sẽ cộng thêm tiền lên, và tổng tiền được cộng lên*/
+    /*Lấy dữ liệu của quantity ở phần 2_3(tem_..)  lấy dữ liệu userId ở phần menu.html*/
+    function doIncrease(){
+        $('.quantity-up').on('click', function (){
+            let cartItemIncrease = new CartItem();
+            let userId = $('.add_cart').attr('id');
+            let productId = $(this).data("id");
+
+            let quantity = $(`.input_${productId}`).val();  /*dữ quan tity lấy từ ID của product*/
+            let increaseValue = Number(quantity) + 1;
+            console.log(quantity + " SỐ lượng")
+            let cart = new Cart();
+
+            if($.isNumeric(quantity)){ /*Hàm xác thực, nếu đúng với quy tắc của số, không có phẩy, cách kí tự đặt biệt, nếu đúng thì ta xử lí tiếp*/
+                cart.userId = userId;
+                cart.productId = productId;
+                cart.quantity = 1;
+
+                console.log(userId+ " userId")
+                console.log(productId + " productId")
+                $.ajax({
+                    headers: {
+                        "accept": "application/json",
+                        "content-type": "application/json"
+                    },
+                    type: "POST",
+                    url: "http://localhost:8080/api/carts/increase",
+                    data: JSON.stringify(cart)
+                })
+                .done((data) => {
+                    console.log(data + "Dữ liệu data, để kiểm tra ");
+
+                    cartItemIncrease = data.cartItemIncrease; /*Truyền vào data.cartItemIncrease, result.put trả về "cartItemIncrease" nên ta sử dụng để hứng được tất cả dữ liệu vừa được cập nhật lại*/
+
+                    console.log(cartItemIncrease + "Sổ ra các thông tin, còn data thì không")
+                    $(`.input_${productId}`).val(cartItemIncrease.quantity);/*tăng thành công thì hiển thị số lượng hiện tại ra nơi ô input*/
+
+                    /*Tổng tiền cập nhật lại khi tăng số lượng lên, vẽ lại ở tổng tiền được tính ra*/
+                    let grandTotal;
+                    grandTotal =  App.formatNumberSpace(cartItemIncrease.cart.grandTotal)
+
+                    $('.cart--info--total span').text(`${grandTotal} đ`); /*Vẽ lại tổng tiền ở phần show ra, khi ta thực hiện thao tác tăng số lượng sản phẩm lên, Mỗi lần tăng số lượng lên 1*/
+
+                    App.IziToast.showSuccessAlert(data.success) /*Vượt qua các thủ tục thì hiển thông báo tăng số lượng thành công*/
+                })
+                .fail((jqXHR) => {
+                    if (jqXHR.status === 401)  {
+                        App.IziToast.showErrorAlert("Vui Lòng Đăng Nhập Để Xem Giỏ Hàng Của Bạn");
+                    }
+                    console.log(jqXHR);
+                })
+           }
+         })
+    }
+    doIncrease();
+
+    function doReduce(){
+        $('.quantity-down').on('click', function (){
+
+            let userId = $('.add_cart').attr('id');
+            let productId = $(this).data("id");
+            let quantity = $(`.input_${productId}`).val();  /*dữ quan tity lấy từ ID của product*/
+            let reduceValue = Number(quantity) -1;
+
+            let cartItemReduce = new CartItem();
+            let cart = new Cart();
+
+            if($.isNumeric(quantity)){ /*Hàm xác thực, nếu đúng với quy tắc của số, không có phẩy, cách kí tự đặt biệt, nếu đúng thì ta xử lí tiếp*/
+                cart.userId = userId;
+                cart.productId = productId;
+                cart.quantity = 1;
+
+                console.log(userId+"userId")
+                console.log(productId +"productId")
+                $.ajax({
+                    headers: {
+                        "accept": "application/json",
+                        "content-type": "application/json"
+                    },
+                    type: "POST",
+                    url: "http://localhost:8080/api/carts/reduce",
+                    data: JSON.stringify(cart)
+                })
+                    .done((data) => {
+                        console.log(data + "Dữ liệu data, để kiểm tra ")
+                        cartItemReduce = data.cartItemReduce;  /*Truyền vào data.cartItemReduce, result.put trả về "cartItemReduce" nên ta sử dụng để hứng được tất cả dữ liệu vừa được cập nhật lại*/
+
+                        $(`.input_${productId}`).val(cartItemReduce.quantity); /*giảm thành công thì hiển thị số lượng hiện tại ra nơi ô input*/
+
+
+                        /*Tổng tiền khi cập nhật lại(khi trừ số lượng xuống thành công)*/
+                        let grandTotal;
+                        grandTotal =  App.formatNumberSpace(cartItemReduce.cart.grandTotal)
+
+                        $('.cart--info--total span').text(`${grandTotal} đ`);  /*gán vào ô hiển thị tổng giá tiền vừa được giảm xuống xong, gán vào lại phẩn show tổng tiền này, vẽ lại giá trị cũ thành giá trị mới*/
+
+                        App.IziToast.showSuccessAlert(data.success)
+                    })
+                    .fail((jqXHR) => {
+                        if (jqXHR.status === 401)  {
+                            App.IziToast.showErrorAlert("Vui Lòng Đăng Nhập Để Xem Giỏ Hàng Của Bạn");
+                        }
+
+                        console.log(jqXHR);
+                    })
+            }
+        })
+    }
+
+    doIncrease();
+
+
+    //Hiển thị thông báo có muốn thoát ứng dụng không
+    $('#logOutListOrder').on('click', function (){
+        let confim = confirm("Bạn có chắc muốn thoát ứng dụng không!")
+        if(confim === true){
+
+            App.SweetAlert.showSuccessAlert("Đăng Xuất Thành Công")
+            setTimeout(function () {
+                window.location.href = "/login"
+            }, 2000);
+
+        }
+    })
+
 
 
 

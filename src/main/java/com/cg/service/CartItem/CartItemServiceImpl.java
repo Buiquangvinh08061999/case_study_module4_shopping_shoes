@@ -19,7 +19,9 @@ public class CartItemServiceImpl implements CartItemService{
         return cartItemRepository.findCartItemDTOByCartIdAndProductId(cartId, productId);
     }
 
-    /*Xử lí tìm cardId đã tồn tại chưa*/
+    /*Xử lí tìm cardId đã tồn tại chưa, và tìm tất cả thông tin của tất cả các trường, dựa theo cartId truyền vào */
+    /*show hiển thị, khi kích vào sẽ sổ ra thông tin, bao gồm tất cả các trường của nó, bao gồm giá tiền, ảnh, tên..vv */
+    /*Bước đẩu xử lí, truyền tham số userId vào trước, /api/carts/{id}, kiếm tra điều kiện, tìm tất cả các trường cartInfo theo userId, tìm ra được rồi. thì ta có cartInfo.get.getId, chính là id truyền vào ở phần dưới, để số tất cả thông tin cartItem ra/*/
     @Override
     public List<CartItemDTO> findCartItemDTOByCartId(Long cartId) {
         return cartItemRepository.findCartItemDTOByCartId(cartId);

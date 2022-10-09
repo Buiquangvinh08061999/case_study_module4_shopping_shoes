@@ -5,7 +5,6 @@ import lombok.*;
 import lombok.experimental.Accessors;
 
 import javax.persistence.*;
-import java.util.Date;
 import java.util.Set;
 
 
@@ -30,7 +29,7 @@ public class User extends BaseEntities {
     private String password;
 
     @Column(name = "full_name", nullable = false)
-    private String fullname;
+    private String fullName;
 
     private String phone;
 
@@ -46,6 +45,7 @@ public class User extends BaseEntities {
     @OneToOne
     @JoinColumn(name ="location_region_id" )
     private LocationRegion locationRegion;
+
 
     @ManyToOne
     @JoinColumn(name = "role_id")
@@ -66,7 +66,7 @@ public class User extends BaseEntities {
                 .setId(id)
                 .setUsername(username)
                 .setPassword(password)
-                .setFullname(fullname)
+                .setFullName(fullName)
                 .setUrlImage(urlImage)
                 .setPhone(phone)
                 .setCreatedAt(getCreatedAt())
@@ -80,13 +80,12 @@ public class User extends BaseEntities {
 
 
 
-
-
     @Override
     public String toString() {
         return "User{" +
                 "id=" + id +
                 ", username='" + username + '\'' +
+                ", fullName ='" + fullName + '\'' +
                 ", password='" + password + '\'' +
                 ", role='" + role + '\'' +
                 '}';

@@ -26,9 +26,10 @@ public class JwtService {
 
         return Jwts.builder()
                 .setSubject((userPrincipal.getUsername()))
+//                .set
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + JWT_TOKEN_VALIDITY * 60 * 60 ))
-                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+                .signWith(SignatureAlgorithm.HS256,  SECRET_KEY)
                 .compact();
     }
 
@@ -47,9 +48,9 @@ public class JwtService {
         } catch (IllegalArgumentException e) {
             logger.error("JWT claims string is empty -> Message: {0}", e);
         }
-
         return false;
     }
+
 
     public String getUserNameFromJwtToken(String token) {
         return Jwts.parser()
@@ -57,6 +58,7 @@ public class JwtService {
                 .parseClaimsJws(token)
                 .getBody().getSubject();
     }
+
 
 }
 

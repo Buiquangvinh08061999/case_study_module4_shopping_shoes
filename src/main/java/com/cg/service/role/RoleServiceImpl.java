@@ -1,6 +1,7 @@
 package com.cg.service.role;
 
 import com.cg.model.Role;
+import com.cg.model.dto.RoleDTO;
 import com.cg.repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,4 +46,24 @@ public class RoleServiceImpl implements IRoleService{
     public Role findByName(String name) {
         return roleRepository.findByName(name);
     }
+
+
+    @Override
+    public List<RoleDTO> findAllRoleDTO() {
+        return roleRepository.findAllRoleDTO();
+    }
+
+    /*hàm existsById đã có trong repo, những hàm ở dưới phải được viết ở RoleRepo*/
+    @Override
+    public Boolean existsById(Long id) {
+        return roleRepository.existsById(id);
+    }
+
+    @Override
+    public Boolean existsByCode(String code) {
+        return roleRepository.existsByCode(code);
+    }
+
+
+
 }

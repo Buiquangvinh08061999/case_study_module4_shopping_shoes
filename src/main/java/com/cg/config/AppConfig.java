@@ -32,9 +32,11 @@ import java.util.Properties;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan("com.cg")
+@ComponentScan("com.cg")/**/
 @EnableTransactionManagement
-@EnableJpaRepositories("com.cg.repository")
+
+@EnableJpaRepositories("com.cg.repository")/*Sử dụng Annotation này để kích hoạt repository*/
+
 @EnableSpringDataWebSupport
 
 public class AppConfig implements WebMvcConfigurer, ApplicationContextAware {

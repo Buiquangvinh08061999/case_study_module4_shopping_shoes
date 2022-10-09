@@ -32,10 +32,12 @@ public class LocationRegionServiceImpl implements LocationRegionService{
         return null;
     }
 
+    /*save location*/
     @Override
     public LocationRegion save(LocationRegion locationRegion) {
         return locationRegionRepository.save(locationRegion);
     }
+
 
     @Override
     public void remove(Long id) {

@@ -1,5 +1,6 @@
 package com.cg.model;
 
+import com.cg.model.dto.OrderDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,13 +28,9 @@ public class Order extends BaseEntities{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
     @CreationTimestamp
     @Column(name = "order_date")
     private Date orderDate;
-
-    @Column(name = "delivery_date")
-    private String deliveryDate;
 
     @Digits(integer = 12, fraction = 0)
     @Column(name = "grand_total")
@@ -53,10 +50,24 @@ public class Order extends BaseEntities{
     private Set<OrderItem> orderItems;
 
 
-    @OneToOne
-    @JoinColumn(name ="location_region_delivery_id", nullable = false)
-    private LocationRegionDelivery locationRegionDelivery;
+
+    /*Trường mới tạo, trạng thái của order(4 trạng thái)*/
+    @ManyToOne
+    @JoinColumn(name = "order_status_id")
+    private OrderStatus orderStatus;
 
 
 
+
+
+    public OrderDTO toOrderDTO(){
+        return new OrderDTO()
+                .setUserId(String.valueOf(user.getId()))
+                .setId(id)
+                .setGrandTotal(grandTotal)
+                .setOrderDate(orderDate)
+                .setUser(user.toUserDTO())
+                .setOrderStatus(orderStatus.toOrderStatusDTO());
+
+    }
 }

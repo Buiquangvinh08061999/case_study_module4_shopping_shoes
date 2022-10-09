@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
-<head>
 
+<head>
     <title>Title</title>
     <th:block th:replace="/layout/head_1 :: head_1"/>
-    <link rel="stylesheet" href="/assets/css/bootstrap.minb.css">
-
+    <link rel="stylesheet" href="/assets/css/bootstrap.minTwo.css">
 
 
 </head>
@@ -52,16 +51,53 @@
                     </div>
                 </div>
 
+<!--                <div class="row">-->
+<!--                    <div class="col-10 d-none d-sm-block" style="margin-bottom: 20px">-->
+<!--                        <form class="form-inline" action="/select/ListUser/search">-->
+<!--                            <input class="form-control col-3 mr-sm-2" type="search" placeholder="Search" aria-label="Search" id="searchUser2" name="keyword2">-->
+<!--                            <button class="btn btn-primary" id="btn-search2" type="submit"> <i class="fas fa-search"></i></button>-->
+<!--                        </form>-->
+<!--                    </div>-->
+<!--                </div>  &lt;!&ndash;end 2&ndash;&gt;-->
+
                 <div class="row">
-                    <div class="col-10">
+                    <div class="col-9">
                         <h1>List of user</h1>
                     </div>
-                    <div class="col-2 create">
-                            <button type="button" class="btn btn-success create-modal"> Create User</button>
+
+                    <div class="col-3 create">
+                        <button type="button" class="btn btn-success create-modal"> Create User</button>
+                        <button type="button" class="btn btn-primary create-role"> Create Role</button>
+                    </div>
+
+                </div>
+
+                    <div class="row">
+                        <div class="col-5" style="font-size: 20px">
+                            <p><i class="mdi mdi-gift mdi-24px"></i>Tổng danh sách người dùng: <span name="span" id="span_count" style="color: #e24949"></span></p>  <!--giá trị data.id, số lượng , sẽ được truyền vào thẻ span có id tương ứng-->
+                        </div>
+
+                        <div class="col-5">
+                            <b>Sắp xếp theo:</b>
+                            <select id="select" name="select" style="padding: 5px; border-radius: 5px">
+                                <option value="value_default">Thứ tự mặc định</option>
+                                <option value="value_sort_asc_id">Sắp xếp ID tăng dần</option>
+                                <option value="value_sort_desc_id">Sắp xếp ID giảm dần</option>
+                                <option value="value_sort_asc_username">Sắp xếp Tên tài khoản từ A->Z</option>
+                                <option value="value_sort_desc_username">Sắp xếp Tên tài khoản từ Z->A</option>
+                                <option value="value_sort_asc_fullName">Sắp xếp Họ và Tên từ A->Z</option>
+                                <option value="value_sort_desc_fullName">Sắp xếp Họ và Tên từ Z->A</option>
+                            </select>
+                        </div>
+
+
+                        <div class="col-2 create">
+                            <a href="/select/ListHistoryUser" class="btn btn-primary"><span>History User</span></a>
+                        </div>
                     </div>
 
                     <table id="tbListUsers" class="table table-hover table-bordered" style="text-align: center">
-                        <thead>
+                        <thead style="background-color: #505d7f; color: white">
                             <tr>
                                 <th>#</th>
                                 <th>Id</th>
@@ -79,7 +115,12 @@
                         <tbody>
 
                         </tbody>
+
                     </table>
+
+                    <div id="search_fail">
+                        <!--Chỗ này để nhận lỗi, tìm kiếm rỗng, không có kết quả, lỗi sẽ được nhận ở đây -->
+                    </div>
 
                 </div>
             </div>
@@ -94,11 +135,13 @@
 
  <div class="footer" style="position: fixed; right: 0; bottom: 0">
 
-
  </div>
 
 
  <th:block th:replace="/user/modal_create :: modal_create"/>
+
+ <th:block th:replace="/user/modal_create_role :: modal_create_role"/>
+
 
  <th:block th:replace="/user/modal_update :: modal_update"/>
 
@@ -124,6 +167,12 @@
          clearInput()
      })
 
+     /*Mở tab thêm mới role ra khi kích vào nút ta sử dụng*/
+     $('.create-role').on('click', function (){
+         $('#modalCreateRole').modal('show')
+     })
+
+
      //Hiển thị thông báo có muốn thoát không
      $('#logout').on('click', function (){
          let confim = confirm("Bạn có chắc muốn thoát ứng dụng không!")
@@ -131,23 +180,25 @@
 
              App.SweetAlert.showSuccessAlert("Đăng Xuất Thành Công")
              setTimeout(function () {
-                 window.location.href = "/"
-             }, 3000);
+                 window.location.href = "/login"
+             }, 2000);
 
          }
      })
      /*Khi click vào hiển thị thanh edit và delete*/
      function handleShowFooter() {
          $('#tbListUsers tbody tr').on('click', function () {
-             /*Trỏ theo id của từng thằng để lấy ra thông tin update*/
+
+             /*Trỏ theo user id của từng thằng để lấy ra thông tin update, phương thức $(this).attr("id") lấy id# ra*/
             let id = $(this).attr("id")
 
-             /*Trỏ theo id của từng thằng để lấy ra thông tin update*/
+             /*Trỏ theo id của từng thằng để lấy ra thông tin update, xóa thằng đứng trước ad là tr_, về rỗng. để nó chỉ hiện id*/
              userId = id.replace("tr_", "");
 
              console.log(userId);
 
              $("#tbListUsers tbody tr td span").removeClass("selected").addClass("unselected");
+
              $(`#${id} span`).removeClass("unselected").addClass("selected");
 
              let temFooter = $.validator.format($.trim($('#tempFooter').val().toString()))
@@ -159,6 +210,15 @@
 
              handleConfirmDelete()
 
+             handleRemove();/*remove ô hiển thị các nút chức năng, và xóa đi tích xanh hiển thị theo id của nó*/
+
+         })
+     }
+     /*Xử lí ẩn các nút đó đi, và ẩn luôn tích xanh , thân thiện với người dùng*/
+     function handleRemove() {
+         $('button.remove').on('click', function () {
+             $('.footer').html("") /*Phím cho phép tắt Các nút chức năng đi, tránh để nó hiển thị mãi*/
+             $("#tbListUsers tbody tr td span").removeClass("selected").addClass("unselected"); /*Xóa dòng đó đi, thì cũng ẩn đi tích xanh của id đó luôn*/
          })
      }
 
@@ -173,9 +233,10 @@
          })
              .done((data) => {
                  $.each(data.results, (i, item) => {
-                     let str = `<option value="${item.province_id}"> ${item.province_name} </option> `;
+                     let str = `<option value="${item.province_id}">${item.province_name}</option> `;
 
                      $('#province').prepend(str);
+
                      $('#provinceUp').prepend(str);
                  })
              })
@@ -250,6 +311,7 @@
              drawWards(districtId)
          })
      })
+
      $('#district').on('change', function () {
          let districtId = $('#district').val()
          drawWards(districtId)
@@ -263,6 +325,7 @@
              drawWards(districtId)
          })
      })
+
      $('#districtUp').on('change', function (){
          let districtId = $('#districtUp').val();
          drawWards(districtId)
@@ -279,6 +342,9 @@
              url: "http://localhost:8080/api/customers",
          })
          .done((data) => {
+             $('#span_count').html("")/*Mỗi lần sắp xếp lại, thì xóa đi giá trị đếm được của list sản phẩm để hiển thị lại, nếu không nó sẽ bị lặp lại*/
+             $('#tbListUsers tbody').html("");/**/
+             getAllCount();/*Hiển thị lại tổng danh sách*/
             $.each(data ,(i, item)=>{
                 user = item;
                 locationRegion = user.locationRegion;
@@ -290,7 +356,7 @@
                         <td>${user.id}</td>
                         <td><img src="/assets/img/${user.urlImage}" alt="" style="width: 90px; height:70px ; border-radius:50%"> </td>
                         <td>${user.username}</td>
-                        <td>${user.fullname}</td>
+                        <td>${user.fullName}</td>
                         <td>${user.phone}</td>
                         <td>${locationRegion.provinceName}</td>
                         <td>${locationRegion.districtName}</td>
@@ -312,56 +378,343 @@
      }
      getAllUser();
 
-
-
-     $('#btn-search').on('click', function (){
-         let keyword = $('#searchUser').val();
-         search(keyword);
-     })
-
-     function search(keyword){
+     /*Tạo mới danh mục đưa vào trong phần modal_create ở phần select*/
+     function getAllRole(){
          $.ajax({
              header: {
                  "accept": "application/json",
                  "content-type": "application/json"
              },
              type: "GET",
-             url: "http://localhost:8080/api/customers/search/" + keyword,
+             url: "http://localhost:8080/api/customers/role",
          })
          .done((data) => {
-             $('#tbListUsers tbody').html('')
+             $.each(data ,(i, item)=>{
+                 role = item;
 
+                 let str = `<option value="${role.id}">${role.code}</option>`;
+
+                 $('#role').append(str);/*đưa vào modal_create để hiển thị ra*/
+
+                 $('#roleUp').append(str);/*đưa vào modal_update để hiển thị ra*/
+             })
+         })
+         .fail((jqXHR) => {
+             console.log(jqXHR)
+         })
+     }
+     getAllRole();
+
+     function getAllCount(){
+         $.ajax({
+             header: {
+
+                 "accept": "application/json",
+                 "content-type": "application/json"
+             },
+             type: "GET",
+             url: "http://localhost:8080/api/customers/count",
+         })
+             .done((data) => {
+                 console.log(data.count +" tổng listUser")
+
+                 let str = `${data.count}`
+
+                 $('#span_count').prepend(str)
+
+             })
+             .fail((jqXHR) => {
+                 console.log(jqXHR)
+             })
+     }
+
+
+
+
+
+
+     /*Hàm sắp xếp sort tất cả các trường theo id, username. fullname .v.v*/
+     function getAllSortASCIdUser(){
+         $.ajax({
+             headers: {
+                 "accept": "application/json",
+                 "content-type": "application/json"
+             },
+             type: "GET",
+             url: "http://localhost:8080/api/customers/sortASCId",
+         })
+         .done((data) => {
+             $('#tbListUsers tbody').html("");
+             $.each(data ,(i, item)=>{
+                 user = item;
+                 locationRegion = user.locationRegion;
+                 role = user.role;
+
+                 let str =`
+                     <tr id="tr_${user.id}">
+                            <td><span id="span_${user.id}" class="select-tab unselected"></td>
+                            <td>${user.id}</td>
+                            <td><img src="/assets/img/${user.urlImage}" alt="" style="width: 90px; height:70px ; border-radius:50%"> </td>
+                            <td>${user.username}</td>
+                            <td>${user.fullName}</td>
+                            <td>${user.phone}</td>
+                            <td>${locationRegion.provinceName}</td>
+                            <td>${locationRegion.districtName}</td>
+                            <td>${locationRegion.wardName}</td>
+                            <td>${locationRegion.address}</td>
+                            <td>${role.code}</td>
+                     </tr>
+                `;
+
+                 $('#tbListUsers tbody').append(str);
+
+                 handleShowFooter();
+             })
+         })
+         .fail((jqXHR) => {
+             console.log(jqXHR)
+         })
+     }
+     function getAllSortDESCIdUser() {
+         $.ajax({
+             headers: {
+                 "accept": "application/json",
+                 "content-type": "application/json"
+             },
+             type: "GET",
+             url: "http://localhost:8080/api/customers/sortDESCId",
+         })
+         .done((data) => {
+             $('#tbListUsers tbody').html("");
              $.each(data, (i, item) => {
                  user = item;
                  locationRegion = user.locationRegion;
                  role = user.role;
+                 console.log(item);
+                 let str = `
+                     <tr id="tr_${user.id}">
+                            <td><span id="span_${user.id}" class="select-tab unselected"></td>
+                            <td>${user.id}</td>
+                            <td><img src="/assets/img/${user.urlImage}" alt="" style="width: 90px; height:70px ; border-radius:50%"> </td>
+                            <td>${user.username}</td>
+                            <td>${user.fullName}</td>
+                            <td>${user.phone}</td>
+                            <td>${locationRegion.provinceName}</td>
+                            <td>${locationRegion.districtName}</td>
+                            <td>${locationRegion.wardName}</td>
+                            <td>${locationRegion.address}</td>
+                            <td>${role.code}</td>
+                     </tr>
+                 `;
+                 $('#tbListUsers tbody').append(str);
+
+                 handleShowFooter();
+             })
+         })
+         .fail((jqXHR) => {
+             console.log(jqXHR)
+         })
+     }
+     function getAllSortASCUserName(){
+         $.ajax({
+             headers: {
+                 "accept": "application/json",
+                 "content-type": "application/json"
+             },
+             type: "GET",
+             url: "http://localhost:8080/api/customers/sortASCUserName",
+         })
+         .done((data) => {
+             $('#tbListUsers tbody').html("");
+             $.each(data, (i, item) => {
+                 user = item;
+                 locationRegion = user.locationRegion;
+                 role = user.role;
+                 console.log(item);
                  let str = `
                  <tr id="tr_${user.id}">
                         <td><span id="span_${user.id}" class="select-tab unselected"></td>
                         <td>${user.id}</td>
-                        <td><img src="/assets/img/${user.urlImage}" alt="" style="width: 90px ; height:70px ; border-radius:50%"></td>
+                        <td><img src="/assets/img/${user.urlImage}" alt="" style="width: 90px; height:70px ; border-radius:50%"> </td>
                         <td>${user.username}</td>
-                        <td>${user.fullname}</td>"
+                        <td>${user.fullName}</td>
                         <td>${user.phone}</td>
                         <td>${locationRegion.provinceName}</td>
                         <td>${locationRegion.districtName}</td>
                         <td>${locationRegion.wardName}</td>
                         <td>${locationRegion.address}</td>
                         <td>${role.code}</td>
-
                  </tr>
-                `;
-
-                 $('#tbListUsers tbody').prepend(str);
+                 `;
+                 $('#tbListUsers tbody').append(str);
 
                  handleShowFooter();
              })
          })
-
          .fail((jqXHR) => {
              console.log(jqXHR)
          })
      }
+     function getAllSortDESCUserName(){
+         $.ajax({
+             headers: {
+                 "accept": "application/json",
+                 "content-type": "application/json"
+             },
+             type: "GET",
+             url: "http://localhost:8080/api/customers/sortDESCUserName",
+         })
+             .done((data) => {
+                 $('#tbListUsers tbody').html("");
+                 $.each(data, (i, item) => {
+                     user = item;
+                     locationRegion = user.locationRegion;
+                     role = user.role;
+                     console.log(item);
+                     let str = `
+                         <tr id="tr_${user.id}">
+                                <td><span id="span_${user.id}" class="select-tab unselected"></td>
+                                <td>${user.id}</td>
+                                <td><img src="/assets/img/${user.urlImage}" alt="" style="width: 90px; height:70px ; border-radius:50%"> </td>
+                                <td>${user.username}</td>
+                                <td>${user.fullName}</td>
+                                <td>${user.phone}</td>
+                                <td>${locationRegion.provinceName}</td>
+                                <td>${locationRegion.districtName}</td>
+                                <td>${locationRegion.wardName}</td>
+                                <td>${locationRegion.address}</td>
+                                <td>${role.code}</td>
+                         </tr>
+                     `;
+                     $('#tbListUsers tbody').append(str);
+
+                     handleShowFooter();
+                 })
+             })
+             .fail((jqXHR) => {
+                 console.log(jqXHR)
+             })
+     }
+     function getAllSortASCFullName(){
+         $.ajax({
+             headers: {
+                 "accept": "application/json",
+                 "content-type": "application/json"
+             },
+             type: "GET",
+             url: "http://localhost:8080/api/customers/sortASCFullName",
+         })
+             .done((data) => {
+                 $('#tbListUsers tbody').html("");
+                 $.each(data, (i, item) => {
+                     user = item;
+                     locationRegion = user.locationRegion;
+                     role = user.role;
+                     console.log(item);
+                     let str = `
+                     <tr id="tr_${user.id}">
+                            <td><span id="span_${user.id}" class="select-tab unselected"></td>
+                            <td>${user.id}</td>
+                            <td><img src="/assets/img/${user.urlImage}" alt="" style="width: 90px; height:70px ; border-radius:50%"> </td>
+                            <td>${user.username}</td>
+                            <td>${user.fullName}</td>
+                            <td>${user.phone}</td>
+                            <td>${locationRegion.provinceName}</td>
+                            <td>${locationRegion.districtName}</td>
+                            <td>${locationRegion.wardName}</td>
+                            <td>${locationRegion.address}</td>
+                            <td>${role.code}</td>
+                     </tr>
+                     `;
+                     $('#tbListUsers tbody').append(str);
+
+                     handleShowFooter();
+                 })
+             })
+             .fail((jqXHR) => {
+                 console.log(jqXHR)
+             })
+     }
+     function getAllSortDESCFullName(){
+         $.ajax({
+             headers: {
+                 "accept": "application/json",
+                 "content-type": "application/json"
+             },
+             type: "GET",
+             url: "http://localhost:8080/api/customers/sortDESCFullName",
+         })
+             .done((data) => {
+                 $('#tbListUsers tbody').html("");
+                 $.each(data, (i, item) => {
+                     user = item;
+                     locationRegion = user.locationRegion;
+                     role = user.role;
+                     console.log(item);
+                     let str = `
+                     <tr id="tr_${user.id}">
+                            <td><span id="span_${user.id}" class="select-tab unselected"></td>
+                            <td>${user.id}</td>
+                            <td><img src="/assets/img/${user.urlImage}" alt="" style="width: 90px; height:70px ; border-radius:50%"> </td>
+                            <td>${user.username}</td>
+                            <td>${user.fullName}</td>
+                            <td>${user.phone}</td>
+                            <td>${locationRegion.provinceName}</td>
+                            <td>${locationRegion.districtName}</td>
+                            <td>${locationRegion.wardName}</td>
+                            <td>${locationRegion.address}</td>
+                            <td>${role.code}</td>
+                     </tr>
+                     `;
+                     $('#tbListUsers tbody').append(str);
+
+                     handleShowFooter();
+                 })
+             })
+             .fail((jqXHR) => {
+                 console.log(jqXHR)
+             })
+     }
+
+     /*end sort*/
+
+     /*Sự kiên select (on change), khi kích vào thì hiển thị sắp xếp theo trật tự, hàm getAll lấy các giá trị sắp xếp ra, và vẽ lại vào phần tbody*/
+     /*sau khi đã get các dữ liệu sort về, ta bắt đầu sử dụng vào thẻ select*/
+     $('#select').on('change', function (){
+         let value = $(this).val(); /*GHI NHỚ sử dụng this lấy tất cả giá trị value ra ở đấy là (tên value, (value_sort_asc_id..v.v)*/
+         console.log(value)
+         if(value ==('value_default')) {
+             getAllUser();
+             return;
+         }else if(value == ('value_sort_asc_id')){
+             getAllSortASCIdUser()
+             return;
+         }else if(value == ('value_sort_desc_id')){
+             getAllSortDESCIdUser()
+             return;
+         }else if(value == ('value_sort_asc_username')){
+             getAllSortASCUserName()
+             return;
+         }
+         else if(value == ('value_sort_desc_username')){
+             getAllSortDESCUserName()
+             return;
+         }
+         else if(value == ('value_sort_asc_fullName')){
+             getAllSortASCFullName()
+             return;
+         }
+         else if(value == ('value_sort_desc_fullName')){
+             getAllSortDESCFullName()
+             return;
+         }
+         else{
+             App.IziToast.showErrorAlert("Vui lòng không được chỉnh sửa các giá trị của value")
+             return;
+         }
+     })
+
+
 
 
      let btnCreateCustomer = $("#btnCreateCustomer");
@@ -376,7 +729,7 @@
          role.id = $('#role').val();
          role.code = $('#role :selected').text();
          user.username = $("#username").val();
-         user.fullname = $("#fullname").val();
+         user.fullName = $("#fullname").val();
          user.password = $("#ipnPassword").val();
          user.phone = $("#phone").val();
 
@@ -403,7 +756,7 @@
                         <td>${user.id}</td>
                         <td><img src="/assets/img/${user.urlImage}" alt=""style="width: 90px; height:70px ; border-radius:50%"></td>
                         <td>${user.username}</td>
-                        <td>${user.fullname}</td>
+                        <td>${user.fullName}</td>
                         <td>${user.phone}</td>
                         <td>${locationRegion.provinceName}</td>
                         <td>${locationRegion.districtName}</td>
@@ -416,12 +769,17 @@
                  $('#tbListUsers tbody').prepend(str);
 
                  App.SweetAlert.showSuccessAlert("Tạo Mới Thành Công")
+
                  unbindAll();
                  $('#modalCreateUser').modal('hide')
 
                  clearInput();
 
                  handleShowFooter();
+
+                 /*Khi tạo thành công xóa đi giá cũ, đưa giá trị biến đếm vào để hiển thị tổng danh sách hiện tại*/
+                 $('#span_count').html("")
+                 getAllCount()
              })
              .fail((jqXHR) => {
                  console.log(jqXHR)
@@ -439,14 +797,12 @@
                      window.location.href = "/select/403"
                  }
 
-
                  if (jqXHR.responseJSON.message) {
                      let msg = jqXHR.responseJSON.message;
 
-                     let str = `<label id="message-error" class="error" for="message">${msg}</label>`;
+                     let str = `<label id="message-error" class="error" for="message"> ${msg} </label>`;
 
                      $('#modalCreateUser .modal-alert-danger').append(str);
-
 
                  }else if (jqXHR.responseJSON) {
                      $.each(jqXHR.responseJSON, (key, item) => {
@@ -458,10 +814,71 @@
 
              })
      });
+     /*Tạo mới danh mục, khi thành công, nó đã hiển thị bên Phần lựa chọn danh mục ở getAllRole()*/
+     let btnCreateRole = $('#btnCreateRole');
+     btnCreateRole.on('click', function (){
+         role.code = $('#roleCode').val();
+         $.ajax({
+             headers: {
+                 "accept": "application/json",
+                 "content-type": "application/json"
+             },
+             "type": "POST",
+             "url": "http://localhost:8080/api/customers/role/create",
+             "data": JSON.stringify(role)
+         })
+         .done((data) => {
+             role = data;
+             console.log(data)
+
+             let str = `<option value="${role.id}">${role.code}</option>`;
+
+             $('#role').append(str); /*Khi thành công thì vẽ lại trong modal_create giá trị đó vào luôn, Ta không load lại trang 1 lần nữa*/
+
+             $('#roleUp').append(str); /*Khi thành công thì vẽ lại modal_update giá trị đó vào luôn, Ta không load lại trang 1 lần nữa*/
+
+             App.SweetAlert.showSuccessAlert("Tạo Mới Danh Mục Thành Công")
+
+             $('#modalCreateRole').modal('hide')
+
+             clearInputRole();
+
+         })
+
+         .fail((jqXHR) => {
+             console.log(jqXHR)
+             $('#modalCreateRole .modal-alert-danger').html('').addClass('show').removeClass('hide')
+
+             let str = '';
+             if (jqXHR.responseText) {
+                 if (jqXHR.responseJSON.message) {
+                     let msg = jqXHR.responseJSON.message;
+                     str += `<label class="error" for="message"> ${msg} + 'top'</label>`;
+                 }
+                 else {
+                     /*Lặp hết tất cả các lỗi nằm ở phía title thì thông báo lỗi, message ở trên là lỗi đơn xử lí ở api/products/category/create */
+                     let data = jqXHR.responseJSON;
+                     // console.log(data)
+                     $.each(data, (key, value) => {
+                         str += `<label class="error" for="message"> ${value} + 'vinh'</label>`;
+                     })
+                 }
+             }
+
+                 $('#modalCreateRole .modal-alert-danger').append(str);
+
+         })
+
+     })
+
 
      /*Clear mới tất cả khi thêm mới*/
      function clearInput(){
          $("#frmCreateCustomer input").val("");
+     }
+
+     function clearInputRole(){
+         $("#frmCreateRole input").val("");
      }
 
      function unbindAll() {
@@ -485,9 +902,11 @@
                      role = user.role;
 
                      $('#usernameUp').val(user.username);
-                     $('#fullnameUp').val(user.fullname);
-                     $('#phoneUp').val(user.phone);
+                     $('#fullnameUp').val(user.fullName);
 
+                     // $('#ipnPasswordUp').val("");/*Tại vì mật khẩu đã bị mã hóa nên khi sổ ra dựa theo id, thì ta cho về chuỗi rỗng hết tất cả các ô*/
+
+                     $('#phoneUp').val(user.phone);
 
                      $('#provinceUp').val(locationRegion.provinceId);
 
@@ -499,6 +918,8 @@
                          });
                      });
 
+                     $('#roleUp').val(role.id); /*Khi update lại,Trong thằng User(id=1) chứa Role thì ta chỉ cần truyền vào RoleId, vào value option id của nó, Thì tự động nó sẽ hiển thị tên theo Id của nó Role của nó*/
+
                      $('#addressUp').val(locationRegion.address);
 
                      $('#modalUpdateUser').modal('show')
@@ -508,8 +929,9 @@
 
          })
      }
-        /*Khi cập thì dùng thuộc tính replaceWith để sửa lại các thông tin */
+     /*Khi cập thì dùng thuộc tính replaceWith để sửa lại các thông tin */
      $('#btnUpdateUser').on('click',()=>{
+
              locationRegion.provinceId = $('#provinceUp').val();
              locationRegion.provinceName = $('#provinceUp :selected').text();
              locationRegion.districtId = $('#districtUp').val();
@@ -518,13 +940,14 @@
              locationRegion.wardName = $('#wardUp :selected').text();
              locationRegion.address = $('#addressUp').val();
 
-             role.id = $('#role').val();
-             role.code = $('#role :selected').text();
+             role.id = $('#roleUp').val();
+             role.code = $('#roleUp :selected').text();
 
              user.id = userId;
 
              user.username = $("#usernameUp").val();
-             user.fullname = $("#fullnameUp").val();
+             user.fullName = $("#fullnameUp").val();
+             // user.password = $("#ipnPasswordUp").val();
              user.phone = $("#phoneUp").val();
 
              user.locationRegion = locationRegion;
@@ -550,7 +973,7 @@
                                 <td>${user.id}</td>
                                 <td><img src="/assets/img/${user.urlImage}" alt="" style="width: 90px; height:70px ; border-radius:50%"> </td>
                                 <td>${user.username}</td>
-                                <td>${user.fullname}</td>
+                                <td>${user.fullName}</td>
                                 <td>${user.phone}</td>
                                 <td>${locationRegion.provinceName}</td>
                                 <td>${locationRegion.districtName}</td>
@@ -562,7 +985,7 @@
 
                      currentRow.replaceWith(str)
 
-                     App.SweetAlert.showSuccessAlert("Cập Nhật Thành Công")
+                     App.SweetAlert.showSuccessAlert("Cập Nhật Thông Tin Thành Công")
 
                      unbindAll();
                      $('#modalUpdateUser').modal('hide');
@@ -592,7 +1015,6 @@
 
                          $('#modalUpdateUser .modal-alert-danger').append(str);
 
-
                      }else if (jqXHR.responseJSON) {
                          $.each(jqXHR.responseJSON, (key, item) => {
                              let str = `<label id="${key}-error" class="error" for="${key}"> ${item} </label>`;
@@ -621,7 +1043,7 @@
                  role = user.role;
 
                  $('#usernameDet').text(user.username)
-                 $('#fullnameDet').text(user.fullname)
+                 $('#fullnameDet').text(user.fullName)
                  $('#phoneDet').text(user.phone)
                  $('#provinceDet').text(user.locationRegion.provinceName)
                  $('#districtDet').text(user.locationRegion.districtName)
@@ -645,6 +1067,62 @@
          })
      }
 
+     /*lấy giá trị keySearch từ giá trị ta nhập vào ô input, ta .val() để gán lại giá trị đó vào*/
+     $('#btn-search').on('click', function (){
+         let keySearch = $('#searchUser').val();
+         search(keySearch);
+     })
+
+     function search(keySearch){
+         let obj = {
+             "keySearch": keySearch
+         }
+         $.ajax({
+             headers: {
+                 "accept": "application/json",
+                 "content-type": "application/json; charset=utf-8"
+             },
+             type: "POST",
+             url: "http://localhost:8080/api/customers/search",
+             data: JSON.stringify(obj)
+         })
+             .done((data) => {
+                 $('#tbListUsers tbody').html('')
+                 $('#search_fail').html('')/*lỗi về lại rỗng, để nó không hiển thị nữa*/
+                 $.each(data, (i, item) => {
+                     user = item;
+                     locationRegion = user.locationRegion;
+                     role = user.role;
+                     let str = `
+                         <tr id="tr_${user.id}">
+                                <td><span id="span_${user.id}" class="select-tab unselected"></td>
+                                <td>${user.id}</td>
+                                <td><img src="/assets/img/${user.urlImage}" alt="" style="width: 90px ; height:70px ; border-radius:50%"></td>
+                                <td>${user.username}</td>
+                                <td>${user.fullName}</td>"
+                                <td>${user.phone}</td>
+                                <td>${user.provinceName}</td>
+                                <td>${user.districtName}</td>
+                                <td>${user.wardName}</td>
+                                <td>${user.address}</td>
+                                <td>${user.code}</td>
+                         </tr>
+                     `;
+
+                     $('#tbListUsers tbody').prepend(str);
+
+                     handleShowFooter();
+                 })
+             })
+
+             .fail((jqXHR) => {
+                 console.log(jqXHR)
+                 console.log(jqXHR)
+                 $('#tbListUsers tbody').html('')/*list product phải trả về rỗng, nếu không lỗi và sản phẩm sẽ hiển thị*/
+                 $('#search_fail').html('')/*lỗi về rỗng, sau đó mới thực thi lỗi mới được thêm*/
+                 $('#search_fail').prepend(`<h3 style="color: #740b0bd4">${jqXHR.responseJSON.message}</h3>`); /*Lỗi tìm kiếm rỗng sẽ đưa vào phần tbody này để hiển thị lỗi*/
+             })
+     }
 
 
      /*Hàm xóa mềm theo id,*/
@@ -665,7 +1143,12 @@
                         .done((data) => {
                             $('#tr_' + userId).remove();
                             App.SweetAlert.showSuccessAlert("Xóa Thành Công")
+
+                            /*Khi xóa thành công thì hiển thị lại tổng số sản phẩm lại*/
+                            $('#span_count').html("")
+                            getAllCount()
                         })
+
                         .fail((jqXHR) => {
 
                             if (jqXHR.status === 403) {
@@ -674,24 +1157,33 @@
 
                             App.SweetAlert.showErrorAlert('Xóa thất bại');
 
-                            });
-
-
+                        });
                     }
                 })
           })
     }
 
 
-
-
-
+     /*modal_create*/
      const ipnElement = document.querySelector('#ipnPassword')
      const btnElement = document.querySelector('#btnPassword')
      btnElement.addEventListener('click', function () {
          const currentType = ipnElement.getAttribute('type')
 
          ipnElement.setAttribute(
+             'type',
+             currentType === 'password' ? 'text' : 'password'
+         )
+     })
+
+
+     /*modal_update*/
+     const ipnElementUp = document.querySelector('#ipnPasswordUp')
+     const btnElementUp = document.querySelector('#btnPasswordUp')
+     btnElementUp.addEventListener('click', function () {
+         const currentType = ipnElementUp.getAttribute('type')
+
+         ipnElementUp.setAttribute(
              'type',
              currentType === 'password' ? 'text' : 'password'
          )

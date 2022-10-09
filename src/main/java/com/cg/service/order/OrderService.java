@@ -14,12 +14,10 @@ import java.util.Optional;
 
 public interface OrderService extends IGeneralService<Order> {
 
-    /*Anh Phước chạy cái doCreaterOder này thôi nhé, Phần dưới của trang admin làm đang bị lỗi chưa chạy*/
+    /*Phần quan trọng xử lí order, tất cả trường cart, cartItem , sẽ qua order, OrderItem*/
     Order doCreateOrder(OrderDTO orderDTO, CartInfoDTO cartInfoDTO);
 
 
-
-    
 
     /*đã sử dùng được, lấy các trường oderItem(id), oder_id, user_id*/
     List<OrderItemDTO> findAllOrderItemDTO();
@@ -30,6 +28,26 @@ public interface OrderService extends IGeneralService<Order> {
 
     List<OrderDTO> findAllOrderDTO();/*Lay tất cả các trường order, bao gồm cả user nằm trong order*/
 
+    /*Hàm đếm số lượng*/
+
     /*Đếm tổng số lượng đơn hàng có trong order ra */
     CountDTO findAllCount();
+
+    /*Đếm tổng số lượng đơn, dựa theo orderStatus.id = 1 (Đang chờ duyệt, hiển thị đơn đang chờ duyệt)*/
+    CountDTO findAllCountOrderStatus1();
+
+    /*Đếm tổng số lượng đơn, dựa theo orderStatus.id = 1 (Đang giao hàng, hiển thị đơn đang giao hàng)*/
+    CountDTO findAllCountOrderStatus2();
+
+    /*Đếm tổng số lượng đơn, dựa theo orderStatus.id = 1 (Đang giao hàng, hiển thị đơn đang giao hàng)*/
+    CountDTO findAllCountOrderStatus3();
+
+    /*Đếm tổng số lượng đơn, dựa theo orderStatus.id = 1 (Đang chờ duyệt, hiển thị đơn đang chờ duyệt)*/
+    CountDTO findAllCountOrderStatus4();
+
+
+    /*Phần này của orderItem, đếm số lượng sản phẩm*/
+    CountDTO findAllCountOrderItemByOrderId(long id);
+
+
 }

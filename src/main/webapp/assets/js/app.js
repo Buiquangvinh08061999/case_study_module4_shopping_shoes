@@ -1,4 +1,5 @@
-class App {
+
+class App{
     static SweetAlert = class {
         static showSuccessAlert(t) {
             Swal.fire({
@@ -54,6 +55,7 @@ class App {
                 message: m,
             });
         }
+
         static showSuccessAlert(m) {
             iziToast.success({
                 title: 'Success',
@@ -61,6 +63,7 @@ class App {
                 message: m,
             });
         }
+
     }
 
     static formatNumberSpace(x) {
@@ -69,7 +72,10 @@ class App {
         }
         return x.toString().replace(/ /g, "").replace(/\B(?=(\d{3})+(?!\d))/g, " ");
     }
+
 }
+
+
 
 class LocationRegion {
     constructor(id, provinceId, provinceName, districtId, districtName, wardId, wardName, address) {
@@ -164,23 +170,30 @@ class Order {
 }
 
 class OrderItem {
-    constructor(id, title, price, quantity,totalPrice, order) {
+    constructor(id, title, price, quantity,totalPrice, urlImage, order) {
         this.id = id;
         this.title = title;
         this.price = price;
         this.quantity = quantity;
         this.totalPrice = totalPrice;
+        this.urlImage = urlImage;
         this.order = order;
     }
 }
 
 class OrderTest { /*day la order*/
-    constructor(id, grandTotal,createdAt, user) {
+    constructor(id, grandTotal, orderDate, user, orderStatus) {
         this.id = id;
         this.grandTotal = grandTotal;
-        this.createdAt = createdAt;
+        this.orderDate = orderDate;
         this.user = user;
+        this.orderStatus = orderStatus;
     }
 }
 
-
+class OrderStatus{
+    constructor(id , title) {
+        this.id = id;
+        this.title = title;
+    }
+}

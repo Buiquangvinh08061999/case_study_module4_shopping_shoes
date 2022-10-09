@@ -46,8 +46,10 @@ public class CartRestController {
     @Autowired
     private CartItemService cartItemService;
 
+
     /*tìm id trong ở userId, ở bên phần ajax ta đã tìm ra id của khách hàng đang mua sản phẩm,*/
     /*trong phần cart(cartInfo) có chứa userId, ta tìm userId ở đó, nếu tồn tại , vượt qua trả về 1 list trong cartItem(Các trường của nó) */
+    /*xử lí ở phần show_cart các thông tin của trường  theo userId đã truyền vào,*/
     @GetMapping("/{id}")
     public ResponseEntity<?> getAllCartItem(@PathVariable long id) {
 
@@ -56,7 +58,7 @@ public class CartRestController {
         if (!userDTO.isPresent()) {
             throw new ResourceNotFoundException("Không Tìm Thấy Người Dùng");
         }
-
+        /*Kiểm tra trong phần cartInfo, có userId, truyền vào kiểm tra có tồn tại id đó không, Ví dụ đăng nhập vào id 1, thì nó sẽ vượt qua bước đầu, vượt qua bước này luôn*/
         Long userId = userDTO.get().getId();
         Optional<CartInfoDTO> cartInfoDTO = cartService.findCartInfoDTOByUserId(userId);
 
@@ -67,17 +69,19 @@ public class CartRestController {
             return new ResponseEntity<>(result, HttpStatus.OK);
         }
 
-        /*Tìm thấy Id CartInfoDTO có tồn tại, thì truyền vào cart Item để kiểm tra, nếu có thì thực hiện thành công*/
-        /*CartInfoDTO là thằng cartDTO, tìm thấy id của nó tồn tại, thì gán vào, Trong CartItem có trường chứa trường cartid, nên phải lấy nó để truyền vào để so sánh khớpk không*/
+        /*Tìm thấy Id CartInfoDTO có tồn tại, thì truyền vào cartItem để kiểm tra, nếu có thì thực hiện thành công*/
+        /*CartInfoDTO là thằng cartDTO, tìm thấy id của nó tồn tại, thì gán vào, Trong CartItem có trường chứa trường cartid, nên phải lấy nó để truyền vào để so sánh khớp không, Từ cartItem nó lấy được cartId, thì sẽ lấy được luôn userId nằm trong phần cartId đó*/
         Long cartId = cartInfoDTO.get().getId();
 
-        /*gán vào thằng CartItemDTO, nếu có tồn tại, thì ta sẽ return về tất các trường nằm trường CartItemDTO(title,url, price, totalPrice..v.v) */
+        /*Gán vào thằng CartItemDTO, nếu có tồn tại, thì ta sẽ return về tất các trường nằm trường CartItemDTO(title,url, price, totalPrice..v.v, lấy được tổng tiền ra, ta xử lí bên ajax để lấy số tiền đó ra và hiển thị) */
         List<CartItemDTO> cartItemDTOList = cartItemService.findCartItemDTOByCartId(cartId);
 
         return new ResponseEntity<>(cartItemDTOList, HttpStatus.OK);
 
     }
 
+    /*Phần add này được truyền vào 3 giá trị ở listOrder, đã tìm ra id(user) id(product), ta truyền vào để có lấy tất cả thông tin của user và product ra,rồi kiểm tra tiếp, có truyền vào userId,productId,quantity(1)*/
+    /*Khi add cart chỉ cần truyền vào userId, và productId, product để cho cartItem set các thuộc tính qua nó, để giỏ hàng chứa thông tin sản phẩm, còn user được đẩy vào thằng cart*/
     @PostMapping("/add")
     public ResponseEntity<?> addCart(@Valid @RequestBody CartDTO cartDTO, BindingResult bindingResult) {
 
@@ -97,14 +101,14 @@ public class CartRestController {
             throw new ResourceNotFoundException("Không Tìm Thấy ID Sản phẩm");
         }
 
-        /*Tìm lấy id của userDTO ra , để so sánh có khớp với thông tin của id khách hàng trong thằng cartInfoDTO không, nó có chưa trường user*/
+        /*Tìm lấy id của userDTO ra , để so sánh có khớp với thông tin của id khách hàng trong thằng cartInfoDTO không, nó có chưa trường user, tìm thằng cart theo userId, sẽ sổ tất cả các trường, bao gồm Tổng tiền hiện tại, để ta tính toán tiếp*/
         Long userId = userDTO.get().getId();
 
         Optional<CartInfoDTO> cartInfoDTO = cartService.findCartInfoDTOByUserId(userId);
 
         String quantity = cartDTO.getQuantity();
 
-        BigDecimal price = new BigDecimal(Long.parseLong(productDTO.get().getPrice()));
+        BigDecimal price = new BigDecimal(Long.parseLong(productDTO.get().getPrice())); /*Lấy giá tiền chính của nó, nếu có cập nhật thì nó sẽ tự động nhân số tiền hiện tại, không bị thiệt hại cho admin*/
 
         /*Hàm nhân giá với số lượng để tính ra tổng tiền */
         BigDecimal grandTotal = price.multiply(new BigDecimal(Long.parseLong(quantity)));
@@ -120,19 +124,21 @@ public class CartRestController {
 
         /*Nếu giỏ hàng chưa tồn tại thì ta tiến hành Tạo giỏ hàng cho nó*/
         if (!cartInfoDTO.isPresent()) {
-
             cart.setUser(userDTO.get().toUser());
-            cart.setGrandTotal(grandTotal);/*Tổng tiền truyền vào cart*/
+            cart.setGrandTotal(grandTotal);/*Tổng tiền tính được ở trên truyền vào cart*/
 
             cartItem = new CartItem();
             cartItem.setPrice(price);/*Hiển thị giá*/
             cartItem.setQuantity(Integer.parseInt(quantity));/*Hiển thị số lượng*/
             cartItem.setTitle(productDTO.get().getName());
             cartItem.setTotalPrice(grandTotal);/*Tổng tiền*/
+
+            cartItem.setUrlImage(productDTO.get().getUrlImage());
+
             cartItem.setProduct(productDTO.get().toProduct());
 
             try {
-                /*Vượt qua các điều kiện thì thực hiện thành công*/
+                /*Vượt qua các điều kiện thì thực hiện thành công, các giá trị của cart và cartItem đã được tạo ra*/
                 cartService.addNewCart(cart, cartItem);
                 successFirst = "Tạo Mới Giỏ Hàng Thành Công";
                 success = "Thêm Sản Phầm Thành Công";
@@ -158,6 +164,7 @@ public class CartRestController {
                 System.out.println(name);
                 cartItem.setTitle(name);
                 cartItem.setTotalPrice(grandTotal);/*Tổng tiền*/
+                cartItem.setUrlImage(productDTO.get().getUrlImage()); /*lấy ảnh*/
                 cartItem.setProduct(productDTO.get().toProduct());/*cartItem có chưa product,  setProduct*/
 
                 cart = cartInfoDTO.get().toCart();/*cartItem có chưa cart,lấy ra để setCart*/
@@ -171,16 +178,16 @@ public class CartRestController {
                 } catch (DataInputException e) {
                     throw new DataInputException("Liên Hệ Chủ Cửa Hàng Để Được Giải Quyết");
                 }
-                return new ResponseEntity<>(result, HttpStatus.CREATED);
+                return new ResponseEntity<>(result,  HttpStatus.CREATED);
 
             } else {
-
+                /*Tức là sản phẩm đã có trong giỏ hàng, khi ta click vào thêm giỏ hàng tại sản phẩm ấy, thì nó phải + số lượng lên 1, giá TotalPrice cộng lại với grand đã tính ở trên để cộng lại trong cartItem, còn giá price là bất biến mặc định không thay đổi,  chỉ cần set lại cái CartItem chứa sản phẩm đó là được*/
                 cartItem = cartItemDTO.get().toCartItem();
                 cartItem.setQuantity(cartItem.getQuantity() + Integer.parseInt(quantity));
                 cartItem.setTotalPrice(cartItem.getTotalPrice().add(grandTotal));
 
                 cart = cartInfoDTO.get().toCart();
-                cart.setGrandTotal(cart.getGrandTotal().add(grandTotal));
+                cart.setGrandTotal(cart.getGrandTotal().add(grandTotal)); /*lấy tổng tiền của cart + thêm tiền của sản phẩm product đã tính ra (số lượng 1 nhân với giá trong cartItem), kết quả chính xác*/
 
                 try {
                     cartService.updateProductByCart(cart, cartItem);
@@ -191,14 +198,17 @@ public class CartRestController {
                 }
             }
         }
+
         return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 
     /*xóa theo id sản phẩm(product)(khi xóa vẫn tính lại tổng tiền còn lại của nó)*/
     /*ở ajax, ta cũng phải tìm ra uerId và producId, để thực hiện thao tác xóa đi sản phẩm*/
+    /*Phần xóa này được truyền vào 3 giá trị ở listOrder,i hệt kiểm tra như phần add, đã tìm ra id(user) id(product), ta truyền vào để có lấy tất cả thông tin của user và product ra,rồi kiểm tra tiếp, có truyền vào userId,productId,quantity(0)*/
+
     @PostMapping("/remove-cart-item")
     public ResponseEntity<?> doRemoveCartItem(@Valid @RequestBody CartDTO cartDTO, BindingResult bindingResult) {
-
+        /*hàm xóa, kiểm tra điều kiện i hệt phần api/carts/add, có userId, productId, quantity, từ phần cart(cart.userid..v.v) được gán vào các giá trị userid, productid vào*/
         new CartDTO().validate(cartDTO, bindingResult);
 
         if (bindingResult.hasFieldErrors()) {
@@ -215,11 +225,12 @@ public class CartRestController {
             throw new ResourceNotFoundException("Không Tìm Thấy ID sản phẩm");
         }
 
-        /*trong cartrepository có chứa phần user, triển khai tìm các trường theo điều kiện userId có tồn tại không, ta lấy userId để truyền trực tiếp vào nó*/
+        /*Trong cartrepository có chứa phần user, triển khai tìm các trường theo điều kiện userId có tồn tại không, ta lấy userId để truyền trực tiếp vào nó*/
+        /*quan trọng, nó lấy ra được 3 trường, có trường tổng tiền hiện tại , để ta xử lí nó, khi xóa nó thì trả về lại giá tiền được tính, tức là trừ số tiền đó đi*/
         Long userId = userDTO.get().getId();
         Optional<CartInfoDTO> cartInfoDTO = cartService.findCartInfoDTOByUserId(userId);
 
-        Cart cart = new Cart();
+        Cart cart = new Cart();/*bỏ phần cart rỗng ở đây, để ta set lại các giá trị vừa thay đổi vào lai đây*/
         Map<String, Object> result = new HashMap<>();
         String success;
 
@@ -235,15 +246,16 @@ public class CartRestController {
                 throw new ResourceNotFoundException("Sản Phẩm Không Tồn Tại Trong Giỏ Hàng");
             } else {/*Nếu tìm thấy cartId & productId ta tiến hành xử lí dữ liệu, cập nhật lại số tiền khi xóa sản phẩm đó*/
 
-                String totalPrice = cartItemDTO.get().getTotalPrice();/*Lấy tổng tiền ra ở cartItemDTO*/
+                String totalPrice = cartItemDTO.get().getTotalPrice();/*Lấy tổng tiền ra ở cartItemDTO, đã tính price nhân với số lượng để ta tổng tiền ở đó*/
 
                 BigDecimal grandTotalCartInfoDTO = new BigDecimal(cartInfoDTO.get().getGrandTotal());/*Lấy tổng tiền này của Cart, để trừ đi tổng tiền của CartItemDTO */
 
-                BigDecimal grandTotalEnd = grandTotalCartInfoDTO.subtract(new BigDecimal(totalPrice));/*Tạo 1 biến grandTotalEnd rổng để xử lí ( Lấy tổng tiền này của Cart, để trừ đi tổng tiền của CartItemDTO, ta parse totalPrice String về BigDecimal) */
+                BigDecimal grandTotalEnd = grandTotalCartInfoDTO.subtract(new BigDecimal(totalPrice));/*Tạo 1 biến grandTotalEnd rổng để xử lí ( Lấy tổng tiền này của Cart, để trừ đi tổng tiền của CartItemDTO, ta parse totalPrice String về BigDecimal, Tại totalPrice nó sẽ lấy đc số tiền sản phẩm vì ta đã tính, còn price thì chỉ lấy đc giá tiền gốc của nó thôi) */
 
                 /*Hoàn thành xử lí truyền giá trị tiền vừa tính được vào lại tổng tiền ở phần cart*/
                 cart = cartInfoDTO.get().toCart();
-                cart.setGrandTotal(grandTotalEnd);
+
+                cart.setGrandTotal(grandTotalEnd);/*lấy ra được số tiền đã tính ở trên, set vào lại cart.setGrandToltal lại để hiển thị ra*/
 
                 Long cartItemId = cartItemDTO.get().getId();/*lấy id của cartItemDTO ra, để truyền vào xử lí*/
 
@@ -266,6 +278,7 @@ public class CartRestController {
 
 
     /*hàm tăng số lượng lên 1, (kiểm tra tất cả điều kiện), tính giá tiền nhân với số lượng, khi tăng lên 1, và lấy tổng tiền + giá tiền cộng thêm*/
+    /*Hàm tăng số lượng, cũng phải truyền vào userId, productId, để ta có giá trị, set lại tổng tiền ở phần cart, và các giá trị trong cartItem, price mặc đinh, thay đổi số lượng và totalPrice*/
     @PostMapping("/increase")
     public ResponseEntity<?> doIncreaseCart(@Valid @RequestBody CartDTO cartDTO, BindingResult bindingResult) {
 
@@ -285,12 +298,12 @@ public class CartRestController {
             throw new ResourceNotFoundException("Không Tìm Thấy ID sản phẩm");
         }
 
-        /*trong cartrepository có chứa phần user, triển khai tìm các trường theo điều kiện userId có tồn tại không, ta lấy userId để truyền trực tiếp vào nó*/
-        Long userId = userDTO.get().getId();
+        /*Tìm tất cả trường của cart theo userId truyền vào ở trên, ta lấy được tổng giá tiền grandTotal ở cart, nếu userId đó tồn tại trong cart, trong cart có trường userId*/
+        Long userId = userDTO.get().getId();/*userId được tìm thấy ở phía trên, ta gán lại vào đây*/
         Optional<CartInfoDTO> cartInfoDTO = cartService.findCartInfoDTOByUserId(userId);
 
         String quantity = "1";
-        BigDecimal price = new BigDecimal(Long.parseLong(productDTO.get().getPrice()));
+        BigDecimal price = new BigDecimal(Long.parseLong(productDTO.get().getPrice())); /*phải lấy giá trị tiền gốc ở phía product ra*/
 
         /*Tổng tiền lấy giá nhân cho số lượng, mặc định tăng số lượng lên 1*/
         BigDecimal grandTotal = price.multiply(new BigDecimal(Long.parseLong(quantity)));
@@ -305,19 +318,20 @@ public class CartRestController {
         if (!cartInfoDTO.isPresent()) {
             throw new ResourceNotFoundException("Người Dùng Chưa Có Giỏ Hàng để tăng số lượng");
         } else {
-            Long cartId = cartInfoDTO.get().getId();
+            /*Thực hiện tìm tất cả các trường theo CartItem theo cartId và productId được tìm thấy ở trên*/
+            Long cartInfoId = cartInfoDTO.get().getId();
             Long productId = productDTO.get().getId();
 
-            Optional<CartItemDTO> cartItemDTO = cartItemService.findCartItemDTOByCartIdAndProductId(cartId, productId);
+            Optional<CartItemDTO> cartItemDTO = cartItemService.findCartItemDTOByCartIdAndProductId(cartInfoId, productId);
             if (!cartItemDTO.isPresent()) {
                 throw new ResourceNotFoundException("Sản Phẩm Không Tồn Tại Trong Giỏ Hàng");
             } else {
 
-                cartItem = cartItemDTO.get().toCartItem();
+                cartItem = cartItemDTO.get().toCartItem(); /*cartItem chưa có giá trị, ta phải gán nó cho cartItemDTO để có các trường dữ liệu. và set lại giá trị của chúng*/
                 cartItem.setQuantity(cartItem.getQuantity() + Integer.parseInt(quantity)); /*lấy số lượng hiện tại + thêm số lượng 1, ta mặc định quantity là 1*/
                 cartItem.setTotalPrice(cartItem.getTotalPrice().add(grandTotal));  /*Tổng tiền hiện tại + thêm với tổng tiền số lượng lên*/
 
-                cart = cartInfoDTO.get().toCart();
+                cart = cartInfoDTO.get().toCart();/*cart chưa có giá trị, ta phải gán nó cho cartInfoDTO để có các trường dữ liệu. và set lại tổng tiền hiện tại, cộng thêm số tiền vừa tăng số lượng lên*/
                 cartItem.setCart(cart);
 
                 cart.setGrandTotal(cart.getGrandTotal().add(grandTotal)); /*Hiển thị tổng tiền tất cả, ta lấy tổng tiền của Cart + tổng tiền của cartItem vào*/
@@ -327,7 +341,7 @@ public class CartRestController {
                     success = "Tăng số lượng thành công!";
 
                     result.put("success", success);
-                    result.put("cartItem", cartItemIncrease.toCartItemDTO());
+                    result.put("cartItemIncrease", cartItemIncrease.toCartItemDTO());
 
                 } catch (DataInputException e) {
                     throw new DataInputException("Liên Hệ Chủ Cửa Hàng Để Được Giải Quyết");
@@ -339,7 +353,7 @@ public class CartRestController {
     }
 
 
-    /*hàm giảm số lượng lên 1, (kiểm tra tất cả điều kiện), tính giá tiền nhân với số lượng, khi giảm xuống 1, và lấy tổng tiền - giá tiền giảm đi*/
+    /*hàm giảm số lượng xuống 1, (kiểm tra tất cả điều kiện), tính giá tiền nhân với số lượng, khi giảm xuống 1, và lấy tổng tiền - giá tiền giảm đi*/
 
     @PostMapping("/reduce")
     public ResponseEntity<?> doReduceCart(@Valid @RequestBody CartDTO cartDTO, BindingResult bindingResult) {
@@ -419,5 +433,14 @@ public class CartRestController {
     }
 
 
+    /*Trả về tất cả list danh sách user ra, để đếm sổ lượng trong giỏ*/
+    @GetMapping("/user/{id}")
+    public ResponseEntity<?> getAllCartDTO(@PathVariable long id){
 
+        List<CartInfoDTO> cartInfoDTO = cartService.findCartIFDTOByUserId(id);
+
+
+        return new ResponseEntity<>(cartInfoDTO , HttpStatus.OK);
+
+    }
 }

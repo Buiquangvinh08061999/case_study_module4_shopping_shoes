@@ -1,0 +1,50 @@
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<th:block th:fragment="modal_update_order_status">
+    <div id="modalUpdateOrderStatus" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Update Order Status</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="modal-alert-danger hide">
+
+                    </div>
+
+                    <form id="frmUpdateOrderStatus" method="post">
+                        <fieldset class="row g-3">
+
+                            <div class="col-md-3">
+                                <label class="form-label">Order Status</label>
+                                <select name="orderStatusUp" id="orderStatusUp" class="form-select">
+                                    <!--                                    <option value="1">GIÀY VANS</option>-->
+                                    <!--                                    <option value="2">GIÀY ADIDAS</option>-->
+                                    <option value="1">Đang chờ duyệt</option>
+                                    <option value="2">Đang giao hàng</option>
+                                    <option value="3">Đã nhận hàng</option>
+                                    <option value="4">Đã hủy đơn</option>
+                                </select>
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+                <div class="modal-footer">
+
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" id="btnUpdateOrderStatus" class="btn btn-outline-primary">
+                        <i class="fa fa-plus" aria-hidden="true"></i>
+                        Update OrderStatus
+                    </button>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</th:block>
+
+

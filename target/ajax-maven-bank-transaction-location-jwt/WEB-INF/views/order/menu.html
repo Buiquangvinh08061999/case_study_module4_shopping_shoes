@@ -1,64 +1,69 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 
-<th:block th:fragment="menu">
-    <div class="header" th:switch="${userDTO}">
-        <div class="header--left">
-            <h1 style="margin-left: 32px"> <a href="/select/ListOrder"><img src="/assets/img/user.png" alt=""></a></h1>
-            <h4>Bánh Ngọt Nhiều Loại</h4>
-        </div>
+<!--<th:block th:fragment="menu">-->
 
-        <div class="header--center">
-            <ul class="header--center--ul">
-                <li><a href="#">Cửa Hàng</a></li>
-                <li><a href="#">Giới Thiệu</a></li>
-                <li><a href="#">Hỏi Đáp</a></li>
-                <li><a href="#">Liên Hệ</a></li>
-                <li><a href="/select/homepage" style="color: #8fdf82">Quay Lại</a></li>
-            </ul>
-        </div>
+<!--    <div class="header" th:switch="${userDTO}">-->
 
-        <div class="header--right" th:case="null">
-            <form action="" class="header--right--form">
-                <input type="text" class="header--right--form--search" placeholder="Tìm Kiếm">
-                <button><i class="fa fa-search" aria-hidden="true"></i></button>
-                <div class="header--right--form--result hide">
-                    <div class="content--product--search">
+<!--        <div class="header&#45;&#45;left">-->
+<!--            <h1 style="margin-left: 32px"> <a href="/select/ListOrder"><img src="/assets/img/avatar.png" alt=""></a></h1>-->
+<!--        </div>-->
 
-                    </div>
-                    <div class="header--right--form--result--search">
-                        <i class="fa fa-search" aria-hidden="true"></i>
-                        <p></p>
-                    </div>
-                </div>
-            </form>
-            <a href="/login">
-                <i class="fa fa-user-circle" aria-hidden="true"></i>
-                <span>Đăng Nhập</span>
-            </a>
-            <a href="javascript: void(0);" class="show_cart"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a>
-        </div>
-        <div class="header--right" th:case="*">
-            <form action="" class="header--right--form">
-                <input type="text" class="header--right--form--search" placeholder="Tìm Kiếm">
-                <button><i class="fa fa-search" aria-hidden="true"></i></button>
+<!--        <div class="header&#45;&#45;center">-->
+<!--            <ul class="header&#45;&#45;center&#45;&#45;ul">-->
+<!--                <li><a href="#">Cửa Hàng</a></li>-->
+<!--                <li><a href="#">Giới Thiệu</a></li>-->
+<!--                <li><a href="#">Hỏi Đáp</a></li>-->
+<!--                <li><a href="#">Liên Hệ</a></li>-->
+<!--                <li><a href="/select/homepage" style="color: #8fdf82">Quay Lại</a></li>-->
+<!--            </ul>-->
+<!--        </div>-->
 
-                <div class="header--right--form--result hide">
-                    <div class="content--product--search">
+<!--        <div class="header&#45;&#45;right" th:case="null">-->
+<!--            <form action="" class="header&#45;&#45;right&#45;&#45;form">-->
+<!--                <input type="text" class="header&#45;&#45;right&#45;&#45;form&#45;&#45;search" placeholder="Tìm Kiếm">-->
+<!--                <button><i class="fa fa-search" aria-hidden="true"></i></button>-->
+<!--                <div class="header&#45;&#45;right&#45;&#45;form&#45;&#45;result hide">-->
+<!--                    <div class="content&#45;&#45;product&#45;&#45;search">-->
 
-                    </div>
-                    <div class="header--right--form--result--search">
-                        <i class="fa fa-search" aria-hidden="true"></i>
-                        <p></p>
-                    </div>
-                </div>
+<!--                    </div>-->
+<!--                    <div class="header&#45;&#45;right&#45;&#45;form&#45;&#45;result&#45;&#45;search">-->
+<!--                        <i class="fa fa-search" aria-hidden="true"></i>-->
+<!--                        <p></p>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </form>-->
+<!--            <a href="/login">-->
+<!--                <i class="fa fa-user-circle" aria-hidden="true"></i>-->
+<!--                <span>Đăng Nhập</span>-->
+<!--            </a>-->
+<!--            <a href="javascript: void(0);" class="show_cart"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a>-->
+<!--        </div>-->
 
-            </form>
-            <a href="/logout">
-                <i class="fa fa-user-circle" aria-hidden="true"></i>
-                <span th:text="${userDTO.fullName}" data-th-id="${userDTO.id}"> </span>
-            </a>
+<!--        <div class="header&#45;&#45;right" th:case="*">-->
+<!--            <form action="" class="header&#45;&#45;right&#45;&#45;form">-->
+<!--                <input type="text" class="header&#45;&#45;right&#45;&#45;form&#45;&#45;search" placeholder="Tìm Kiếm">-->
+<!--                <button><i class="fa fa-search" aria-hidden="true"></i></button>-->
 
-            <a href="javascript: void(0);" class="show_cart" data-th-id="${userDTO.id}"> <i class="fa fa-shopping-cart" aria-hidden="true"></i></a>
-        </div>
-    </div>
-</th:block>
+<!--                <div class="header&#45;&#45;right&#45;&#45;form&#45;&#45;result hide">-->
+<!--                    <div class="content&#45;&#45;product&#45;&#45;search">-->
+
+<!--                    </div>-->
+<!--                    <div class="header&#45;&#45;right&#45;&#45;form&#45;&#45;result&#45;&#45;search">-->
+<!--                        <i class="fa fa-search" aria-hidden="true"></i>-->
+<!--                        <p></p>-->
+<!--                    </div>-->
+<!--                </div>-->
+
+<!--            </form>-->
+
+<!--            <a href="/logout">-->
+<!--                <i class="fa fa-user-circle" aria-hidden="true"></i>-->
+<!--                <span th:text="${userDTO.fullName}" class="add_cart" data-th-id="${userDTO.id}"></span>-->
+<!--            </a>-->
+
+<!--            <a href="javascript: void(0);" class="show_cart" data-th-id="${userDTO.id}"> <i class="fa fa-shopping-cart" aria-hidden="true"></i></a>-->
+<!--        </div>-->
+
+<!--    </div>-->
+
+<!--</th:block>-->

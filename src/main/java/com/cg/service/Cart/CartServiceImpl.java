@@ -22,12 +22,15 @@ public class CartServiceImpl implements CartService{
     private CartItemRepository cartItemRepository;
 
 
+    /*Tìm tất cả thông tin của thằng cart, theo userId truyền vào, Được dùng trong CartRest */
     @Override
     public Optional<CartInfoDTO> findCartInfoDTOByUserId(long id) {
         return cartRepository.findCartInfoDTOByUserId(id);
     }
 
-    /*Tạo mới cartId, lưu lại cart*/
+    /*Đây là phần thêm mới cart, truyền cart,và cartItem vào, lưu đối tượng cart, và set cho cartItem.setCart lại*/
+    /*Thằng cart là con của cartItem, Nên ta phải gọi cartRepo vào đây để lưu nó lại, và trong cartItem.setCart, truyền thằng cart được lưu vào*/
+    /*Được tạo ra khi giỏ hàng đang trống, nó sẽ lưu thông tin các trường product, đẩy vào trong cart, cartItem, và save lại*/
     @Override
     public CartItem addNewCart(Cart cart, CartItem cartItem) {
 
@@ -38,7 +41,7 @@ public class CartServiceImpl implements CartService{
         return cartItemRepository.save(cartItem);
     }
 
-    /*Lưu lại phần cartItem, có các trường quan trọng của product*/
+    /*Lưu lại các phần cartItem, có các trường quan trọng của product, được sử dụng ở cartRest(add),Dùng cho giỏ hàng sản phẩm đã tồn tại, Và ta thêm sản phẩm mới thành công*/
     @Override
     public CartItem addProductByCart(Cart cart, CartItem cartItem) {
         CartItem cartItemNew = cartItemRepository.save(cartItem);
@@ -58,6 +61,7 @@ public class CartServiceImpl implements CartService{
         return cartItemNew;
     }
 
+    /*Xóa cartItem , nhưng lưu lại phần cart trống, trả lại giá tiền total(span) ở giỏ hàng*/
     @Override
     public CartInfoDTO doRemoveCartItem(Cart cart, Long cartItemId) {
         cartItemRepository.deleteById(cartItemId);
@@ -66,6 +70,15 @@ public class CartServiceImpl implements CartService{
 
         return cartNew.toCartInfoDTO();
     }
+
+
+    /*Hàm count*/
+    @Override
+    public List<CartInfoDTO> findCartIFDTOByUserId(Long id) {
+        return cartRepository.findCartIFDTOByUserId(id);
+    }
+
+
 
     @Override
     public List<Cart> findAll() {

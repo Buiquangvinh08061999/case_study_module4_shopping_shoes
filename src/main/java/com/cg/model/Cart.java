@@ -21,7 +21,7 @@ import java.util.Set;
 @Accessors(chain = true)
 
 public class Cart extends BaseEntities{
-
+    /*Tương tác dữ liệu với CartInfoDTO dto,trả về các giá trị return CartInfoDTO tương tác dữ liệu với nó */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -34,8 +34,10 @@ public class Cart extends BaseEntities{
     @JoinColumn(name = "user_id")
     private User user;
 
+
     @OneToMany(mappedBy = "cart")
     private Set<CartItem> cartItems;
+
 
 
     public CartInfoDTO toCartInfoDTO() {

@@ -4,11 +4,12 @@
 
     <title>Title</title>
     <th:block th:replace="/layout/head_1 :: head_1"/>
-    <link rel="stylesheet" href="/assets/css/bootstrap.minb.css">
+    <link rel="stylesheet" href="/assets/css/bootstrap.minTwo.css">
 </head>
 <body>
 
 <div id="wrapper">
+
     <th:block th:replace="/layout/navbar_custom_top_2 :: navbar_custom_top_2"/>
 
 
@@ -17,7 +18,6 @@
         <th:block th:replace="/layout/hearder_left_3 :: hearder_left_3"/>
 
     </div>
-
 
     <div class="content-page">
 
@@ -49,21 +49,48 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-10">
+                    <div class="col-9">
                         <h1>List of Product</h1>
                     </div>
-                    <div class="col-2 create">
-                            <button type="button" class="btn btn-success create-modal">Create Product</button>
+
+                    <div class="col-3 create">
+                        <button type="button" class="btn btn-success create-modal">Create Product</button>
+                        <button type="button" class="btn btn-primary create-category"> Create Category</button>
                     </div>
-                    <div id="divFail">
-                        <div></div>
+
+                </div>
+
+
+                    <div class="row">
+                        <div class="col-5" style="font-size: 20px">
+                            <p><i class="mdi mdi-gift mdi-24px"></i>Tổng sản phẩm: <span name="span" id="span_count" style="color: #e24949"></span></p>  <!--giá trị data.id, số lượng , sẽ được truyền vào thẻ span có id tương ứng-->
+                        </div>
+
+
+                        <div class="col-5">
+                            <b>Sắp xếp theo:</b>
+                            <select id="select" name="select" style="padding: 5px; border-radius: 5px">
+                                <option value="value_default">Thứ tự mặc định</option>
+                                <option value="value_sort_asc_id">Sắp xếp ID tăng dần</option>
+                                <option value="value_sort_desc_id">Sắp xếp ID giảm dần</option>
+                                <option value="value_sort_asc_name">Sắp xếp Tên sản phẩm từ A->Z</option>
+                                <option value="value_sort_desc_name">Sắp xếp Tên sản phẩm từ Z->A</option>
+                                <option value="value_sort_asc_price">Sắp xếp Giá từ Thấp đến Cao</option>
+                                <option value="value_sort_desc_price">Sắp xếp Giá từ Cao đến Thấp</option>
+                            </select>
+                        </div>
+
+
+                        <div class="col-2 create">
+                             <a href="/select/ListHistoryProduct" class="btn btn-primary"><span>History Product</span></a>
+                        </div>
                     </div>
 
                     <table id="tbListProducts" class="table table-hover table-bordered" style="text-align: center">
-                        <thead>
+                        <thead style="background-color: #505d7f; color: white">
                             <tr>
                                 <th>#</th>
-                                <th>Id</th>
+                                <th>ID</th>
                                 <th>Avatar</th>
                                 <th>Name</th>
                                 <th>Price</th>
@@ -74,12 +101,17 @@
                         <tbody>
 
                         </tbody>
+
                     </table>
+
+                    <div id="search_fail">
+                        <!--Chỗ này để nhận lỗi, tìm kiếm rỗng, không có kết quả, lỗi sẽ được nhận ở đây -->
+                    </div>
+
                 </div>
             </div>
         </div>
     </div>
-
 
 
     <th:block th:replace="/layout/script_6 :: script_6"/>
@@ -88,12 +120,14 @@
 
 <div class="footer" style="position: fixed; right: 0; bottom: 0">
 
-
 </div>
 
 <th:block th:replace="/product/footer :: footer"/>
 
 <th:block th:replace="/product/modal_create :: modal_create"/>
+
+<th:block th:replace="/product/modal_create_category :: modal_create_category"/>
+
 <th:block th:replace="/product/modal_update :: modal_update"/>
 <th:block th:replace="/product/modal_detail :: modal_detail"/>
 <script>
@@ -103,6 +137,7 @@
 
     let productId = null;
 
+    /*Mở CreateProduct ra để truyền dự liệu vào*/
     $('.create-modal').on('click', function (){
         $('#modalCreateProduct').modal('show')
 
@@ -113,6 +148,15 @@
         clearInput();
     })
 
+    /*Mở CreateCategory ra để truyền dữ liệu vào*/
+    $('.create-category').on('click', function (){
+        $('#modalCreateCategory').modal('show')
+
+        $('#modalCreateCategory .modal-alert-danger').html('').addClass('hide').removeClass('show'); /*Bị lỗi thì ở dưới, thì khi ta mở lại thì phải tắt (show đi) để ko hiển thị lỗi*/
+
+        clearInputCategory(); /* khi mở ra lại thì cũng xóa dữ liệu input đi*/
+    })
+
     //Hiển thị thông báo có muốn thoát không
     $('#logout').on('click', function (){
         let confim = confirm("Bạn có chắc muốn thoát ứng dụng không!")
@@ -120,26 +164,29 @@
 
             App.SweetAlert.showSuccessAlert("Đăng Xuất Thành Công")
             setTimeout(function () {
-                window.location.href = "/"
-            }, 3000);
+                window.location.href = "/login"
+            }, 1000);
         }
     })
 
     /*Khi click vào hiển thị thanh edit và delete*/
     function handleShowFooter() {
         $('#tbListProducts tbody tr').on('click', function () {
-            /*Trỏ theo id của từng thằng để lấy ra thông tin update*/
+            /*Trỏ theo id  product của từng thằng để lấy ra thông tin update, hàm attr(lấy theo id(#) ở đấy đã chứa id)*/
             let id = $(this).attr("id")
 
             /*Trỏ theo id của từng thằng để lấy ra thông tin update*/
             productId = id.replace("tr_", "");
 
             console.log(productId);
+
             $("#tbListProducts tbody tr td span").removeClass("selected").addClass("unselected");
             $(`#${id} span`).removeClass("unselected").addClass("selected");
 
+
             let temFooter = $.validator.format($.trim($('#tempFooter').val().toString()))
             $('.footer').html(temFooter)
+
 
             handleShowUpdate();
 
@@ -147,12 +194,20 @@
 
             handleConfirmDelete();
 
+            handleRemove();/*remove ô hiển thị các nút chức năng, và xóa đi tích xanh hiển thị theo id của nó*/
+        })
+    }
+    /*Xử lí ẩn các nút đó đi, và ẩn luôn tích xanh , thân thiện với người dùng*/
+    function handleRemove() {
+        $('button.remove').on('click', function () {
+            $('.footer').html("") /*Phím cho phép tắt Các nút chức năng đi, tránh để nó hiển thị mãi*/
+            $("#tbListProducts tbody tr td span").removeClass("selected").addClass("unselected"); /*Xóa dòng đó đi, thì cũng ẩn đi tích xanh của id đó luôn*/
         })
     }
 
     function getAllProduct(){
         $.ajax({
-            header: {
+            headers: {
                 "accept": "application/json",
                 "content-type": "application/json"
             },
@@ -160,34 +215,379 @@
             url: "http://localhost:8080/api/products",
         })
             .done((data) => {
+                $('#span_count').html("")/*Mỗi lần sắp xếp lại, thì xóa đi giá trị đếm được của list sản phẩm để hiển thị lại, nếu không nó sẽ bị lặp lại*/
+                $('#tbListProducts tbody').html("");/*CHÚ Ý, Khi ta kích vào sắp xếp, khi nó vẽ lại phải xóa đi phần GetAllProduct trong tbody chứa Dữ Liệu ở đó đi, để đưa dữ liệu ta vừa sort vào*/
+                getAllCount(); /*Trả lại tổng số lượng sản phẩm ngay lập tức, không cần load lại trang*/
                 $.each(data ,(i, item)=>{
-                    product = item;
+                    product = item
                     category = product.category;
 
                     let str =`
-                     <tr id="tr_${product.id}">
-                            <td><span id="span_${product.id}" class="select-tab unselected"></td>
-                            <td>${product.id}</td>
-                            <td><img src="${product.urlImage}" alt="" style="width: 90px; height:70px ; border-radius:50%"> </td>
-                            <td>${product.name}</td>
-                            <td>${new Intl.NumberFormat('vi-VN', {
-                                        style: 'currency',
-                                        currency: 'VND'
-                            }).format(product.price)}</td>
-                            <td>${product.describe}</td>
-                            <td>${category.title}</td>
-                     </tr>
-                `;
+                         <tr id="tr_${product.id}">
+                                <td><span id="span_${product.id}" class="select-tab unselected"></td>
+                                <td>${product.id}</td>
+                                <td><img src="${product.urlImage}" alt="" style="width: 90px; height:70px ; border-radius:50%"> </td>
+                                <td>${product.name}</td>
+                                <td>${new Intl.NumberFormat('vi-VN', {
+                                            style: 'currency',
+                                            currency: 'VND'
+                                }).format(product.price)}</td>
+                                <td>${product.describe}</td>
+                                <td>${category.title}</td>
+                         </tr>
+                        `;
+
                     $('#tbListProducts tbody').prepend(str);
 
-                    handleShowFooter();
                 })
+                handleShowFooter();
             })
             .fail((jqXHR) => {
                 console.log(jqXHR)
             })
     }
     getAllProduct();
+
+    /*Lấy hết dữ liệu của category(id, title) ra, để đưa vào option*/
+    function getAllCategory(){
+        $.ajax({
+            header: {
+                "accept": "application/json",
+                "content-type": "application/json"
+            },
+            type: "GET",
+            url: "http://localhost:8080/api/products/category",
+        })
+        .done((data) => {
+            $.each(data ,(i, item)=>{
+                category = item;
+
+                let str = `<option value="${category.id}">${category.title}</option>`
+
+                $('#category').append(str);/*đưa vào modal_create*/
+
+                $('#categoryUp').append(str);/*/*đưa vào modal_update*/
+
+            })
+        })
+
+        .fail((jqXHR) => {
+            console.log(jqXHR)
+        })
+    }
+    getAllCategory();
+
+    /*Lấy hết dữ liệu biến đếm số lương  count product ra, để đưa vào thẻ span hiển thị số lượng đang có*/
+    function getAllCount(){
+        $.ajax({
+            header: {
+
+                "accept": "application/json",
+                "content-type": "application/json"
+            },
+            type: "GET",
+            url: "http://localhost:8080/api/products/count",
+        })
+        .done((data) => {
+            console.log(data.count +" tổng sản phẩm")
+
+            let str = `${data.count}`
+
+            $('#span_count').prepend(str)
+
+        })
+        .fail((jqXHR) => {
+            console.log(jqXHR)
+        })
+    }
+
+
+
+    /*Hàm tìm tất cả các trường theo id tăng dần */
+    function getAllSortASCId(){
+        $.ajax({
+            headers: {
+                "accept": "application/json",
+                "content-type": "application/json"
+            },
+            type: "GET",
+            url: "http://localhost:8080/api/products/sortASCId",
+        })
+        .done((data) => {
+            /*CHÚ Ý CHÚ Ý*/
+            $('#tbListProducts tbody').html("");/*CHÚ Ý, Khi ta kích vào sắp xếp, khi nó vẽ lại phải xóa đi phần GetAllProduct trong tbody chứa Dữ Liệu ở đó đi, để đưa dữ liệu ta vừa sort vào*/
+            $.each(data ,(i, item)=>{
+                console.log(item)
+                product = item;
+                category = product.category;
+                let str =`
+                 <tr id="tr_${product.id}">
+                    <td><span id="span_${product.id}" class="select-tab unselected"></td>
+                    <td>${product.id}</td>
+                    <td><img src="${product.urlImage}" alt="" style="width: 90px; height:70px ; border-radius:50%"> </td>
+                    <td>${product.name}</td>
+                    <td>${new Intl.NumberFormat('vi-VN', {
+                        style: 'currency',
+                        currency: 'VND'
+                    }).format(product.price)}</td>
+                    <td>${product.describe}</td>
+                    <td>${category.title}</td>
+                 </tr>
+            `;
+                $('#tbListProducts tbody').append(str); /*thêm cuối*/
+
+                handleShowFooter();
+            })
+        })
+        .fail((jqXHR) => {
+            console.log(jqXHR)
+        })
+    }
+
+    /*Hàm tìm tất cả các trường theo id giảm dần */
+    function getAllSortDESCId(){
+        $.ajax({
+            headers: {
+                "accept": "application/json",
+                "content-type": "application/json"
+            },
+            type: "GET",
+            url: "http://localhost:8080/api/products/sortDESCId",
+        })
+        .done((data) => {
+            /*CHÚ Ý CHÚ Ý*/
+            $('#tbListProducts tbody').html("");/*CHÚ Ý, Khi ta kích vào sắp xếp, khi nó vẽ lại phải xóa đi phần GetAllProduct trong tbody chứa Dữ Liệu ở đó đi, để đưa dữ liệu ta vừa sort vào*/
+            $.each(data ,(i, item)=>{
+                product = item;
+                category = product.category;
+                console.log(item)
+                let str =`
+                     <tr id="tr_${product.id}">
+                        <td><span id="span_${product.id}" class="select-tab unselected"></td>
+                        <td>${product.id}</td>
+                        <td><img src="${product.urlImage}" alt="" style="width: 90px; height:70px ; border-radius:50%"> </td>
+                        <td>${product.name}</td>
+                        <td>${new Intl.NumberFormat('vi-VN', {
+                            style: 'currency',
+                            currency: 'VND'
+                        }).format(product.price)}</td>
+                        <td>${product.describe}</td>
+                        <td>${category.title}</td>
+                     </tr>
+             `;
+                $('#tbListProducts tbody').append(str); /*thêm cuối*/
+
+                handleShowFooter();
+            })
+        })
+        .fail((jqXHR) => {
+            console.log(jqXHR)
+        })
+    }
+
+    /*Hàm tìm tất cả các trường theo tên tăng dần */
+    function getAllSortASCName(){
+        $.ajax({
+            headers: {
+                "accept": "application/json",
+                "content-type": "application/json"
+            },
+            type: "GET",
+            url: "http://localhost:8080/api/products/sortASCName",
+        })
+            .done((data) => {
+                /*CHÚ Ý CHÚ Ý*/
+                $('#tbListProducts tbody').html("");/*CHÚ Ý, Khi ta kích vào sắp xếp, khi nó vẽ lại phải xóa đi phần GetAllProduct trong tbody chứa Dữ Liệu ở đó đi, để đưa dữ liệu ta vừa sort vào*/
+
+                $.each(data ,(i, item)=>{
+                    console.log(item)
+                    product = item;
+                    category = product.category;
+                    let str =`
+                 <tr id="tr_${product.id}">
+                        <td><span id="span_${product.id}" class="select-tab unselected"></td>
+                        <td>${product.id}</td>
+                        <td><img src="${product.urlImage}" alt="" style="width: 90px; height:70px ; border-radius:50%"> </td>
+                        <td>${product.name}</td>
+                        <td>${new Intl.NumberFormat('vi-VN', {
+                        style: 'currency',
+                        currency: 'VND'
+                    }).format(product.price)}</td>
+                        <td>${product.describe}</td>
+                        <td>${category.title}</td>
+                 </tr>
+            `;
+                    $('#tbListProducts tbody').append(str); /*thêm cuối*/
+                    handleShowFooter();
+
+                })
+            })
+            .fail((jqXHR) => {
+                console.log(jqXHR)
+            })
+    }
+
+    /*Hàm tìm tất cả các trường theo tên giảm dần */
+    function getAllSortDESCName(){
+        $.ajax({
+            headers: {
+                "accept": "application/json",
+                "content-type": "application/json"
+            },
+            type: "GET",
+            url: "http://localhost:8080/api/products/sortDESCName",
+        })
+        .done((data) => {
+
+            /*CHÚ Ý CHÚ Ý*/
+            $('#tbListProducts tbody').html("");/*CHÚ Ý, Khi ta kích vào sắp xếp, khi nó vẽ lại phải xóa đi phần GetAllProduct trong tbody chứa Dữ Liệu ở đó đi, để đưa dữ liệu ta vừa sort vào*/
+
+            $.each(data ,(i, item)=>{
+                console.log(item)
+                product = item;
+                category = product.category;
+
+                let str =`
+                 <tr id="tr_${product.id}">
+                        <td><span id="span_${product.id}" class="select-tab unselected"></td>
+                        <td>${product.id}</td>
+                        <td><img src="${product.urlImage}" alt="" style="width: 90px; height:70px ; border-radius:50%"> </td>
+                        <td>${product.name}</td>
+                        <td>${new Intl.NumberFormat('vi-VN', {
+                    style: 'currency',
+                    currency: 'VND'
+                }).format(product.price)}</td>
+                        <td>${product.describe}</td>
+                        <td>${category.title}</td>
+                 </tr>
+            `;
+                $('#tbListProducts tbody').append(str); /*thêm cuối*/
+                handleShowFooter();
+            })
+        })
+        .fail((jqXHR) => {
+            console.log(jqXHR)
+        })
+    }
+
+    /*Hàm tìm tất cả các trường theo giá tăng dần */
+    function getAllSortASCPrice(){
+        $.ajax({
+            headers: {
+                "accept": "application/json",
+                "content-type": "application/json"
+            },
+            type: "GET",
+            url: "http://localhost:8080/api/products/sortASCPrice",
+        })
+        .done((data) => {
+            $('#tbListProducts tbody').html("");/*CHÚ Ý, Khi ta kích vào sắp xếp, khi nó vẽ lại phải xóa đi phần GetAllProduct trong tbody chứa Dữ Liệu ở đó đi, để đưa dữ liệu ta vừa sort vào*/
+            $.each(data ,(i, item)=>{
+                product = item;
+                category = product.category;
+                console.log(item)
+                let str =`
+                     <tr id="tr_${product.id}">
+                        <td><span id="span_${product.id}" class="select-tab unselected"></td>
+                        <td>${product.id}</td>
+                        <td><img src="${product.urlImage}" alt="" style="width: 90px; height:70px ; border-radius:50%"> </td>
+                        <td>${product.name}</td>
+                        <td>${new Intl.NumberFormat('vi-VN', {
+                            style: 'currency',
+                            currency: 'VND'
+                        }).format(product.price)}</td>
+                        <td>${product.describe}</td>
+                        <td>${category.title}</td>
+                     </tr>
+                `;
+                $('#tbListProducts tbody').append(str); /*thêm cuối*/
+
+                console.log(data.id + "của data")
+                handleShowFooter();
+            })
+        })
+        .fail((jqXHR) => {
+            console.log(jqXHR)
+        })
+    }
+
+    /*Hàm tìm tất cả các trường theo giá giảm dần */
+    function getAllSortDESCPrice(){
+        $.ajax({
+            headers: {
+                "accept": "application/json",
+                "content-type": "application/json"
+            },
+            type: "GET",
+            url: "http://localhost:8080/api/products/sortDESCPrice",
+        })
+        .done((data) => {
+            $('#tbListProducts tbody').html("");/*CHÚ Ý, Khi ta kích vào sắp xếp, khi nó vẽ lại phải xóa đi phần GetAllProduct trong tbody chứa Dữ Liệu ở đó đi, để đưa dữ liệu ta vừa sort vào*/
+            $.each(data ,(i, item)=>{
+                product = item;
+                category = product.category;
+                console.log(item)
+                let str =`
+                     <tr id="tr_${product.id}">
+                        <td><span id="span_${product.id}" class="select-tab unselected"></td>
+                        <td>${product.id}</td>
+                        <td><img src="${product.urlImage}" alt="" style="width: 90px; height:70px ; border-radius:50%"> </td>
+                        <td>${product.name}</td>
+                        <td>${new Intl.NumberFormat('vi-VN', {
+                            style: 'currency',
+                            currency: 'VND'
+                        }).format(product.price)}</td>
+                        <td>${product.describe}</td>
+                        <td>${category.title}</td>
+                     </tr>
+                `;
+                $('#tbListProducts tbody').append(str); /*thêm cuối*/
+
+                handleShowFooter();
+            })
+        })
+        .fail((jqXHR) => {
+            console.log(jqXHR)
+        })
+    }
+
+
+    /*Sự kiên select (on change), khi kích vào thì hiển thị sắp xếp theo trật tự, hàm getAll lấy các giá trị sắp xếp ra, và vẽ lại vào phần tbody*/
+    /*sau khi đã get các dữ liệu sort về, ta bắt đầu sử dụng vào thẻ select*/
+    $('#select').on('change', function (){
+        let value = $(this).val(); /*GHI NHỚ sử dụng this lấy tất cả giá trị value ra ở đấy là (tên value, (value_sort_asc_id..v.v)*/
+        console.log(value)
+        if(value == ('value_default')) {
+            getAllProduct();
+            return;
+        }else if(value == ('value_sort_asc_id')){
+            getAllSortASCId()
+            return;
+        }else if(value == ('value_sort_desc_id')){
+            getAllSortDESCId()
+            return;
+
+        }else if(value == ('value_sort_asc_name')){
+            getAllSortASCName()
+            return;
+        }
+        else if(value == ('value_sort_desc_name')){
+            getAllSortDESCName();
+            return;
+        }
+        else if(value == ('value_sort_asc_price')){
+            getAllSortASCPrice()
+            return;
+        }
+        else if(value == ('value_sort_desc_price')){
+            getAllSortDESCPrice()
+            return;
+        }
+        else{
+            App.IziToast.showErrorAlert("Vui lòng không sửa giá trị value!")
+            return;
+        }
+    })
 
 
 
@@ -241,6 +641,10 @@
                 clearInput()
 
                 handleShowFooter();
+
+                /*Khi tạo thành công xóa đi giá cũ, đưa giá trị biến đếm vào để hiển thị*/
+                $('#span_count').html("")
+                getAllCount()
             })
 
             .fail((jqXHR) => {
@@ -260,7 +664,6 @@
                     window.location.href = "/select/403"
                 }
 
-
                 if (jqXHR.responseJSON.message) {
 
                     let msg = jqXHR.responseJSON.message;
@@ -268,7 +671,6 @@
                     let str = `<label id="message-error" class="error" for="message"> ${msg} </label>`;
 
                     $('#modalCreateProduct .modal-alert-danger').append(str);
-
 
                 }else if (jqXHR.responseJSON) {
                     $.each(jqXHR.responseJSON, (key, item) => {
@@ -281,11 +683,71 @@
             })
     })
 
+    /*Thêm mới danh mục*/
+    let btnCreateCategory = $('#btnCreateCategory');
+    btnCreateCategory.on('click', function (){
+        category.title = $('#categoryTitle').val();/*gán category.title =  giá trị ta nhập vào từ ô input*/
+        $.ajax({
+            headers: {
+                "accept": "application/json",
+                "content-type": "application/json"
+            },
+            "type": "POST",
+            "url": "http://localhost:8080/api/products/category/create",
+            "data": JSON.stringify(category)
+        })
+        .done((data) => {
+            category = data;
+
+            let str =`<option value="${category.id}">${category.title}</option>`
+
+            $('#category').append(str);
+
+            $('#categoryUp').append(str);
+
+
+            App.SweetAlert.showSuccessAlert("Tạo Mới Danh Mục Sản Phẩm Thành Công");
+
+            $('#modalCreateCategory').modal('hide')
+
+            clearInputCategory();
+        })
+        .fail((jqXHR) => {
+            console.log(jqXHR)
+            $('#modalCreateCategory .modal-alert-danger').html('').addClass('show').removeClass('hide'); /*Bị lỗi thì add show vào để hiện thị*/
+
+            /*jqXHR.responseText là lỗi tổng, điều nhận hết lỗi, Rồi vào kiểm tra tiếp, */
+            let str = '';
+            if (jqXHR.responseText) {
+                if (jqXHR.responseJSON.message) {
+                    let msg = jqXHR.responseJSON.message;
+                    str += `<label class="error" for="message"> ${msg} + 'top'</label>`;
+                }
+                else {
+                    /*Lặp hết tất cả các lỗi nằm ở phía title thì thông báo lỗi, message ở trên là lỗi đơn xử lí ở api/products/category/create */
+                    let data = jqXHR.responseJSON;
+                    // console.log(data)
+                    $.each(data, (key, value) => {
+                        str += `<label class="error" for="message"> ${value} + 'vinh'</label>`;
+                    })
+                }
+            }
+
+            $('#modalCreateCategory .modal-alert-danger').append(str);
+
+        })
+    })
+
 
     /*Clear mới tất cả khi thêm mới*/
     function clearInput(){
         $("#frmCreateProduct input").val("");
     }
+    function clearInputCategory(){
+        $("#frmCreateCategory input").val("");
+    }
+
+
 
     //Hiển thị dữ liệu của Id ra, phai viet ham tim Id o rest CustomerController
     function handleShowUpdate() {
@@ -302,6 +764,9 @@
             .done((data)=>{
                 product = data;
                 category = product.category;
+                console.log(data);
+                console.log(category.id + "id danh mục")
+                console.log(category.title +"danh mục")
 
                 $('#usernameUp').val(product.name);
                 $('#urlImageUp').val(product.urlImage);
@@ -329,6 +794,7 @@
         category.title = $('#categoryUp :selected').text()
 
         product.category = category;
+
         $.ajax({
             "headers": {
                 "accept": "application/json",
@@ -344,7 +810,7 @@
             category = product.category;
 
             let currentRow = $('#tr_'+ productId);
-
+            console.log(productId + "id")
             let str =`
                  <tr id="tr_${product.id}">
                         <td><span id="span_${product.id}" class="select-tab unselected"></td>
@@ -366,7 +832,7 @@
             App.SweetAlert.showSuccessAlert("Cập Nhật Thành Công")
             $('#modalUpdateProduct').modal('hide');
 
-            handleShowFooter();
+            handleShowFooter(); /*Vẽ lại thì phải gán sữ kiện của tất cả các nút lại, để có thể sử dụng lại, nếu không sẽ không sử dụng tiếp được*/
 
         })
         .fail((jqXHR) =>{
@@ -401,6 +867,7 @@
         })
     })
 
+    /*Hiển thị thông tin detail của productId đấy*/
     function handleShowDetail() {
         $('button.detail').on('click', function () {
             $.ajax({
@@ -415,6 +882,7 @@
                     $('#urlImageDet').html("");
                     product = data;
                     category = product.category;
+
 
                     $('#nameDet').text(product.name)
 
@@ -431,8 +899,8 @@
                     $('#updatedAtDet').text(product.updatedAt)
 
                     let str =`
-                    <img style="width: 255px;" src="${product.urlImage}" alt="">
-                 `;
+                      <img style="width: 255px;" src="${product.urlImage}" alt="">
+                    `;
 
                     $('#urlImageDet').prepend(str);
 
@@ -444,58 +912,62 @@
 
 
     $('#btn-search-product').on('click', function (){
-        let keyword = $('#searchProduct').val();
-        search(keyword);
+        let keySearch = $('#searchProduct').val();
+        search(keySearch);
     })
 
-    function search(keyword) {
+    function search(keySearch) { /*truyền từ khóa vào, biến data truyền vào (Obj để lấy từ khóa vừa tìm kiếm)*/
+        let obj = {
+            "keySearch": keySearch
+        }
         $.ajax({
-            header: {
+            headers: {
                 "accept": "application/json",
-                "content-type": "application/json"
+                "content-type": "application/json; charset=utf-8"
             },
-            type: "GET",
-            url: "http://localhost:8080/api/products/search/" + keyword,
+            type: "POST",
+            url: "http://localhost:8080/api/products/search",
+            data: JSON.stringify(obj)
         })
             .done((data) => {
-
                 $('#tbListProducts tbody').html('')
+                $('#search_fail').html('')/*lỗi về lại rỗng, để nó không hiển thị nữa*/
 
                 $.each(data, (i, item) => {
                     product = item;
                     category = product.category;
+                    console.log(product + "product")
 
                     let str =`
-                     <tr id="tr_${product.id}">
-                            <td><span id="span_${product.id}" class="select-tab unselected"></td>
-                            <td>${product.id}</td>
-                            <td><img src="${product.urlImage}" alt="" style="width: 90px; height:70px ; border-radius:50%"> </td>
-                            <td>${product.name}</td>
-                            <td>${new Intl.NumberFormat('vi-VN', {
-                                style: 'currency',
-                                currency: 'VND'
-                            }).format(product.price)}</td>
+                         <tr id="tr_${product.id}">
+                                <td><span id="span_${product.id}" class="select-tab unselected"></td>
+                                <td>${product.id}</td>
+                                <td><img src="${product.urlImage}" alt="" style="width: 90px; height:70px ; border-radius:50%"> </td>
+                                <td>${product.name}</td>
+                                <td>${new Intl.NumberFormat('vi-VN', {
+                                    style: 'currency',
+                                    currency: 'VND'
+                                }).format(product.price)}</td>
 
-                            <td>${product.describe}</td>
-                            <td>${category.title}</td>
-                     </tr>
-                `;
+                                <td>${product.describe}</td>
+                                <td>${category.title}</td>
+                         </tr>
+                    `;
+
                     $('#tbListProducts tbody').prepend(str);
 
-
                     handleShowFooter();
+
                 })
             })
-
             .fail((jqXHR) => {
                 console.log(jqXHR)
-                // $('#divFail div').html('');
-                //
-                // let str =`<h3>Không có kết quả tìm kiếm này!</h3>`
-                // $('#divFail div').prepend(str);
+                $('#tbListProducts tbody').html('')/*list product phải trả về rỗng, nếu không lỗi và sản phẩm sẽ hiển thị*/
+                $('#search_fail').html('')/*lỗi về rỗng, sau đó mới thực thi lỗi mới được thêm*/
+                $('#search_fail').prepend(`<h3 style="color: #740b0bd4">${jqXHR.responseJSON.message}</h3>`); /*Lỗi tìm kiếm rỗng sẽ đưa vào phần tbody này để hiển thị lỗi*/
             })
-    }
 
+    }
 
     /*Hàm xóa mềm theo id,*/
     function handleConfirmDelete() {
@@ -513,22 +985,20 @@
                             "data": JSON.stringify(product)
                         })
                         .done((data) => {
-                            $('#tr_' + productId).remove();
+                            $('#tr_' + productId).remove(); /*xóa sản phẩm đó ngay lập tức ở trang đấy*/
                             App.SweetAlert.showSuccessAlert("Xóa Thành Công")
 
+                            /*Khi xóa thành công thì hiển thị lại tổng số sản phẩm lại*/
+                            $('#span_count').html("")
+                            getAllCount()
                         })
                         .fail((jqXHR) => {
-
                             //Nếu lỗi 403 thì chuyển qua trang lỗi
                             if (jqXHR.status === 403) {
                                 window.location.href = "/select/403"
                             }
-
                             App.SweetAlert.showErrorAlert('Xóa thất bại');
-
-
                         });
-
                     }
                 })
         })

@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+
 @Entity
 @Table(name = "order_items")
 @Accessors(chain = true)
@@ -35,10 +36,14 @@ public class OrderItem{
     @Column(name = "total_price")
     private BigDecimal totalPrice;
 
+    @Column(name = "url_image") /*trường mới*/
+    private String urlImage;
+
     /*Số 2*/
     /*Làm cách này với quan hệ một nhiều*/
     @ManyToOne
     @JoinColumn(name = "order_id")
     private Order order;
+
 
 }

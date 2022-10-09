@@ -1,7 +1,7 @@
 .modal-alert-danger {
     padding: 10px 35px;
     margin-bottom: 15px;
-    color: #842029;
+    color: #e31225;
     background-color: #f8d7da;
     border-color: #f5c2c7;
 }
@@ -47,7 +47,6 @@ table td span.unselected {
 .hide {
     display: none;
 }
-
 
 
 .message{

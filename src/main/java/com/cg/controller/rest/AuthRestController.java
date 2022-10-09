@@ -23,12 +23,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -44,25 +47,33 @@ public class AuthRestController {
     @Autowired
     private IUserService userService;
 
+    @Autowired
+    private AppUtil appUtils;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User user) {
-        Authentication authentication = authenticationManager.authenticate(
 
-                new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
+//        List<UserDTO> userDTOS = userService.findAllUserDTOByDeletedIsFalse();
+//        if(userDTOS.equals(true)){
+//            System.out.println("sai rồi");
+//        }
 
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword())); /*Gửi tên username và password lên để so sánh với 2 trường này trong User user(gửi ở phần login.html)*/
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        String jwt = jwtService.generateTokenLogin(authentication);
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        User currentUser = userService.getByUsername(user.getUsername());
+
+        String jwt = jwtService.generateTokenLogin(authentication); /*jwt tạo 1 chuỗi token để dùng ở json*/
+
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();/*trong UserDetails có phương thức String username và password sẳn */
+
+        User currentUser = userService.getByUsername(user.getUsername()); /*phương thức đầu tiên của userRepo*/
 
         JwtResponse jwtResponse = new JwtResponse(
-                jwt,
-                currentUser.getId(),
-                userDetails.getUsername(),
-                currentUser.getUsername(),
+                jwt, /*chuổi token ở trên truyền vào*/
+                currentUser.getId(), /*lấy id ở User ra*/
+                userDetails.getUsername(), /*lấy tên ở UserDetails*/
+                currentUser.getUsername(),  /*lấy username ở User ra*/
                 userDetails.getAuthorities()
         );
 
@@ -84,4 +95,5 @@ public class AuthRestController {
                 .body(jwtResponse);
 
     }
+
 }

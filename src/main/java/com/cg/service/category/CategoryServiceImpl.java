@@ -43,5 +43,23 @@ public class CategoryServiceImpl implements ICategoryService{
         categoryRepository.deleteById(id);
     }
 
+    /*Hiển thị tất cả lit danh mục*/
+    @Override
+    public List<CategoryDTO> findAllCategoryDTO() {
+        return categoryRepository.findAllCategoryDTO();
+    }
+
+    /*Kiểm tra id của category(danh mục có tồn tại không)*/
+    @Override
+    public Boolean existsById(Long id) {
+        return categoryRepository.existsById(id);
+    }
+
+    /*Kiểm tra title của category(danh mục có tồn tại không)*/
+    @Override
+    public Boolean existsByTitle(String title) {
+        return categoryRepository.existsByTitle(title);
+    }
+
 
 }

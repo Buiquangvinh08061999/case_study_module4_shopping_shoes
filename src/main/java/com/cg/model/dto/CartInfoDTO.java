@@ -17,8 +17,10 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @Accessors(chain = true)
+/*Tạo ra cart này để lấy thông tin tính tổng tiền và tìm thấy id người mua sản phẩm*/
 public class CartInfoDTO {
 
+    /*các trường chính trong thằng này là carts gốc ở  trên database , nó tương tác phần Cart ở model, trả về các giá trị return Cart tương tác với nó*/
     private Long id;
 
     private String grandTotal;

@@ -9,10 +9,14 @@ import java.util.List;
 
 public interface ICategoryService extends IGeneralService<Category> {
 
+    /*Phương thức mẫu để hiểu hàm save ở IGeneralService */
     Category save(Category category);
 
 
+    List<CategoryDTO> findAllCategoryDTO();
 
 
+    Boolean existsById(Long id);
 
+    Boolean existsByTitle(String title);
 }

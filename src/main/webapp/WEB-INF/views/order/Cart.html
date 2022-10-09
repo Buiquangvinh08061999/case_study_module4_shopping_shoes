@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -8,14 +8,87 @@
 <body>
 
 <div class="container">
-    <th:block th:replace="/order/menu :: menu" />
+<!--    <th:block th:replace="/order/menu :: menu" />-->
+    <div class="header" th:switch="${userDTO}">
+        <div class="header--left">
+            <h1 style="margin-left: 32px"> <a href="/select/ListOrder"><img src="/assets/img/LogoShopShoe.png" alt=""></a></h1>
+        </div>
+
+        <div class="header--center">
+            <ul class="header--center--ul">
+                <li><a href="#">Cửa Hàng</a></li>
+                <li><a href="#">Giới Thiệu</a></li>
+                <li><a href="#">Hỏi Đáp</a></li>
+
+                <li>
+                    <a href="javascript:void(0);" style="color: #0995fd"  id="logOutListOrder">
+                                  Đăng Xuất
+                        <i class="fa-solid fa-right-from-bracket" title="LogOut" style="font-size: 20px"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!--Chưa dùng hàm search-->
+        <div class="header--right" th:case="null">
+            <form action="" class="header--right--form">
+                <input type="text" class="header--right--form--search" placeholder="Tìm Kiếm">
+                <button><i class="fa fa-search" aria-hidden="true"></i></button>
+                <div class="header--right--form--result hide">
+                    <div class="content--product--search">
+
+                    </div>
+                    <div class="header--right--form--result--search">
+                        <i class="fa fa-search" aria-hidden="true"></i>
+                        <p></p>
+                    </div>
+                </div>
+            </form>
+            <a href="#">
+                <i class="fa fa-user-circle" aria-hidden="true"></i>
+                <span>Đăng Nhập</span>
+            </a>
+            <a href="javascript: void(0);" class="show_cart"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a>
+        </div>
+
+        <div class="header--right" th:case="*">
+            <form action="" class="header--right--form">
+                <input type="text" class="header--right--form--search" placeholder="Tìm Kiếm">
+                <button><i class="fa fa-search" aria-hidden="true"></i></button>
+
+                <div class="header--right--form--result hide">
+                    <div class="content--product--search">
+
+                    </div>
+                    <div class="header--right--form--result--search">
+                        <i class="fa fa-search" aria-hidden="true"></i>
+                        <p></p>
+                    </div>
+                </div>
+
+            </form>
+
+            <a href="/logout">
+                <i class="fa fa-user-circle" aria-hidden="true"></i>
+                <span th:text="${userDTO.fullName}" class="add_cart" data-th-id="${userDTO.id}"> </span>
+            </a>
+
+            <a href="javascript: void(0);" class="show_cart" data-th-id="${userDTO.id}"> <i class="fa fa-shopping-cart" aria-hidden="true"></i></a>
+        </div>
+
+    </div>
+    <!--end menu, không tái sử dụng nữa, mà vẽ trực tiếp vào cho nó luôn-->
+
+
+
+    <!--Phần mặc định của nó, sử lí hiển thị đơn hàng,-->
     <div class="content--cart">
 
         <div class="content--cart--product">
             <h3>Giỏ Hàng Của Tôi</h3>
 
             <div class="content--cart--product--list">
-
+                <!--Vẽ lại nôi dung chi tiết sản phẩm vào trong này, viết api xử lí, đưa nội dung vào đây-->
             </div>
 
         </div>
@@ -40,15 +113,14 @@
 
         </div>
 
-
-
     </div> <!--end content--cart-->
 </div> <!--end container-->
 
 <th:block th:replace="/layout/script_6 :: script_6"/>
 
 <script>
-
+    /*PHẦN NÀY XỬ LÍ HOÀN THÀNH ORDER, */
+    /*đưa tất cả dữ liệu từ cart và cartItem sang order và orderItem*/
     let user = new User();
     let product = new Product();
     let cart = new Cart();
@@ -104,14 +176,14 @@
 
                     $('.content--cart--product--list').prepend(str);
 
-                    doRemoveShowProductCart();
-
-                    doCreateOrder();
               })
-
                 /*Lấy ra được tổng tiền của cart(grandTotal)*/
                 $('.content--cart--money--bottom span').text(`${grandTotal} đ`);
             }
+            /*Phải bỏ ngoài vòng lặp , nếu không nó sẽ lặp lại, sẽ bị double dữ liệu lên, CHÚ Ý*/
+            doRemoveShowProductCart();
+
+            doCreateOrder();
         })
         .fail((jqXHR) => {
             if (jqXHR.status === 401) {
@@ -170,10 +242,15 @@
         $('.create_order').on('click', function (){
             let order = new Order();
 
-            let userId = $('.add_cart').attr('id');
+            // let userId = $('.add_cart').attr('id');
+            // order.userId = userId;
+            // console.log(userId + "userId")
+
+            let userId = $('.header--right a span').attr('id');
             order.userId = userId;
 
-            console.log(userId +"userId")
+            console.log(userId + " userId");
+            console.log(JSON.stringify(order))
             $.ajax({
                 headers: {
                     "accept": "application/json",
@@ -186,7 +263,7 @@
             .done((data) => {
                 App.IziToast.showSuccessAlert(data.success);
 
-                /*Khi thành công thì xóa hết bảng hiển thị sản phẩm*/
+                /*Khi thành công thì xóa hết bảng hiển thị sản phẩm, và trả về  tiền về 0*/
                 $('.content--cart--product--list').html("");
 
                 $('.content--cart--money--bottom span').text(`0 đ`)
@@ -211,6 +288,19 @@
 
         })
     }
+
+    //Hiển thị thông báo có muốn thoát ứng dụng không
+    $('#logOutListOrder').on('click', function (){
+        let confim = confirm("Bạn có chắc muốn thoát ứng dụng không!")
+        if(confim === true){
+
+            App.SweetAlert.showSuccessAlert("Đăng Xuất Thành Công")
+            setTimeout(function () {
+                window.location.href = "/login"
+            }, 2000);
+
+        }
+    })
 
 
 

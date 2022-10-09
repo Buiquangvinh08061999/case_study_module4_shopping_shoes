@@ -62,19 +62,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.httpBasic().authenticationEntryPoint(restServicesEntryPoint());
 
         http.authorizeRequests()
-                .antMatchers("/", "/api/auth/login", "/api/auth/register","/api/customers/create" , "/login" , "/select/ListUser" ).permitAll()
-//                .antMatchers("/login", "/api/products/update" , "/api/products/create", "/api/products/delete{id}",  "/api/customers/update", "/api/customers/create" , "/api/customers/delete{id}" ).hasAnyAuthority("ADMIN")
+                .antMatchers("/", "/api/auth/login", "/api/customers/create" , "/login").permitAll() /* "/select/ListUser"*/
+                .antMatchers("/select/ListProduct" , "/select/ListUser", "/select/ListOrderDashBoard", "/select/homepage" ,"select/ListHistoryUser").hasAnyAuthority("ADMIN")
                 .antMatchers("/assets/**").permitAll()
-//                .antMatchers(
-//                        "/v2/api-docs",
-//                        "/swagger-resources/configuration/ui",
-//                        "/configuration/ui",
-//                        "/swagger-resources",
-//                        "/swagger-resources/configuration/security",
-//                        "/configuration/security",
-//                        "/swagger-ui.html",
-//                        "/webjars/**"
-//                ).permitAll()
                 .antMatchers(
                         "/v3/api-docs",
                         "/swagger-resources/configuration/ui",

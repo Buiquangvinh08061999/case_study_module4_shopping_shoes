@@ -38,8 +38,8 @@ body .container .header .header--left h1 a {
 }
 
 body .container .header .header--left h1 a img {
-    width: 100px;
-    height: 100px;
+    width: 200px;
+    height: 130px;
 }
 
 body .container .header .header--left h4 {
@@ -178,7 +178,7 @@ body .container .header .header--right a:hover span {
 }
 
 body .container .header .header--right a i {
-    font-size: 20px;
+    font-size: 28px;
     color: black;
 }
 
@@ -252,7 +252,6 @@ body .container .content .content--product .content--product--bottom p {
 }
 
 body .container .content .content--product .content--product--bottom p:nth-child(2) {
-    border-bottom: 1px solid black;
     width: 85px;
     margin-left: 125px;
 }
@@ -599,6 +598,7 @@ body .cart .cart--info .cart--info--total h2 {
 body .cart .cart--info .cart--info--total span {
     font-size: 30px;
     margin-left: 33px;
+    color: #ef1200;
 }
 
 body .cart .cart--info .cart--info--show {

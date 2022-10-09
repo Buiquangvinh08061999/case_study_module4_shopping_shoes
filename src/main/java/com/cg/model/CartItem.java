@@ -33,10 +33,13 @@ public class CartItem extends BaseEntities {
 
     private int quantity;
 
+
     @Digits(integer = 12, fraction = 0)
     @Column(name = "total_price")
     private BigDecimal totalPrice;
 
+    @Column(name = "url_image") /*Trường mới*/
+    private String urlImage;
 
     @ManyToOne
     @JoinColumn(name = "cart_id")
@@ -46,6 +49,7 @@ public class CartItem extends BaseEntities {
     @JoinColumn(name = "product_id")
     private Product product;
 
+
     public CartItemDTO toCartItemDTO(){
         return new CartItemDTO()
                 .setId(id)
@@ -53,6 +57,7 @@ public class CartItem extends BaseEntities {
                 .setPrice(price.toString())
                 .setQuantity(String.valueOf(quantity))
                 .setTotalPrice(totalPrice.toString())
+                .setUrlImage(urlImage)
                 .setCart(cart.toCartInfoDTO())
                 .setProduct(product.toProductDTO());
     }

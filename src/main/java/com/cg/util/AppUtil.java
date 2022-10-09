@@ -15,6 +15,7 @@ public class AppUtil {
 
     public ResponseEntity<?> mapErrorToResponse(BindingResult result) {
         List<FieldError> fieldErrors = result.getFieldErrors();
+
         Map<String, String> errors = new HashMap<>();
         for (FieldError fieldError : fieldErrors) {
             errors.put(fieldError.getField(), fieldError.getDefaultMessage());

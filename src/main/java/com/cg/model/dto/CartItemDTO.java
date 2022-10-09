@@ -28,18 +28,21 @@ public class CartItemDTO {
 
     private String totalPrice;
 
+    private String urlImage;/*trường mới, hiện ảnh*/
+
     private ProductDTO product;
 
-    private CartInfoDTO cart;
+    private CartInfoDTO cart;  /*CartInFo chính là các trường chính của cart, ta chỉ đổi tên thành CartInFo*/
 
 
 
-    public CartItemDTO(Long id, String title, BigDecimal price, int quantity, BigDecimal totalPrice, Product product, Cart cart) {
+    public CartItemDTO(Long id, String title, BigDecimal price, int quantity, BigDecimal totalPrice, String urlImage, Product product, Cart cart) {
         this.id = id;
         this.title = title;
         this.price = price.toString();
         this.quantity = String.valueOf(quantity);
         this.totalPrice = totalPrice.toString();
+        this.urlImage = urlImage;
         this.product = product.toProductDTO();
         this.cart = cart.toCartInfoDTO();
     }
@@ -51,6 +54,7 @@ public class CartItemDTO {
                 .setPrice(new BigDecimal(price))
                 .setQuantity(Integer.parseInt(quantity))
                 .setTotalPrice(new BigDecimal(totalPrice))
+                .setUrlImage(urlImage)
                 .setCart(cart.toCart())
                 .setProduct(product.toProduct());
     }

@@ -15,7 +15,7 @@ import org.springframework.validation.Validator;
 @Accessors(chain = true)
 
 public class CartDTO implements Validator {
-
+    /*thằng này tạo riêng chứa cả các trường chính(Chứa userId ở bảng carts, chứa productId ở bảng carts_item*/
 
     private String userId;
 
@@ -34,11 +34,36 @@ public class CartDTO implements Validator {
         CartDTO cartDTO = (CartDTO) target;
 
         String checkUserID = cartDTO.getUserId();
-        String checkProductId = cartDTO.getProductId();
-        String checkQuantity= cartDTO.getQuantity();
+        String productIdCheck = cartDTO.getProductId();
+        String quantityCheck = cartDTO.getQuantity();
+
 
         if((checkUserID.trim().isEmpty())){
             errors.rejectValue("userId", "userId rỗng","Vui Lòng Cung Cấp Id Người Dùng");
+            return;
+        }
+        if ((productIdCheck.trim().isEmpty())){
+            errors.rejectValue("productId", "productId.isEmpty", "Vui Lòng Cung Cấp Id Sản Phẩm");
+            return;
+        }
+
+        if ((quantityCheck.trim()).isEmpty()) {
+            errors.rejectValue("quantity", "quantity.isEmpty", "Vui Lòng Cung Cấp Số Lượng Của Sản Phẩm");
+            return;
+        }
+
+        if (!checkUserID.matches("(^$|[0-9]*$)")) {
+            errors.rejectValue("userId", "userId.matches", "Id Khách Hàng Không Hợp Lệ");
+            return;
+        }
+
+        if (!productIdCheck.matches("(^$|[0-9]*$)")) {
+            errors.rejectValue("productId", "productId.matches", "Id Sản Phẩm Không Hợp Lệ");
+            return;
+        }
+
+        if (!quantityCheck.matches("(^$|[0-9]*$)")) {
+            errors.rejectValue("quantity", "quantity.matches", "Số Lượng Sản Phẩm Không Hợp Lệ");
             return;
         }
     }

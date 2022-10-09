@@ -5,6 +5,7 @@ import com.cg.model.CartItem;
 import com.cg.model.dto.CartInfoDTO;
 import com.cg.service.IGeneralService;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface CartService extends IGeneralService<Cart> {
@@ -15,8 +16,17 @@ public interface CartService extends IGeneralService<Cart> {
 
     CartItem addProductByCart(Cart cart, CartItem cartItem);
 
+    /*Phương thức này dùng để cập nhật Tăng và Giảm số lượng trong phần Post(api/carts/increase và api/carts/reduce*/
     CartItem updateProductByCart(Cart cart, CartItem cartItem);
 
+    /*Phần này thực hiện xóa cartItem ra*/
     CartInfoDTO doRemoveCartItem(Cart cart, Long cartItemId);
+
+
+
+
+
+    /*Hàm count*/
+    List<CartInfoDTO> findCartIFDTOByUserId(Long id);
 
 }

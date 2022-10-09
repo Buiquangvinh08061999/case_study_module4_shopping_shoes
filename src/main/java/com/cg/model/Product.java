@@ -42,9 +42,9 @@ public class Product extends BaseEntities{
     private boolean deleted;
 
     @Column(name = "describe_product")
-     private String describe;
+    private String describe;
 
-    @ManyToOne
+    @ManyToOne()
     @JoinColumn(name = "category_id")
     private Category category;
 

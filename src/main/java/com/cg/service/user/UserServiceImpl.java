@@ -3,10 +3,10 @@ package com.cg.service.user;
 import com.cg.model.LocationRegion;
 import com.cg.model.User;
 import com.cg.model.UserPrinciple;
+import com.cg.model.dto.CountDTO;
 import com.cg.model.dto.UserDTO;
 import com.cg.repository.LocationRegionRepository;
 import com.cg.repository.UserRepository;
-import com.cg.service.locationRegion.LocationRegionServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -32,6 +32,7 @@ public class UserServiceImpl implements IUserService{
     public List<User> findAll() {
         return userRepository.findAll();
     }
+
     //Hiển thị list tất cả ra
     @Override
     public List<UserDTO> findAllUserDTOByDeletedIsFalse() {
@@ -40,9 +41,16 @@ public class UserServiceImpl implements IUserService{
 
     //Hàm search
     @Override
-    public List<UserDTO> searchAllUser(String keywork) {
-        return userRepository.search(keywork);
+    public List<UserDTO> searchAllUser(String keyword) {
+        return userRepository.search(keyword);
     }
+
+    //Hàm search A.Minh
+//    @Override
+//    public List<User> searchAllTemp(String keyword) {
+//        List<User> users = userRepository.findAllByFullNameLikeOrPhoneLike(keyword, keyword);
+//        return users;
+//    }
 
 
     @Override
@@ -55,6 +63,7 @@ public class UserServiceImpl implements IUserService{
         return userRepository.getById(id);
     }
 
+    /*Triển khai phương thức này từ repository nhận giá trị tên(user.getUsername) truyền vào ở hàm login(khi ta đăng nhập vào)  */
     @Override
     public User getByUsername(String username) {
         return userRepository.getByUsername(username);
@@ -65,25 +74,31 @@ public class UserServiceImpl implements IUserService{
         return userRepository.findByUsername(username);
     }
 
-//    @Override
-//    public Optional<UserDTO> findUserDTOByUsername(String username) {
-//        return userRepository.findUserDTOByUsername(username);
-//    }
+    /*Tìm id của user để kiểm tra có tồn tại không đưa vào phần CartRestController*/
+    @Override
+    public Optional<UserDTO> findUserDTOById(long id) {
+        return userRepository.findUserDTOById(id);
+    }
 
+    /*Phần này lưu lại thông tin từ các ô input ở phần ajax (/api/customers/create (POST), và mã hóa Password*/
     @Override
     public User save(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        LocationRegion locationRegion = locationRegionRepository.save(user.getLocationRegion());
+        LocationRegion locationRegion = locationRegionRepository.save(user.getLocationRegion());/*hàm save này được viết ở location để lưu thông tin location*/
 
         user.setLocationRegion(locationRegion);
 
         return userRepository.save(user);
     }
 
+    /*Phần này lưu lại các thông tin update từ các ô input ở phần ajax (/api/customers/update (PUT),
+    đặt biệt không mã hóa lại Password, nếu mã hóa sẽ không đăng nhập lại được, ta tắt đi tính năng đó*/
     @Override
     public User saveUpdate(User user) {
-        LocationRegion locationRegion = locationRegionRepository.save(user.getLocationRegion());
+//        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        LocationRegion locationRegion = locationRegionRepository.save(user.getLocationRegion()); /*hàm save này được viết ở location để lưu thông tin location*/
 
         user.setLocationRegion(locationRegion);
 
@@ -102,6 +117,7 @@ public class UserServiceImpl implements IUserService{
         if (!userOptional.isPresent()) {
             throw new UsernameNotFoundException(username);
         }
+
         return UserPrinciple.build(userOptional.get());
 //        return (UserDetails) userOptional.get();
 
@@ -121,14 +137,65 @@ public class UserServiceImpl implements IUserService{
         return userRepository.existsByPhone(phone);
     }
 
+    /*Cập nhật cho trùng tên của nó, nhưng không trùng tên ở các mục khác*/
     @Override
     public Boolean existsByUsernameAndIdIsNot(String username, Long id) {
         return userRepository.existsByUsernameAndIdIsNot(username, id);
     }
 
+    /*Cập nhật cho trùng phone của nó, nhưng không trùng phone ở các mục khác*/
     @Override
     public Boolean existsByPhoneAndIdIsNot(String phone, Long id) {
         return userRepository.existsByPhoneAndIdIsNot(phone, id);
+    }
+
+    /*Viết hàm này để truyền giá trị vào menu(show_cart), lấy giá đó để lấy id, tên người dùng(đăng nhập)*/
+    @Override
+    public Optional<UserDTO> findUserDTOByUsername(String username) {
+        return userRepository.findUserDTOByUsername(username);
+    }
+
+    /*Hàm tìm kiếm tất cả các trường theo id tăng dần sortASC theo id*/
+    @Override
+    public List<UserDTO> findAllSortASCIdUserDTO() {
+        return userRepository.findAllSortASCIdUserDTO();
+    }
+
+    @Override
+    public List<UserDTO> findAllSortDESCIdUserDTO() {
+        return userRepository.findAllSortDESCIdUserDTO();
+    }
+
+    @Override
+    public List<UserDTO> findAllSortASCUserNameUserDTO() {
+        return userRepository.findAllSortASCUserNameUserDTO();
+    }
+
+    @Override
+    public List<UserDTO> findAllSortDESCUserNameUserDTO() {
+        return userRepository.findAllSortDESCUserNameUserDTO();
+    }
+
+    @Override
+    public List<UserDTO> findAllSortASCFullNameUserDTO() {
+        return userRepository.findAllSortASCFullNameUserDTO();
+    }
+
+    @Override
+    public List<UserDTO> findAllSortDESCFullNameUserDTO() {
+        return userRepository.findAllSortDESCFullNameUserDTO();
+    }
+
+    /*Đếm tổng số lượng danh sách người dùng, đang tốn tại(Get api/customers/count)*/
+    @Override
+    public CountDTO findAllCount() {
+        return userRepository.findAllCount();
+    }
+
+    /*Phương thức này dùng để hiện thị lại những danh sách đã bị xóa mềm*/
+    @Override
+    public List<UserDTO> findAllUserDTOHistoryByDeletedIsTrue() {
+        return userRepository.findAllUserDTOHistoryByDeletedIsTrue();
     }
 
 
