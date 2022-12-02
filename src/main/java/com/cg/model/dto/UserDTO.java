@@ -11,6 +11,7 @@ import org.springframework.validation.Validator;
 
 import javax.validation.Valid;
 import javax.validation.constraints.*;
+import java.math.BigDecimal;
 import java.util.Date;
 
 
@@ -23,7 +24,6 @@ public class UserDTO implements Validator {
 
     private Long id;
 
-
     private String username;
 
     private String password;
@@ -32,28 +32,24 @@ public class UserDTO implements Validator {
 //    @Pattern(regexp = "^[a-zA-Z\\s]*$", message = "FullName phải là chữ , không có kí tự đặt biệt và số")
     private String fullName;
 
-
-//    @NotBlank(message = "Phone là bắt buộc")
-//    @Pattern(regexp = "^[0][1-9][0-9]{8,9}|[+84][1-9][0-9]{10,11}$", message = "Phone không bao gồm dấu cách,chữ,kí tự đặc biệt,Phone gồm 10 đến 11 số và bắt đầu là số 0 và +84")
     private String phone;
 
     private String urlImage;
 
     private boolean deleted;
 
-    /*Cách này dùng để validate Oject lồng Oject, tức là các lỗi thằng con sẽ được ném vào thằng cha nhận, và qua API chỉ cần đối tượng UserDTO sẽ hứng được hết*/
     @Valid
     private LocationRegionDTO locationRegion;
 
     @Valid
     private RoleDTO role;
 
-
     @JsonFormat(pattern = "HH:mm - dd/MM/yyyy", timezone = "Asia/Ho_Chi_Minh")
     private Date createdAt;
 
     @JsonFormat(pattern = "HH:mm - dd/MM/yyyy", timezone = "Asia/Ho_Chi_Minh")
     private Date updatedAt;
+
 
 
     /*viết thêm các trường để search ra các trường này*/
@@ -64,9 +60,7 @@ public class UserDTO implements Validator {
 
     private String code;
 
-    public boolean isDeleted() {
-        return deleted;
-    }
+
 
     /*Hiển thị tất cả*/
     public UserDTO(Long id, String username, String password, String fullName, String phone, String urlImage, Date createdAt, Date updatedAt, LocationRegion locationRegion, Role role) {
@@ -115,12 +109,10 @@ public class UserDTO implements Validator {
         this.fullName = fullName;
     }
 
-    /*Các giá trị được set ở đây, là các giá trị nằm ở trường userDTO phía trên*/
-    /*Thay vì làm thủ công.forEach User,-> rồi gán ở trong UserDTO  userDTO= new USDTO, rồi userDTO.setId(user.getId)..v.v. thì ta làm cách dưới */
-    /*Ở đây xử lí dữ liệu qua user, set lại các giá trị user, Truyền các trường userDTO vào các trường set phía dưới vào*/
+
 
     public User toUser() {
-        return new User()
+        return (User) new User()
                 .setId(id)
                 .setUsername(username)
                 .setPassword(password)
@@ -128,7 +120,9 @@ public class UserDTO implements Validator {
                 .setUrlImage(urlImage)
                 .setPhone(phone)
                 .setLocationRegion(locationRegion.toLocationRegion())
-                .setRole(role.toRole());
+                .setRole(role.toRole())
+                .setCreatedAt(createdAt)
+                .setUpdatedAt(updatedAt);
     }
 
 
@@ -168,9 +162,7 @@ public class UserDTO implements Validator {
             errors.rejectValue("username",  "username.length()" ,"User Name phải nằm trong khoảng từ 14 đến 255 kí tự, Vui lòng nhập lại!");
             return;
         }
-        /*end username*/
 
-        /*Tổng hợp các phương thức xử lí validator fullName*/
         if(fullName.trim().isEmpty()){
             errors.rejectValue("fullName",  "fullName.isEmpty" ,"Vui lòng nhập vào fullName, fullName không được để trống");
             return;
@@ -184,9 +176,7 @@ public class UserDTO implements Validator {
             return;
         }
 
-        /*end fullName*/
 
-        /*Tổng hợp các phương thức xử lí validator PassWord*/
         if(password.trim().isEmpty()){
             errors.rejectValue("password",  "password.isEmpty" ,"Vui lòng nhập vào PassWord, PassWord không được để trống");
             return;
@@ -195,20 +185,14 @@ public class UserDTO implements Validator {
             errors.rejectValue("password",  "password.length()" ,"PassWord  phải nằm trong khoảng từ 3 đến 50 kí tự, Vui lòng nhập lại!");
             return;
         }
-        /*end PassWord*/
 
-        /*Tổng hợp các phương thức xử lí validator Phone*/
         if(phone.trim().isEmpty()){
             errors.rejectValue("phone",  "phone.isEmpty" ,"Vui lòng nhập vào Phone, Phone không được để trống");
             return;
         }
-        if(!phone.matches("\\+[0-9]\\s\\(([0-9]{3})\\)\\s+[0-9]{3}[-]+[0-9]{4}")){
-            errors.rejectValue("phone",  "phone.matches" ,"Phone không chứa kí tự đặt biệt,chữ cái, chỉ chứa chữ số (VD: +1 (264) 351-2299)");
-            return;
-        }
-        /*end Phone*/
 
-        /*Tổng hợp các phương thức xử lí validator Address*/
+
+
         if(address.trim().isEmpty()){
             errors.rejectValue("address",  "address.isEmpty" ,"Vui lòng nhập vào Address, Address không được để trống");
             return;
@@ -217,52 +201,12 @@ public class UserDTO implements Validator {
             errors.rejectValue("address",  "address.length()" ,"Address  phải nằm trong khoảng từ 3 đến 50 kí tự, Vui lòng nhập lại!");
             return;
         }
-        /*end Address*/
+
 
 
     }
 
 
-
-
-//    @Override
-//    public boolean supports( Class<?> clazz) {
-//        return UserDTO.class.isAssignableFrom(clazz);
-//    }
-//
-//    @Override
-//    public void validate(Object target, Errors errors) {
-//        UserDTO userDTO = (UserDTO) target;
-//
-//        String userNameStr = userDTO.getUsername();
-//        String fullNameStr = userDTO.getFullname();
-//
-//        if(!userNameStr.matches("(^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\\\.[A-Za-z]{2,3}$)")){
-//            errors.rejectValue("username", "userNameStr.matches","Vui lòng nhập đúng định dạng UserName VD(txr@gmail.com)");
-//            return;
-//        }
-//        if(userNameStr.isEmpty()) {
-//            errors.rejectValue("username", "userNameStr.isEmpty", "UserName không được để trống");
-//            return;
-//        }
-//        if(userNameStr == null){
-//            errors.rejectValue("username", "userNameStr.null","UserName không được null");
-//            return;
-//        }
-//        if(userNameStr.length() < 6 || userNameStr.length() > 31){
-//            errors.rejectValue("username", "userNameStr.length","UserName từ 6 đến 31 kí tự");
-//            return;
-//        }
-
-//        if(!fullNameStr.matches(("^[a-zA-Z]$"))){
-//            errors.rejectValue("fullname", "fullNameStr.matches","FullName không có kí tự đặt biệt và số");
-//            return;
-//        }
-//
-//        if(fullNameStr.isEmpty()){
-//            errors.rejectValue("fullname", "fullNameStr.isEmpty","FullName không được rỗng");
-//            return;
-//        }
 
 
     }

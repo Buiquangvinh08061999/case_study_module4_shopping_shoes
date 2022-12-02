@@ -16,10 +16,8 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Entity
 @Table(name ="location_region")
-
 @Accessors(chain = true)/*hàm void sẽ ko trả về đc phải cần thuộc tính này để return, retunrn lại chính nó,*/
 public class LocationRegion extends BaseEntities{
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -47,6 +45,8 @@ public class LocationRegion extends BaseEntities{
 
     @OneToOne(mappedBy = "locationRegion")
     private User user;
+
+
 
     public LocationRegionDTO toLocationRegionDTO() {
         return new LocationRegionDTO()

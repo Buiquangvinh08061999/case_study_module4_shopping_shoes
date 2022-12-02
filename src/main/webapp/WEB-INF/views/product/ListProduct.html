@@ -159,8 +159,8 @@
 
     //Hiển thị thông báo có muốn thoát không
     $('#logout').on('click', function (){
-        let confim = confirm("Bạn có chắc muốn thoát ứng dụng không!")
-        if(confim === true){
+        let message = confirm("Bạn có chắc muốn thoát ứng dụng không!")
+        if(message === true){
 
             App.SweetAlert.showSuccessAlert("Đăng Xuất Thành Công")
             setTimeout(function () {

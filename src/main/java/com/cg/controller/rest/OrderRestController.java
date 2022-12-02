@@ -76,7 +76,6 @@ public class OrderRestController {
 
         List<OrderItemDTO> orderItemDTO = orderService.findAllOrderItemDTOByOrderId(id);
 
-
         return new ResponseEntity<>(orderItemDTO, HttpStatus.OK);
 
     }
@@ -86,7 +85,7 @@ public class OrderRestController {
     @GetMapping("/count")
     public ResponseEntity<?> getAllCountOrderDTO() {
         CountDTO countDTO = orderService.findAllCount();
-        /*Nếu rỗng bắn ra lỗi*/
+
         try {
             return new ResponseEntity<>(countDTO, HttpStatus.OK);
 
@@ -100,8 +99,12 @@ public class OrderRestController {
 
         CountDTO countDTO = orderService.findAllCountOrderItemByOrderId(id);
 
+        try {
+            return new ResponseEntity<>(countDTO, HttpStatus.OK);
 
-        return new ResponseEntity<>(countDTO, HttpStatus.OK);
+        }catch (DataInputException e){
+            throw new DataInputException("Thông tin không hợp lệ ");
+        }
 
     }
 
@@ -109,7 +112,7 @@ public class OrderRestController {
     @GetMapping("/count/orderStatus1")
     public ResponseEntity<?> getAllCountOrderStatus1() {
         CountDTO countDTO = orderService.findAllCountOrderStatus1();
-        /*Nếu rỗng bắn ra lỗi*/
+
         try {
             return new ResponseEntity<>(countDTO, HttpStatus.OK);
 
@@ -120,7 +123,7 @@ public class OrderRestController {
     @GetMapping("/count/orderStatus2")
     public ResponseEntity<?> getAllCountOrderStatus2() {
         CountDTO countDTO = orderService.findAllCountOrderStatus2();
-        /*Nếu rỗng bắn ra lỗi*/
+
         try {
             return new ResponseEntity<>(countDTO, HttpStatus.OK);
 
@@ -131,7 +134,7 @@ public class OrderRestController {
     @GetMapping("/count/orderStatus3")
     public ResponseEntity<?> getAllCountOrderStatus3() {
         CountDTO countDTO = orderService.findAllCountOrderStatus3();
-        /*Nếu rỗng bắn ra lỗi*/
+
         try {
             return new ResponseEntity<>(countDTO, HttpStatus.OK);
 
@@ -142,7 +145,7 @@ public class OrderRestController {
     @GetMapping("/count/orderStatus4")
     public ResponseEntity<?> getAllCountOrderStatus4() {
         CountDTO countDTO = orderService.findAllCountOrderStatus4();
-        /*Nếu rỗng bắn ra lỗi*/
+
         try {
             return new ResponseEntity<>(countDTO, HttpStatus.OK);
 
@@ -222,14 +225,12 @@ public class OrderRestController {
             return appUtils.mapErrorToResponse(bindingResult);
         }
 
-
         Optional<OrderStatus> orderStatusId = orderStatusService.findById(orderDTO.getOrderStatus().getId());
         if(!orderStatusId.isPresent()){
             throw new DataInputException("ID orderStatus không tồn tại!, vui lòng không chỉnh sửa value");
         }
 
         try {
-
             Order updateOrder = orderService.save(orderDTO.toOrder());
 
             return new ResponseEntity<>(updateOrder.toOrderDTO(),  HttpStatus.CREATED);

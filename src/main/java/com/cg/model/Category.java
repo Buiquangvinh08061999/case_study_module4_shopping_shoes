@@ -20,7 +20,6 @@ import java.util.Set;
 @Entity
 @Table(name = "categories")
 @Accessors(chain = true)
-
 public class Category {
 
     @Id

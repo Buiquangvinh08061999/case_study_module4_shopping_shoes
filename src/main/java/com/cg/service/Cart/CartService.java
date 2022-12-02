@@ -26,7 +26,4 @@ public interface CartService extends IGeneralService<Cart> {
 
 
 
-    /*Hàm count*/
-    List<CartInfoDTO> findCartIFDTOByUserId(Long id);
-
 }

@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import javax.validation.Valid;
 import java.math.BigDecimal;
 
 @Getter
@@ -23,8 +24,9 @@ public class OrderItemDTO {
     private int quantity;
     private BigDecimal totalPrice;
 
-    private String urlImage; /*trường mới*/
+    private String urlImage;
 
+    @Valid
     private OrderDTO order;
 
 

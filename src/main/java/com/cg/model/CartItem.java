@@ -18,9 +18,7 @@ import java.math.BigDecimal;
 @Entity
 @Table(name = "cart_items")
 @Accessors(chain = true)
-
 public class CartItem extends BaseEntities {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -38,7 +36,7 @@ public class CartItem extends BaseEntities {
     @Column(name = "total_price")
     private BigDecimal totalPrice;
 
-    @Column(name = "url_image") /*Trường mới*/
+    @Column(name = "url_image")
     private String urlImage;
 
     @ManyToOne

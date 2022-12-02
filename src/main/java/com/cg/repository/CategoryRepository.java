@@ -12,10 +12,13 @@ import java.util.List;
 public interface CategoryRepository extends JpaRepository<Category, Long> {
 
 
-    @Query("SELECT NEW com.cg.model.dto.CategoryDTO(c.id, c.title) FROM Category AS c")
+    @Query("SELECT NEW com.cg.model.dto.CategoryDTO(" +
+                "c.id, c.title" +
+            ") " +
+            "FROM Category AS c"
+    )
     List<CategoryDTO> findAllCategoryDTO();
 
 
-    /*Kiểm tra tên đã tồn tại chưa*/
     Boolean existsByTitle(String title);
 }

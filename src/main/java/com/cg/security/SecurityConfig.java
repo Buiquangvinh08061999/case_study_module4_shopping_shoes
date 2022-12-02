@@ -65,15 +65,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/", "/api/auth/login", "/api/customers/create" , "/login").permitAll() /* "/select/ListUser"*/
                 .antMatchers("/select/ListProduct" , "/select/ListUser", "/select/ListOrderDashBoard", "/select/homepage" ,"select/ListHistoryUser").hasAnyAuthority("ADMIN")
                 .antMatchers("/assets/**").permitAll()
-                .antMatchers(
-                        "/v3/api-docs",
-                        "/swagger-resources/configuration/ui",
-                        "/configuration/ui",
-                        "/swagger-resources",
-                        "/swagger-resources/configuration/security",
-                        "/configuration/security",
-                        "/swagger-ui/**"
-                ).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()

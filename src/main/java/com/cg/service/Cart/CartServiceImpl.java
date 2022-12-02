@@ -28,12 +28,8 @@ public class CartServiceImpl implements CartService{
         return cartRepository.findCartInfoDTOByUserId(id);
     }
 
-    /*Đây là phần thêm mới cart, truyền cart,và cartItem vào, lưu đối tượng cart, và set cho cartItem.setCart lại*/
-    /*Thằng cart là con của cartItem, Nên ta phải gọi cartRepo vào đây để lưu nó lại, và trong cartItem.setCart, truyền thằng cart được lưu vào*/
-    /*Được tạo ra khi giỏ hàng đang trống, nó sẽ lưu thông tin các trường product, đẩy vào trong cart, cartItem, và save lại*/
     @Override
     public CartItem addNewCart(Cart cart, CartItem cartItem) {
-
         Cart cartNew = cartRepository.save(cart);
 
         cartItem.setCart(cartNew);
@@ -70,15 +66,6 @@ public class CartServiceImpl implements CartService{
 
         return cartNew.toCartInfoDTO();
     }
-
-
-    /*Hàm count*/
-    @Override
-    public List<CartInfoDTO> findCartIFDTOByUserId(Long id) {
-        return cartRepository.findCartIFDTOByUserId(id);
-    }
-
-
 
     @Override
     public List<Cart> findAll() {

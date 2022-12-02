@@ -120,6 +120,7 @@
         })
             .done((data) => {
                 $.each(data ,(i, item)=>{
+                    console.log(data)
                     order = item
                     user = order.user;
                     orderStatus = order.orderStatus;
@@ -132,7 +133,7 @@
                                 <td>${'#000' + order.id}</td>
                                 <td>${user.username}</td>
                                 <td>${user.phone}</td>
-                                <td>${order.orderDate}</td>
+                                <td>${order.createdAt}</td>
                                 <td class="fw-bold">
                                     ${new Intl.NumberFormat('vi-VN', {
                                     style: 'currency',
@@ -175,7 +176,7 @@
     let districtName ="";
     let wardName ="";
     let address ="";
-    let orderDate ="";
+    let orderCreatedAt ="";
     let roleCode ="";
     let orderStatusTitle ="";
     let total = 0;
@@ -218,7 +219,7 @@
                     districtName = locationRegion.districtName;/*Thị Xã*/
                     wardName = locationRegion.wardName; /*Huyện*/
                     address = locationRegion.address;
-                    orderDate = order.orderDate; /*hiển thị ngày đặt*/
+                    orderCreatedAt = order.createdAt; /*hiển thị ngày đặt*/
                     roleCode = role.code;/*hiển thị role.code theo orderId*/
                     orderStatusTitle = orderStatus.title; /*hiển thị  tên trạng thái, orderStatus.title theo orderId*/
 
@@ -246,6 +247,7 @@
                                 </td>
                             </tr>
                     `;
+
                     $('#tbProductDetail tbody').append(product);
 
                     $('#modalDetail').modal('show');
@@ -271,7 +273,7 @@
 
                 /*Đưa vào thẻ #order_date hiển thị ngày đặt hàng */
                 let order_date =`
-                     <b>Ngày đặt hàng: </b><span>${orderDate}</span>
+                     <b>Ngày đặt hàng: </b><span>${orderCreatedAt}</span>
                 `;
                 $('#order_date').append(order_date)
 
@@ -469,6 +471,7 @@
             .done((data) => {
                 order = data;
                 orderStatus = order.orderStatus
+
                 console.log(data);
                 console.log(orderStatus.id +" ID status")
                 console.log(orderStatus.title +" tên status")
@@ -509,17 +512,17 @@
                 console.log(currentRow);
                 let str = `
                   <tr id="tr_${order.id}">
-                        <td>${order.id}</td>
+                        <td>${'#000' + order.id}</td>
                         <td>${user.username}</td>
                         <td>${user.phone}</td>
-                        <td>${order.orderDate}</td>
+                        <td>${order.createdAt}</td>
                         <td class="fw-bold">
                         ${new Intl.NumberFormat('vi-VN', {
                             style: 'currency',
                             currency: 'VND'
                         }).format(order.grandTotal)}
                         </td>
-                        <td><i style="color: #11c80d">${orderStatus.title}</i></td>
+                        <td><i style="color: red">${orderStatus.title}</i> </td>
                         <td>
                            <button type="button" data-id="${order.id}" class="btn btn-outline-primary detail_order">Chi Tiết</button>
                         </td>
@@ -540,7 +543,6 @@
                 handleDetail_order();/*Để ở mục done tránh vòng lặp forEach sẽ bị lặp */
 
                 handleShowUpdateOrderStatus();/*Để ở mục done tránh vòng lặp forEach sẽ bị lặp, hiển thị select option( trạng thái ra, để ta lựa chọn)*/
-
 
                 $('#span_count_1').html("")/*Mỗi lần sắp xếp lại, thì xóa đi giá trị đếm được của list sản phẩm để hiển thị lại, nếu không nó sẽ bị lặp lại*/
                 $('#span_count_2').html("")

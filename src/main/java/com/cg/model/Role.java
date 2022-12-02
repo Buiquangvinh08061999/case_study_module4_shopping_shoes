@@ -17,7 +17,6 @@ import java.util.Set;
 @Table(name = "roles")
 @Accessors(chain = true)
 public class Role {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -31,7 +30,6 @@ public class Role {
     /*mặc định là hắn LAZY, trường role, thì nó sẽ không hiển thị thằng userId có chưa roleId(2.v.v) tương ứng ra, còn dùng EAGER thì nó sẽ lấy tất cả record tương ứng, userId sẽ lấy hết thằng roleId tương ứng mà nó chưa*/
     @OneToMany(targetEntity = User.class, mappedBy = "role", fetch = FetchType.EAGER)
     private Set<User> users;
-
 
 
     public RoleDTO toRoleDTO(){

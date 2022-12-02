@@ -65,7 +65,6 @@ class App{
         }
 
     }
-
     static formatNumberSpace(x) {
         if (x == null) {
             return x;
@@ -74,7 +73,6 @@ class App{
     }
 
 }
-
 
 
 class LocationRegion {
@@ -182,10 +180,10 @@ class OrderItem {
 }
 
 class OrderTest { /*day la order*/
-    constructor(id, grandTotal, orderDate, user, orderStatus) {
+    constructor(id, grandTotal, createdAt, user, orderStatus) {
         this.id = id;
         this.grandTotal = grandTotal;
-        this.orderDate = orderDate;
+        this.createdAt = createdAt;
         this.user = user;
         this.orderStatus = orderStatus;
     }

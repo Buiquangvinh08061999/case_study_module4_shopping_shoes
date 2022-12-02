@@ -85,7 +85,6 @@
 
             <a href="javascript: void(0);" class="show_cart" data-th-id="${userDTO.id}"> <i class="fa fa-shopping-cart" aria-hidden="true"></i></a> <!--Đây là nút hình ảnh giỏ hàng, xử lí truyền theo id của user-->
 
-
         </div>
 
     </div>
@@ -108,13 +107,13 @@
 
 <th:block th:replace="/order/temp_block_product_info :: temp_block_product_info" />
 
-<th:block th:replace="/order/2_1cart_modal :: 2_1cart_modal" />
+<th:block th:replace="/order/cart_modal :: cart_modal" />
 
-<!--Chưa rõ nó dùng để làm gì-->
-<th:block th:replace="/order/2_2product_info :: 2_2product_info" />
 
-<!--Chỉ biết nó nằm trong phần cart nhưng chưa hiểu nghiệp vụ-->
-<th:block th:replace="/order/2_3tem_block_show_product_cart :: 2_3tem_block_show_product_cart" />
+<th:block th:replace="/order/product_info :: product_info" />
+
+<!--chưa sử dủng-->
+<th:block th:replace="/order/tem_block_show_product_cart :: tem_block_show_product_cart" />
 
 <th:block th:replace="/layout/script_6 :: script_6"/>
 
@@ -124,7 +123,6 @@
     let user = new User();
     let category = new Category();
     let product = new Product();
-
 
     let cartItem = new CartItem();
     let cart = new Cart();
@@ -151,10 +149,12 @@
                 <div class="content--product--bottom">
                     <p style="color: #2e23a9">${product.name}</p>
                     <span style="color:#4d0a0aba;">Loại: ${category.title}</span>
-                    <p style="color: #ef1200">${new Intl.NumberFormat('vi-VN', {
-                    style: 'currency',
-                    currency: 'VND'
-                    }).format(product.price)}</p>
+                    <p style="color: #ef1200">
+                        ${new Intl.NumberFormat('vi-VN', {
+                        style: 'currency',
+                        currency: 'VND'
+                        }).format(product.price)}
+                    </p>
                     <p class="add--cart" data-id="${product.id}">Thêm Vào Giỏ Hàng</p>
 
                 </div>
@@ -163,7 +163,6 @@
         return str;
     }
 
-    /*Mặc định khi thêm mới bên Product thì nó sẽ tự vẽ trong phần body(content ở giữa) hiển thị sản phẩm ra, lấy lại api in chang ở product khi hiển thị sản phẩm*/
     function getAllProduct(){
         $.ajax({
             header: {
@@ -178,7 +177,7 @@
                 $.each(data ,(i, item)=>{
                     product = item;
                     category = product.category
-                    let str = renderAllProduct(product, category); /*hàm làm gọn code, tái sử dụng ,khi chỉ cần gọi lại hàm*/
+                    let str = renderAllProduct(product, category);
 
                     $('.content--product--first').prepend(str);
                 })
@@ -237,7 +236,7 @@
                 product = item;
                 category = product.category
 
-                let str = renderAllProduct(product, category); /*hàm làm gọn code, tái sử dụng ,khi chỉ cần gọi lại hàm*/
+                let str = renderAllProduct(product, category);
 
                 $('.content--product--first').prepend(str);
 
@@ -263,13 +262,13 @@
             url: "http://localhost:8080/api/products/betweenPrice100000and200000",
         })
             .done((data) => {
-                $('.content--product--first').html("");/*CHÚ Ý, Khi ta kích vào sắp xếp, khi nó vẽ lại phải xóa đi phần GetAllProduct trong tbody chứa Dữ Liệu ở đó đi, để đưa dữ liệu ta vừa sort vào*/
+                $('.content--product--first').html("");
 
                 $.each(data ,(i, item)=> {
                     product = item;
                     category = product.category
 
-                    let str = renderAllProduct(product, category); /*hàm làm gọn code, tái sử dụng ,khi chỉ cần gọi lại hàm*/
+                    let str = renderAllProduct(product, category);
 
                     $('.content--product--first').prepend(str);
 
@@ -295,13 +294,13 @@
             url: "http://localhost:8080/api/products/betweenPrice200000and300000",
         })
             .done((data) => {
-                $('.content--product--first').html("");/*CHÚ Ý, Khi ta kích vào sắp xếp, khi nó vẽ lại phải xóa đi phần GetAllProduct trong tbody chứa Dữ Liệu ở đó đi, để đưa dữ liệu ta vừa sort vào*/
+                $('.content--product--first').html("");
 
                 $.each(data ,(i, item)=> {
                     product = item;
                     category = product.category
 
-                    let str = renderAllProduct(product, category); /*hàm làm gọn code, tái sử dụng ,khi chỉ cần gọi lại hàm*/
+                    let str = renderAllProduct(product, category);
 
                     $('.content--product--first').prepend(str);
 
@@ -327,13 +326,13 @@
             url: "http://localhost:8080/api/products/betweenPrice300000and500000",
         })
             .done((data) => {
-                $('.content--product--first').html("");/*CHÚ Ý, Khi ta kích vào sắp xếp, khi nó vẽ lại phải xóa đi phần GetAllProduct trong tbody chứa Dữ Liệu ở đó đi, để đưa dữ liệu ta vừa sort vào*/
+                $('.content--product--first').html("");
 
                 $.each(data ,(i, item)=> {
                     product = item;
                     category = product.category
 
-                    let str = renderAllProduct(product, category); /*hàm làm gọn code, tái sử dụng ,khi chỉ cần gọi lại hàm*/
+                    let str = renderAllProduct(product, category);
 
                     $('.content--product--first').prepend(str);
 
@@ -350,21 +349,13 @@
     }
 
 
-
-    /*Phần addcart là đầu tiên, xong mới đến bước showcart*/
-    /*Lấy id ở menu.html vì ta đã truyền userDTO id đó vào, khi thêm sản phẩm vào, ta lấy dữ liệu userId, và productId vào, và gán lại cho các trường của cart*/
     function addCart(){
         $('.add--cart').on('click',function (){
 
             let userId = $('.add_cart').attr('id'); /*lấy userid ở phần menu có class add_cart ra, còn class add--cart là khác, nó dùng để để xử lí,*/
-
-            let productId = $(this).data("id");/*lấy id của product ra ở phần vẽ lại getAllProduct, có product.id của nó ra*/
+            let productId = $(this).data("id"); /*lấy id của product ra ở phần vẽ lại getAllProduct, có product.id của nó ra*/
             let quantity = 1;
 
-            console.log(userId  + "userId")
-            console.log(productId +"productId");
-
-            /*truyền các giá trị id này khớp với 3 trường trong cart ra gán nó lại, và truyền vào data:JSON, để thằng cartDTO bên api có giá trị, nếu không sẽ báo lỗi*/
             cart.userId = userId;
             cart.productId = productId;
             cart.quantity = quantity;
@@ -377,7 +368,7 @@
                 },
                 type: "POST",
                 url: "http://localhost:8080/api/carts/add",
-                data: JSON.stringify(cart) /*bắt buộc phải truyền các trường data vào, để thằng cartDTO nhận 3 giá trị vào, 3 giá trị nhận vào kiểu chuỗi*/
+                data: JSON.stringify(cart) //Truyền JSON vào
             })
             .done((data) => {
                 console.log(data + "giá trị data")
@@ -385,6 +376,7 @@
                     App.IziToast.showSuccessAlert(data.successFirst)
                 }
                 App.IziToast.showSuccessAlert(data.success)
+
             })
             .fail((jqXHR) => {
                 console.log(jqXHR)
@@ -479,15 +471,10 @@
             let userId = $('.add_cart').attr('id');/*lấy userid ở phần menu có class add_cart ra, còn class add--cart là khác, nó dùng để để xử lí,*/
             let productId = $(this).data("id");/*lấy id của product ra ở phần vẽ lại getAllProduct, có product.id của nó ra*/
 
-            console.log(userId + "userId")
-            console.log(productId + "productId")
-
-            /*truyền các giá trị id này khớp với 3 trường trong cart ra gán nó lại, và truyền vào data:JSON, để thằng cartDTO bên api có giá trị, nếu không sẽ báo lỗi*/
             cart.userId = userId;
             cart.productId = productId;
             cart.quantity = 0;
 
-            console.log(JSON.stringify(cart) + " 3 trường điều là kiểu chuỗi")
             $.ajax({
                 headers: {
                     "accept": "application/json",
@@ -522,12 +509,13 @@
     /*Lấy dữ liệu của quantity ở phần 2_3(tem_..)  lấy dữ liệu userId ở phần menu.html*/
     function doIncrease(){
         $('.quantity-up').on('click', function (){
+
             let cartItemIncrease = new CartItem();
             let userId = $('.add_cart').attr('id');
             let productId = $(this).data("id");
 
             let quantity = $(`.input_${productId}`).val();  /*dữ quan tity lấy từ ID của product*/
-            let increaseValue = Number(quantity) + 1;
+
             console.log(quantity + " SỐ lượng")
             let cart = new Cart();
 
@@ -580,7 +568,6 @@
             let userId = $('.add_cart').attr('id');
             let productId = $(this).data("id");
             let quantity = $(`.input_${productId}`).val();  /*dữ quan tity lấy từ ID của product*/
-            let reduceValue = Number(quantity) -1;
 
             let cartItemReduce = new CartItem();
             let cart = new Cart();
@@ -590,8 +577,6 @@
                 cart.productId = productId;
                 cart.quantity = 1;
 
-                console.log(userId+"userId")
-                console.log(productId +"productId")
                 $.ajax({
                     headers: {
                         "accept": "application/json",
@@ -606,7 +591,6 @@
                         cartItemReduce = data.cartItemReduce;  /*Truyền vào data.cartItemReduce, result.put trả về "cartItemReduce" nên ta sử dụng để hứng được tất cả dữ liệu vừa được cập nhật lại*/
 
                         $(`.input_${productId}`).val(cartItemReduce.quantity); /*giảm thành công thì hiển thị số lượng hiện tại ra nơi ô input*/
-
 
                         /*Tổng tiền khi cập nhật lại(khi trừ số lượng xuống thành công)*/
                         let grandTotal;
@@ -629,11 +613,10 @@
 
     doIncrease();
 
-
-    //Hiển thị thông báo có muốn thoát ứng dụng không
+    
     $('#logOutListOrder').on('click', function (){
-        let confim = confirm("Bạn có chắc muốn thoát ứng dụng không!")
-        if(confim === true){
+        let message = confirm("Bạn có chắc muốn thoát ứng dụng không!")
+        if(message === true){
 
             App.SweetAlert.showSuccessAlert("Đăng Xuất Thành Công")
             setTimeout(function () {

@@ -33,24 +33,16 @@ public class UserServiceImpl implements IUserService{
         return userRepository.findAll();
     }
 
-    //Hiển thị list tất cả ra
     @Override
     public List<UserDTO> findAllUserDTOByDeletedIsFalse() {
         return userRepository.findAllUserDTOByDeletedIsFalse();
     }
 
-    //Hàm search
+
     @Override
     public List<UserDTO> searchAllUser(String keyword) {
         return userRepository.search(keyword);
     }
-
-    //Hàm search A.Minh
-//    @Override
-//    public List<User> searchAllTemp(String keyword) {
-//        List<User> users = userRepository.findAllByFullNameLikeOrPhoneLike(keyword, keyword);
-//        return users;
-//    }
 
 
     @Override
@@ -80,7 +72,7 @@ public class UserServiceImpl implements IUserService{
         return userRepository.findUserDTOById(id);
     }
 
-    /*Phần này lưu lại thông tin từ các ô input ở phần ajax (/api/customers/create (POST), và mã hóa Password*/
+
     @Override
     public User save(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -92,12 +84,9 @@ public class UserServiceImpl implements IUserService{
         return userRepository.save(user);
     }
 
-    /*Phần này lưu lại các thông tin update từ các ô input ở phần ajax (/api/customers/update (PUT),
-    đặt biệt không mã hóa lại Password, nếu mã hóa sẽ không đăng nhập lại được, ta tắt đi tính năng đó*/
+
     @Override
     public User saveUpdate(User user) {
-//        user.setPassword(passwordEncoder.encode(user.getPassword()));
-
         LocationRegion locationRegion = locationRegionRepository.save(user.getLocationRegion()); /*hàm save này được viết ở location để lưu thông tin location*/
 
         user.setLocationRegion(locationRegion);
@@ -119,7 +108,7 @@ public class UserServiceImpl implements IUserService{
         }
 
         return UserPrinciple.build(userOptional.get());
-//        return (UserDetails) userOptional.get();
+
 
     }
     @Override
@@ -192,7 +181,6 @@ public class UserServiceImpl implements IUserService{
         return userRepository.findAllCount();
     }
 
-    /*Phương thức này dùng để hiện thị lại những danh sách đã bị xóa mềm*/
     @Override
     public List<UserDTO> findAllUserDTOHistoryByDeletedIsTrue() {
         return userRepository.findAllUserDTOHistoryByDeletedIsTrue();

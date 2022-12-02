@@ -24,7 +24,6 @@ import java.util.Optional;
 
 
 @RestController
-
 @RequestMapping("/api/customers")
 
 public class CustomerRestController {
@@ -38,8 +37,6 @@ public class CustomerRestController {
     @Autowired
     private IRoleService roleService;
 
-
-    /*Trả về tất cả list danh sách user ra*/
     @GetMapping
     public ResponseEntity<?> getAllUserDTO(){
 
@@ -49,17 +46,6 @@ public class CustomerRestController {
 
     }
 
-//    @GetMapping("/search/{word}")
-//    public ResponseEntity<?> getSearchUserDTO(@PathVariable String word){
-//        System.out.println(word);
-//        List<UserDTO> userDTO = userService.searchAllUser(word);
-//
-//        if(userDTO.isEmpty()){
-//            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-//        }
-//
-//        return new ResponseEntity<>(userDTO , HttpStatus.OK);
-//    }
 
     @PostMapping("/search")
     public ResponseEntity<?> getSearchUserDTO(@RequestBody SearchDTO searchDTO, BindingResult bindingResult){
@@ -93,6 +79,7 @@ public class CustomerRestController {
 
         userDTO.setId(0L);
         userDTO.getLocationRegion().setId(0L);
+
         userDTO.setUrlImage("avatar.png");  /*mặc định đường dẫn ảnh chứa trong thư mục*/
 
         Boolean existsById  = userService.existsById(userDTO.getId());
@@ -114,7 +101,6 @@ public class CustomerRestController {
         if(!roleId.isPresent()){
             throw new EmailExistsException("ID ROLE không tồn tại,vui lòng không được chỉnh sửa");
         }
-
 
 
         try{
@@ -143,7 +129,6 @@ public class CustomerRestController {
     }
 
 
-    //Hàm xử lí nút edit , chúng ta put dữ liệu lên lại sau khi đã có có dữ liệu từ Edit(Id phía trên)
     @PutMapping("/update")
 //    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<?> doUpdate(@Validated @RequestBody UserDTO userDTO, BindingResult bindingResult){
@@ -176,21 +161,18 @@ public class CustomerRestController {
         userDTO.getLocationRegion().setId(0L);
 
 
-
         try {
-            //Cách 1:User updateUser = userService.saveUpdate(userDTO.toUser());
 
             User user = userDTO.toUser();
-            User updateUser = userService.saveUpdate(user)
-                    ;
-            return new ResponseEntity<> (updateUser.toUserDTO(), HttpStatus.ACCEPTED);
+            User updateUser = userService.saveUpdate(user);
+
+            return new ResponseEntity<>(updateUser.toUserDTO(), HttpStatus.ACCEPTED);
 
         }catch (DataInputException e){
             throw new DataInputException("Thông tin tài khoản không hợp lệ");
         }
     }
 
-    //Hàm xóa mềm theo id, chỉ gần set user.get().setDeleted(true);
     @DeleteMapping("/delete/{id}")
 //    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<?> getAllUserDTO(@PathVariable Long id){
@@ -210,7 +192,6 @@ public class CustomerRestController {
        }
 
     }
-
 
     @GetMapping("/role")
     public ResponseEntity<?> getAllRoleDTO(){
@@ -257,7 +238,6 @@ public class CustomerRestController {
 
         List<UserDTO> userDTO = userService.findAllSortASCIdUserDTO();
 
-        /*Nếu rỗng bắn ra lỗi*/
         if (userDTO.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
@@ -269,7 +249,6 @@ public class CustomerRestController {
 
         List<UserDTO> userDTO = userService.findAllSortDESCIdUserDTO();
 
-        /*Nếu rỗng bắn ra lỗi*/
         if (userDTO.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
@@ -282,7 +261,7 @@ public class CustomerRestController {
 
         List<UserDTO> userDTO = userService.findAllSortASCUserNameUserDTO();
 
-        /*Nếu rỗng bắn ra lỗi*/
+
         if (userDTO.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
@@ -294,7 +273,7 @@ public class CustomerRestController {
 
         List<UserDTO> userDTO = userService.findAllSortDESCUserNameUserDTO();
 
-        /*Nếu rỗng bắn ra lỗi*/
+
         if (userDTO.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
@@ -307,30 +286,28 @@ public class CustomerRestController {
 
         List<UserDTO> userDTO = userService.findAllSortASCFullNameUserDTO();
 
-        /*Nếu rỗng bắn ra lỗi*/
+
         if (userDTO.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(userDTO, HttpStatus.OK);
     }
-
 
     @GetMapping("/sortDESCFullName")
     public ResponseEntity<?> getAllSortDESCFullNameUserDTO() {
 
         List<UserDTO> userDTO = userService.findAllSortDESCFullNameUserDTO();
 
-        /*Nếu rỗng bắn ra lỗi*/
         if (userDTO.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
+
         return new ResponseEntity<>(userDTO, HttpStatus.OK);
     }
     /*Đếm số lượng sản phẩm*/
     @GetMapping("/count")
     public ResponseEntity<?> getAllCountUserDTO() {
         CountDTO countDTO = userService.findAllCount();
-        /*Nếu rỗng bắn ra lỗi*/
 
         return new ResponseEntity<>(countDTO, HttpStatus.OK);
 

@@ -423,6 +423,7 @@
                  $('#span_count').prepend(str)
 
              })
+
              .fail((jqXHR) => {
                  console.log(jqXHR)
              })
@@ -526,6 +527,7 @@
          })
          .done((data) => {
              $('#tbListUsers tbody').html("");
+
              $.each(data, (i, item) => {
                  user = item;
                  locationRegion = user.locationRegion;
@@ -552,6 +554,7 @@
              })
          })
          .fail((jqXHR) => {
+
              console.log(jqXHR)
          })
      }
@@ -885,6 +888,7 @@
          $("#tbListUsers tbody tr").off();
      }
 
+
      function handleShowUpdate() {
          $('button.edit').on('click', function () {
              console.log(userId);
@@ -965,7 +969,7 @@
                      user = data;
                      locationRegion = user.locationRegion;
                      role = user.role;
-
+                     console.log(data +" dữ liệu")
                      let currentRow = $('#tr_'+ user.id);
                      let str =`
                          <tr id="tr_${user.id}">
@@ -1041,7 +1045,8 @@
                  user = data;
                  locationRegion = user.locationRegion;
                  role = user.role;
-
+                 console.log(data + "Dữ liệu")
+                 console.log(user + "Dữ liệu")
                  $('#usernameDet').text(user.username)
                  $('#fullnameDet').text(user.fullName)
                  $('#phoneDet').text(user.phone)
@@ -1146,6 +1151,7 @@
 
                             /*Khi xóa thành công thì hiển thị lại tổng số sản phẩm lại*/
                             $('#span_count').html("")
+
                             getAllCount()
                         })
 

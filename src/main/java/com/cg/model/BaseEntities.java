@@ -15,9 +15,8 @@ import java.util.Date;
 
 @Getter
 @Setter
-
 @MappedSuperclass
-
+@Accessors(chain = true)
 public  abstract class BaseEntities {
 
     @CreationTimestamp

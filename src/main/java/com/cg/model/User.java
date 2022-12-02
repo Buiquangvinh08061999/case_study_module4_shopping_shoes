@@ -15,7 +15,6 @@ import java.util.Set;
 @Entity
 @Table(name = "users")
 @Accessors(chain = true)
-
 public class User extends BaseEntities {
 
     @Id
@@ -32,9 +31,6 @@ public class User extends BaseEntities {
     private String fullName;
 
     private String phone;
-
-//    @Column(name = "is_actice", columnDefinition = "boolean default false")
-//    private boolean isActice;
 
     @Column(name = "url_image")
     private String urlImage;
@@ -60,7 +56,6 @@ public class User extends BaseEntities {
     private Set<Cart> carts;
 
 
-
     public UserDTO toUserDTO(){
         return new UserDTO()
                 .setId(id)
@@ -69,10 +64,10 @@ public class User extends BaseEntities {
                 .setFullName(fullName)
                 .setUrlImage(urlImage)
                 .setPhone(phone)
-                .setCreatedAt(getCreatedAt())
-                .setUpdatedAt(getUpdatedAt())
                 .setLocationRegion(locationRegion.toLocationRegionDTO())
-                .setRole(role.toRoleDTO());
+                .setRole(role.toRoleDTO())
+                .setCreatedAt(getCreatedAt())
+                .setUpdatedAt(getUpdatedAt());
     }
 
 

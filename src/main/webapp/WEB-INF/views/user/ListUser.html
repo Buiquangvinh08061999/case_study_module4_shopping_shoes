@@ -51,14 +51,6 @@
                     </div>
                 </div>
 
-<!--                <div class="row">-->
-<!--                    <div class="col-10 d-none d-sm-block" style="margin-bottom: 20px">-->
-<!--                        <form class="form-inline" action="/select/ListUser/search">-->
-<!--                            <input class="form-control col-3 mr-sm-2" type="search" placeholder="Search" aria-label="Search" id="searchUser2" name="keyword2">-->
-<!--                            <button class="btn btn-primary" id="btn-search2" type="submit"> <i class="fas fa-search"></i></button>-->
-<!--                        </form>-->
-<!--                    </div>-->
-<!--                </div>  &lt;!&ndash;end 2&ndash;&gt;-->
 
                 <div class="row">
                     <div class="col-9">
@@ -423,6 +415,7 @@
                  $('#span_count').prepend(str)
 
              })
+
              .fail((jqXHR) => {
                  console.log(jqXHR)
              })
@@ -526,6 +519,7 @@
          })
          .done((data) => {
              $('#tbListUsers tbody').html("");
+
              $.each(data, (i, item) => {
                  user = item;
                  locationRegion = user.locationRegion;
@@ -552,6 +546,7 @@
              })
          })
          .fail((jqXHR) => {
+
              console.log(jqXHR)
          })
      }
@@ -885,6 +880,7 @@
          $("#tbListUsers tbody tr").off();
      }
 
+
      function handleShowUpdate() {
          $('button.edit').on('click', function () {
              console.log(userId);
@@ -965,7 +961,7 @@
                      user = data;
                      locationRegion = user.locationRegion;
                      role = user.role;
-
+                     console.log(data +" dữ liệu")
                      let currentRow = $('#tr_'+ user.id);
                      let str =`
                          <tr id="tr_${user.id}">
@@ -1041,7 +1037,8 @@
                  user = data;
                  locationRegion = user.locationRegion;
                  role = user.role;
-
+                 console.log(data + "Dữ liệu")
+                 console.log(user + "Dữ liệu")
                  $('#usernameDet').text(user.username)
                  $('#fullnameDet').text(user.fullName)
                  $('#phoneDet').text(user.phone)
@@ -1146,6 +1143,7 @@
 
                             /*Khi xóa thành công thì hiển thị lại tổng số sản phẩm lại*/
                             $('#span_count').html("")
+
                             getAllCount()
                         })
 

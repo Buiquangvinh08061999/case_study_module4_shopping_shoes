@@ -53,15 +53,9 @@ public class AuthRestController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User user) {
 
-//        List<UserDTO> userDTOS = userService.findAllUserDTOByDeletedIsFalse();
-//        if(userDTOS.equals(true)){
-//            System.out.println("sai rồi");
-//        }
-
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword())); /*Gửi tên username và password lên để so sánh với 2 trường này trong User user(gửi ở phần login.html)*/
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
 
         String jwt = jwtService.generateTokenLogin(authentication); /*jwt tạo 1 chuỗi token để dùng ở json*/
 

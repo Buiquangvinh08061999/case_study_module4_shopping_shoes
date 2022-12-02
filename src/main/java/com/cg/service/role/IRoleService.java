@@ -10,9 +10,7 @@ import java.util.Optional;
 public interface IRoleService extends IGeneralService<Role> {
     Role findByName(String name);
 
-    /*viết api để hiển thị tất cả thông tin*/
     List<RoleDTO> findAllRoleDTO();
-
 
     Boolean existsById(Long id);
 

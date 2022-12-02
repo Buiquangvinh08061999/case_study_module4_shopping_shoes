@@ -26,10 +26,8 @@ public class LocationRegionDTO {
     private String wardId;
     private String wardName;
 
-//    @NotBlank(message = "Address là bắt buộc")
-//    @NotEmpty(message = "Add không được để trống")
-    private String address;
 
+    private String address;
 
     public LocationRegion toLocationRegion(){
         return new LocationRegion()

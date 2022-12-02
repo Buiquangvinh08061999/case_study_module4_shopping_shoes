@@ -21,16 +21,11 @@ import java.util.Set;
 @Entity
 @Table(name = "orders")
 @Accessors(chain = true)
-
 public class Order extends BaseEntities{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @CreationTimestamp
-    @Column(name = "order_date")
-    private Date orderDate;
 
     @Digits(integer = 12, fraction = 0)
     @Column(name = "grand_total")
@@ -38,6 +33,7 @@ public class Order extends BaseEntities{
 
     @Column(name = "is_pending",columnDefinition = "boolean default true")
     private boolean isPending;
+
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -50,14 +46,9 @@ public class Order extends BaseEntities{
     private Set<OrderItem> orderItems;
 
 
-
-    /*Trường mới tạo, trạng thái của order(4 trạng thái)*/
     @ManyToOne
     @JoinColumn(name = "order_status_id")
     private OrderStatus orderStatus;
-
-
-
 
 
     public OrderDTO toOrderDTO(){
@@ -65,9 +56,10 @@ public class Order extends BaseEntities{
                 .setUserId(String.valueOf(user.getId()))
                 .setId(id)
                 .setGrandTotal(grandTotal)
-                .setOrderDate(orderDate)
                 .setUser(user.toUserDTO())
-                .setOrderStatus(orderStatus.toOrderStatusDTO());
+                .setOrderStatus(orderStatus.toOrderStatusDTO())
+                .setCreatedAt(getCreatedAt())
+                .setUpdatedAt(getUpdatedAt());
 
     }
 }

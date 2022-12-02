@@ -39,7 +39,6 @@ public class Cart extends BaseEntities{
     private Set<CartItem> cartItems;
 
 
-
     public CartInfoDTO toCartInfoDTO() {
         return new CartInfoDTO()
                 .setId(id)

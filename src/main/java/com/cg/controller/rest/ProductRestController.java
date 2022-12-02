@@ -47,7 +47,6 @@ public class ProductRestController {
 
         List<ProductDTO> productDTO = productService.findAllProductDTO();
 
-        /*Nếu rỗng bắn ra lỗi*/
         if (productDTO.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
@@ -60,7 +59,7 @@ public class ProductRestController {
     @PostMapping("/create")
 //    @PreAuthorize("hasAnyAuthority('ADMIN')")
     /*@RequestBody gửi lên, còn @ResponseBody là đẩy giá trị string lên */
-    public ResponseEntity<?> doCreateProduct(@Validated @RequestBody  ProductDTO productDTO, BindingResult bindingResult) {
+    public ResponseEntity<?> doCreateProduct(@Validated @RequestBody ProductDTO productDTO, BindingResult bindingResult) {
 
         new ProductDTO().validate(productDTO , bindingResult);
 
@@ -73,9 +72,8 @@ public class ProductRestController {
             throw new EmailExistsException("Tên " +productDTO.getName()+ " bạn vừa nhập vào đã tồn tại.Vui lòng nhập lại!");
         }
 
-        productDTO.setId(0L); /*dữ liệu clear an toàn, set lại giá trị. tránh bị xung đột phía create vs update*/
+        productDTO.setId(0L);
         productDTO.setQuantity(String.valueOf(1)); /*set quantity mặc định là 1*/
-
 
         Optional<Category> category = categoryService.findById(productDTO.getCategory().getId());
 
@@ -95,7 +93,7 @@ public class ProductRestController {
 
     }
 
-    /*Hàm hiển thị dữ liệu Edit theo id, tìm theo id của productId, ở phần ajax đó, ta đẩy userId đó vào đây, để đổ tất cả dữ liệu các trường về*/
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getCustomerById(@PathVariable long id) {
 
@@ -156,13 +154,11 @@ public class ProductRestController {
 
         List<ProductDTO> productDTO = productService.searchAllProduct(keySearch);
 
-
         if (productDTO.isEmpty()) {
             throw new DataInputException("Không tìm thấy từ khóa(  " + searchDTO.getKeySearch() + "   )vui lòng nhập lại!"); /*nếu từ khóa tìm kiếm rỗng sẽ bắn ra lỗi*/
         }
 
-
-        return new ResponseEntity<>(productDTO, HttpStatus.OK); /*nếu thành công trả về 1 danh sách productDTO*/
+        return new ResponseEntity<>(productDTO, HttpStatus.OK);
     }
 
     //Hàm xóa mềm theo id
@@ -184,15 +180,13 @@ public class ProductRestController {
             throw new DataInputException("Thông tin không hợp lệ");
         }
 
-        /*Khi xóa mềm, ta chỉ cần tìm kiếm id đây có tồn tại không, Có thì ta chỉ cần setDeleted về true(1) (đã xóa mềm)*/
     }
 
     @GetMapping("/category")
     public ResponseEntity<?> getAllCategoryDTO() {
-        /*Lấy hết dữ liệu category để đẩy vào option*/
+
         List<CategoryDTO> categoryDTO = categoryService.findAllCategoryDTO();
 
-        /*Nếu rỗng bắn ra lỗi*/
         if (categoryDTO.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
@@ -237,8 +231,7 @@ public class ProductRestController {
 
         List<ProductDTO> productDTO = productService.findAllSortASCNameProductDTO();
 
-        System.out.println(productDTO.toString());
-        /*Nếu rỗng bắn ra lỗi*/
+
         if (productDTO.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
@@ -249,7 +242,7 @@ public class ProductRestController {
     public ResponseEntity<?> getAllSortDESCNameProductDTO() {
 
         List<ProductDTO> productDTO = productService.findAllSortDESCNameProductDTO();
-        /*Nếu rỗng bắn ra lỗi*/
+
         if (productDTO.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
@@ -261,8 +254,7 @@ public class ProductRestController {
     public ResponseEntity<?> getAllSortASCIdProductDTO() {
 
         List<ProductDTO> productDTO = productService.findAllSortASCIdProductDTO();
-        System.out.println(productDTO.toString());
-        /*Nếu rỗng bắn ra lỗi*/
+
         if (productDTO.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
@@ -273,7 +265,6 @@ public class ProductRestController {
     public ResponseEntity<?> getAllSortDESCIdProductDTO() {
 
         List<ProductDTO> productDTO = productService.findAllSortDESCIdProductDTO();
-        /*Nếu rỗng bắn ra lỗi*/
         if (productDTO.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
@@ -285,7 +276,6 @@ public class ProductRestController {
     public ResponseEntity<?> getAllSortASCPriceProductDTO() {
 
         List<ProductDTO> productDTO = productService.findAllSortASCPriceProductDTO();
-        /*Nếu rỗng bắn ra lỗi*/
         if (productDTO.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
@@ -295,7 +285,6 @@ public class ProductRestController {
     public ResponseEntity<?> getAllSortDESCPriceProductDTO() {
 
         List<ProductDTO> productDTO = productService.findAllSortDESCPriceProductDTO();
-        /*Nếu rỗng bắn ra lỗi*/
         if (productDTO.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
@@ -305,19 +294,17 @@ public class ProductRestController {
     @GetMapping("/count")
     public ResponseEntity<?> getAllCountProductDTO() {
         CountDTO  countDTO = productService.findAllCount();
-        /*Nếu rỗng bắn ra lỗi*/
 
         return new ResponseEntity<>(countDTO, HttpStatus.OK);
 
     }
 
-    /*Trả về tập danh sách đã bị xóa mềm , hiển thị trong historym tất cả danh sách có deleted = 1*/
+    /*Trả về tập danh sách đã bị xóa mềm*/
     @GetMapping("/historyProduct")
     public ResponseEntity<?> getAllHistoryProductDTO() {
 
         List<ProductDTO> productDTO = productService.findAllHistoryProductDTO();
 
-        /*Nếu rỗng bắn ra lỗi*/
         if (productDTO.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
@@ -345,13 +332,13 @@ public class ProductRestController {
             throw new DataInputException("Thông tin không hợp lệ");
         }
     }
+
     /*Phần này được trang người dùng sử dụng(listOrder)*/
     @GetMapping("/betweenPrice50000and100000")
     public ResponseEntity<?> getAllBetWeenPriceProductDTO() {
 
         List<ProductDTO> productDTO = productService.findAllBetWeenPriceProductDTO();
 
-        /*Nếu rỗng bắn ra lỗi*/
         if (productDTO.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
@@ -364,7 +351,6 @@ public class ProductRestController {
 
         List<ProductDTO> productDTO = productService.findAllBetWeenPrice100_200ProductDTO();
 
-        /*Nếu rỗng bắn ra lỗi*/
         if (productDTO.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
@@ -376,7 +362,6 @@ public class ProductRestController {
 
         List<ProductDTO> productDTO = productService.findAllBetWeenPrice200_300ProductDTO();
 
-        /*Nếu rỗng bắn ra lỗi*/
         if (productDTO.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
@@ -389,7 +374,6 @@ public class ProductRestController {
 
         List<ProductDTO> productDTO = productService.findAllBetWeenPrice300_500ProductDTO();
 
-        /*Nếu rỗng bắn ra lỗi*/
         if (productDTO.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }

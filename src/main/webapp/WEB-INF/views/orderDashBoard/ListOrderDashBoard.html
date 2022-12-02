@@ -11,7 +11,6 @@
 <div id="wrapper">
     <th:block th:replace="/layout/navbar_custom_top_2 :: navbar_custom_top_2"/>
 
-
     <div class="left-side-menu">
 
         <th:block th:replace="/layout/hearder_left_3 :: hearder_left_3"/>
@@ -56,13 +55,13 @@
                     </div>
 
                     <div class="col-3" style="font-size: 20px">
-                        <p>Đang giao hàng: <span name="span" id="span_count_2" style="color: #0c723eeb"> </span></p>  <!--giá trị data.id, số lượng , sẽ được truyền vào thẻ span có id tương ứng-->
+                        <p>Đang giao hàng: <span name="span" id="span_count_2" style="color: #0c723eeb"> </span></p>
                     </div>
                     <div class="col-3" style="font-size: 20px">
-                        <p>Đã nhận hàng: <span name="span" id="span_count_3" style="color: #0c723eeb"> </span></p>  <!--giá trị data.id, số lượng , sẽ được truyền vào thẻ span có id tương ứng-->
+                        <p>Đã nhận hàng: <span name="span" id="span_count_3" style="color: #0c723eeb"> </span></p>
                     </div>
                     <div class="col-3" style="font-size: 20px">
-                        <p>Đã hủy đơn: <span name="span" id="span_count_4" style="color: #e24949"> </span></p>  <!--giá trị data.id, số lượng , sẽ được truyền vào thẻ span có id tương ứng-->
+                        <p>Đã hủy đơn: <span name="span" id="span_count_4" style="color: #e24949"> </span></p>
                     </div>
                 </div>
 
@@ -100,12 +99,12 @@
 <script>
 
     let orderItem  = new OrderItem();
-
     let order = new OrderTest();//1 chứa 2
-
     let user = new User();// 2 chứa 3
-
     let orderStatus = new OrderStatus(); /*trạng thái order*/
+
+    let locationRegion = new LocationRegion();
+    let role = new Role();
 
     /*đã lấy được tất cả danh sách order ra, ta chỉ cần forEach, để vẽ lại giá trị vào, có chứa order(id để thao tác với orderItem, tìm theo orderId), ở đây có order chứa userid, nên sẽ có tất cả thông tin của user, user chưa location nên có các trường tĩnh.v,v*/
     /*orderId đã được vẽ vào table, nên ta chỉ cần dùng $(this).data("id")  để lấy orderId ra và gán vào phương thực orderItem*/
@@ -120,6 +119,7 @@
         })
             .done((data) => {
                 $.each(data ,(i, item)=>{
+                    console.log(data)
                     order = item
                     user = order.user;
                     orderStatus = order.orderStatus;
@@ -132,7 +132,7 @@
                                 <td>${'#000' + order.id}</td>
                                 <td>${user.username}</td>
                                 <td>${user.phone}</td>
-                                <td>${order.orderDate}</td>
+                                <td>${order.createdAt}</td>
                                 <td class="fw-bold">
                                     ${new Intl.NumberFormat('vi-VN', {
                                     style: 'currency',
@@ -153,7 +153,7 @@
                     $('#tbListOrders tbody').prepend(str);
                 })
 
-                handleDetail_order();/*Để ở mục done tránh vòng lặp forEach sẽ bị lặp */
+                handleDetail_order(); /*Để ở mục done tránh vòng lặp forEach sẽ bị lặp */
 
                 handleShowUpdateOrderStatus();/*Để ở mục done tránh vòng lặp forEach sẽ bị lặp, hiển thị select option( trạng thái ra, để ta lựa chọn)*/
 
@@ -165,8 +165,6 @@
     }
     getAllOrderID();
 
-    let locationRegion = new LocationRegion();
-    let role = new Role();
 
     /*Tận dụng phương thức đã tìm ra order id ở trên.Để gán vô phương thức OrderItem tìm tất cả các trường theo order_id */
     let username= "";
@@ -175,11 +173,11 @@
     let districtName ="";
     let wardName ="";
     let address ="";
-    let orderDate ="";
+    let orderCreatedAt ="";
     let roleCode ="";
     let orderStatusTitle ="";
     let total = 0;
-    let orderId; /*Tạo biến này để lấy giá trị orderId khi kích vào nút chi tiết, rồi gán lại cho biến đếm count phía dưới, để đếm orderItem theo orderId truyền vào, đếm số lượng sản phẩm, vào phần giữa(product)*/
+    let orderId;
     function handleDetail_order() {
         $('button.detail_order').on('click', function (){
             orderId =  $(this).data("id")   /*Dùng phương thức này lấy orderid ở data-id="${order.id}" nằm ở bảng table ta đã get api của tất cả các trường ở bảng đó ra */
@@ -218,8 +216,8 @@
                     districtName = locationRegion.districtName;/*Thị Xã*/
                     wardName = locationRegion.wardName; /*Huyện*/
                     address = locationRegion.address;
-                    orderDate = order.orderDate; /*hiển thị ngày đặt*/
-                    roleCode = role.code;/*hiển thị role.code theo orderId*/
+                    orderCreatedAt = order.createdAt; /*hiển thị ngày đặt*/
+                    roleCode = role.code;
                     orderStatusTitle = orderStatus.title; /*hiển thị  tên trạng thái, orderStatus.title theo orderId*/
 
                     /*Phần cuối hiển thị thông tin tổng tiền ở order, gán xuống done, tránh bị lăpk*/
@@ -246,6 +244,7 @@
                                 </td>
                             </tr>
                     `;
+
                     $('#tbProductDetail tbody').append(product);
 
                     $('#modalDetail').modal('show');
@@ -271,7 +270,7 @@
 
                 /*Đưa vào thẻ #order_date hiển thị ngày đặt hàng */
                 let order_date =`
-                     <b>Ngày đặt hàng: </b><span>${orderDate}</span>
+                     <b>Ngày đặt hàng: </b><span>${orderCreatedAt}</span>
                 `;
                 $('#order_date').append(order_date)
 
@@ -315,11 +314,12 @@
             url: "http://localhost:8080/api/orders/orderItem/orderId/" + orderId,
         })
         .done((data) => {
-            /*đếm phụ theo vào orderId người dùng kích vào sẽ lấy đc orderId đó ra để đếm, Có 1 hiển thị 1, có bao nhiêu hiển thi báy nhiêu*/
+
             console.log(data.count + " tổng đơn hàng OrderItem Lấy theo OrderId để đếm số lượng sản phẩm đó ra, Vẽ vào Phần giữa(Product)")
 
             let str = `${data.count}`
             $('#span_count_OrderItemByOrderId').prepend(str)
+
         })
         .fail((jqXHR) => {
             console.log(jqXHR)
@@ -353,7 +353,7 @@
     }
     getAllCount();
 
-    /*Đếm số lượng tổng đơn hàng đang chờ duyệt*/
+
     function getAllCountOrderStatus1(){
         $.ajax({
             header: {
@@ -452,7 +452,6 @@
 
 
 
-
     let orderIdStatus ='';
     function handleShowUpdateOrderStatus() {
         $('button.update_order_status').on('click', function (){
@@ -469,9 +468,9 @@
             .done((data) => {
                 order = data;
                 orderStatus = order.orderStatus
+
                 console.log(data);
-                console.log(orderStatus.id +" ID status")
-                console.log(orderStatus.title +" tên status")
+
 
                 $('#orderStatusUp').val(orderStatus.id); /*Chỉ hiện thị lại trạng thái đơn hàng, show ra để ta xử lí*/
 
@@ -509,17 +508,17 @@
                 console.log(currentRow);
                 let str = `
                   <tr id="tr_${order.id}">
-                        <td>${order.id}</td>
+                        <td>${'#000' + order.id}</td>
                         <td>${user.username}</td>
                         <td>${user.phone}</td>
-                        <td>${order.orderDate}</td>
+                        <td>${order.createdAt}</td>
                         <td class="fw-bold">
                         ${new Intl.NumberFormat('vi-VN', {
                             style: 'currency',
                             currency: 'VND'
                         }).format(order.grandTotal)}
                         </td>
-                        <td><i style="color: #11c80d">${orderStatus.title}</i></td>
+                        <td><i style="color: red">${orderStatus.title}</i> </td>
                         <td>
                            <button type="button" data-id="${order.id}" class="btn btn-outline-primary detail_order">Chi Tiết</button>
                         </td>
@@ -541,7 +540,6 @@
 
                 handleShowUpdateOrderStatus();/*Để ở mục done tránh vòng lặp forEach sẽ bị lặp, hiển thị select option( trạng thái ra, để ta lựa chọn)*/
 
-
                 $('#span_count_1').html("")/*Mỗi lần sắp xếp lại, thì xóa đi giá trị đếm được của list sản phẩm để hiển thị lại, nếu không nó sẽ bị lặp lại*/
                 $('#span_count_2').html("")
                 $('#span_count_3').html("")
@@ -558,23 +556,6 @@
 
 
 
-
-
-
-    // function getGrandTotal(){
-    //     let orderIdNew =  $(this).data("id")
-    //     $.ajax({
-    //         headers: {
-    //             "accept": "application/json",
-    //             "content-type": "application/json"
-    //         },
-    //         type: "GET",
-    //         url: "http://localhost:8080/api/orders/order" + orderIdNew,
-    //     })
-    //     .done((data) => {
-    //         console.log(data + "đối tượng data")
-    //     })
-    // }
 
 
 

@@ -20,9 +20,7 @@ import java.util.Set;
 @Entity
 @Table(name = "products")
 @Accessors(chain = true)
-
 public class Product extends BaseEntities{
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -48,10 +46,8 @@ public class Product extends BaseEntities{
     @JoinColumn(name = "category_id")
     private Category category;
 
-
     @OneToMany(mappedBy = "product")
     private Set<CartItem> cartItems;
-
 
     public ProductDTO toProductDTO(){
         return new ProductDTO()

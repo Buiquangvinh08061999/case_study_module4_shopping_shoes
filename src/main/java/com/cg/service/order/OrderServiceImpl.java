@@ -67,6 +67,8 @@ public class OrderServiceImpl implements OrderService{
 
     }
 
+
+
     @Override
     public Order doCreateOrder(OrderDTO orderDTO, CartInfoDTO cartInfoDTO) {
 
@@ -86,6 +88,7 @@ public class OrderServiceImpl implements OrderService{
 
         /*tìm tất cả thông tin trong cartItem,có cart_id = 3, sẽ duyệt hết qua thằng 3, và lấy hết thong tin từ điều kiện cartItem = 3 ra(Không đụng chạm đến và k duyệt qua những thằng có cart_id khác nó)*/
         List<CartItem> cartItemList = cartItemRepository.findAllCartItemByCart(cartInfoDTO.getId());
+
         for (CartItem cartItem : cartItemList){
             orderItem.setId(0L);
             orderItem.setTitle(cartItem.getTitle());
@@ -105,6 +108,8 @@ public class OrderServiceImpl implements OrderService{
 
         return orderNew;
     }
+
+
 
     @Override
     public List<OrderItemDTO> findAllOrderItemDTO() {

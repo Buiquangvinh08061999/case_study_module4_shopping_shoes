@@ -14,7 +14,6 @@ import java.math.BigDecimal;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-
 @Entity
 @Table(name = "order_items")
 @Accessors(chain = true)
@@ -36,7 +35,7 @@ public class OrderItem{
     @Column(name = "total_price")
     private BigDecimal totalPrice;
 
-    @Column(name = "url_image") /*trường mới*/
+    @Column(name = "url_image")
     private String urlImage;
 
     /*Số 2*/

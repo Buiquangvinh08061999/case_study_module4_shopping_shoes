@@ -19,13 +19,11 @@ import javax.validation.constraints.NotNull;
 @Accessors(chain = true)
 public class RoleDTO implements Validator {
 
-
     private Long id;
 
     private String code;
 
     private String name;
-
 
 
     public Role toRole() {

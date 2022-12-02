@@ -15,10 +15,8 @@ import org.springframework.validation.Validator;
 @Accessors(chain = true)
 
 public class CartDTO implements Validator {
-    /*thằng này tạo riêng chứa cả các trường chính(Chứa userId ở bảng carts, chứa productId ở bảng carts_item*/
 
     private String userId;
-
     private String productId;
 
     private String quantity;

@@ -46,10 +46,6 @@ public class CartRestController {
     @Autowired
     private CartItemService cartItemService;
 
-
-    /*tìm id trong ở userId, ở bên phần ajax ta đã tìm ra id của khách hàng đang mua sản phẩm,*/
-    /*trong phần cart(cartInfo) có chứa userId, ta tìm userId ở đó, nếu tồn tại , vượt qua trả về 1 list trong cartItem(Các trường của nó) */
-    /*xử lí ở phần show_cart các thông tin của trường  theo userId đã truyền vào,*/
     @GetMapping("/{id}")
     public ResponseEntity<?> getAllCartItem(@PathVariable long id) {
 
@@ -80,8 +76,6 @@ public class CartRestController {
 
     }
 
-    /*Phần add này được truyền vào 3 giá trị ở listOrder, đã tìm ra id(user) id(product), ta truyền vào để có lấy tất cả thông tin của user và product ra,rồi kiểm tra tiếp, có truyền vào userId,productId,quantity(1)*/
-    /*Khi add cart chỉ cần truyền vào userId, và productId, product để cho cartItem set các thuộc tính qua nó, để giỏ hàng chứa thông tin sản phẩm, còn user được đẩy vào thằng cart*/
     @PostMapping("/add")
     public ResponseEntity<?> addCart(@Valid @RequestBody CartDTO cartDTO, BindingResult bindingResult) {
 
@@ -110,22 +104,19 @@ public class CartRestController {
 
         BigDecimal price = new BigDecimal(Long.parseLong(productDTO.get().getPrice())); /*Lấy giá tiền chính của nó, nếu có cập nhật thì nó sẽ tự động nhân số tiền hiện tại, không bị thiệt hại cho admin*/
 
-        /*Hàm nhân giá với số lượng để tính ra tổng tiền */
         BigDecimal grandTotal = price.multiply(new BigDecimal(Long.parseLong(quantity)));
 
-        /*2 thằng này đang trống, ta phải set lại truyền giá trị vào cho nó*/
-        CartItem cartItem = new CartItem();
 
+        CartItem cartItem = new CartItem();
         Cart cart = new Cart();
 
         Map<String, Object> result = new HashMap<>();
-
         String success, successFirst;
 
         /*Nếu giỏ hàng chưa tồn tại thì ta tiến hành Tạo giỏ hàng cho nó*/
         if (!cartInfoDTO.isPresent()) {
             cart.setUser(userDTO.get().toUser());
-            cart.setGrandTotal(grandTotal);/*Tổng tiền tính được ở trên truyền vào cart*/
+            cart.setGrandTotal(grandTotal);
 
             cartItem = new CartItem();
             cartItem.setPrice(price);/*Hiển thị giá*/
@@ -160,11 +151,11 @@ public class CartRestController {
                 cartItem.setPrice(price);
                 cartItem.setQuantity(Integer.parseInt(quantity));
 
-                String name = productDTO.get().getName();/*Cách làm nếu title không nhận các thuộc tính và có giá trị null*/
+                String name = productDTO.get().getName();
                 System.out.println(name);
                 cartItem.setTitle(name);
                 cartItem.setTotalPrice(grandTotal);/*Tổng tiền*/
-                cartItem.setUrlImage(productDTO.get().getUrlImage()); /*lấy ảnh*/
+                cartItem.setUrlImage(productDTO.get().getUrlImage());
                 cartItem.setProduct(productDTO.get().toProduct());/*cartItem có chưa product,  setProduct*/
 
                 cart = cartInfoDTO.get().toCart();/*cartItem có chưa cart,lấy ra để setCart*/
@@ -201,10 +192,6 @@ public class CartRestController {
 
         return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
-
-    /*xóa theo id sản phẩm(product)(khi xóa vẫn tính lại tổng tiền còn lại của nó)*/
-    /*ở ajax, ta cũng phải tìm ra uerId và producId, để thực hiện thao tác xóa đi sản phẩm*/
-    /*Phần xóa này được truyền vào 3 giá trị ở listOrder,i hệt kiểm tra như phần add, đã tìm ra id(user) id(product), ta truyền vào để có lấy tất cả thông tin của user và product ra,rồi kiểm tra tiếp, có truyền vào userId,productId,quantity(0)*/
 
     @PostMapping("/remove-cart-item")
     public ResponseEntity<?> doRemoveCartItem(@Valid @RequestBody CartDTO cartDTO, BindingResult bindingResult) {
@@ -354,7 +341,6 @@ public class CartRestController {
 
 
     /*hàm giảm số lượng xuống 1, (kiểm tra tất cả điều kiện), tính giá tiền nhân với số lượng, khi giảm xuống 1, và lấy tổng tiền - giá tiền giảm đi*/
-
     @PostMapping("/reduce")
     public ResponseEntity<?> doReduceCart(@Valid @RequestBody CartDTO cartDTO, BindingResult bindingResult) {
 
@@ -433,14 +419,6 @@ public class CartRestController {
     }
 
 
-    /*Trả về tất cả list danh sách user ra, để đếm sổ lượng trong giỏ*/
-    @GetMapping("/user/{id}")
-    public ResponseEntity<?> getAllCartDTO(@PathVariable long id){
-
-        List<CartInfoDTO> cartInfoDTO = cartService.findCartIFDTOByUserId(id);
 
 
-        return new ResponseEntity<>(cartInfoDTO , HttpStatus.OK);
-
-    }
 }

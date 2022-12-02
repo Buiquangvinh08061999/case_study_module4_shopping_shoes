@@ -14,8 +14,8 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 @Accessors(chain = true)
 public class OrderStatusDTO {
-    private Long id;
 
+    private Long id;
     private String title;
 
     private boolean deleted;

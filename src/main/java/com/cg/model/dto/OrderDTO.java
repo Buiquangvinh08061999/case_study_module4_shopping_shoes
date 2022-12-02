@@ -16,40 +16,40 @@ import java.util.Date;
 @Setter
 @Accessors(chain = true)
 
-public class OrderDTO  implements Validator  {
+public class OrderDTO implements Validator  {
 
     private String userId;
 
-
     private Long id;
+
     private BigDecimal grandTotal;
-
-
-    @JsonFormat(pattern = "HH:mm - dd/MM/yyyy", timezone = "Asia/Ho_Chi_Minh")
-    private Date orderDate; /*Lấy ra ngày tạo, khi cập nhật lại cũng không ảnh hưởng*/
-
 
     private UserDTO user;
 
     private OrderStatusDTO orderStatus;
 
+    @JsonFormat(pattern = "HH:mm - dd/MM/yyyy", timezone = "Asia/Ho_Chi_Minh")
+    private Date createdAt;
+
+    @JsonFormat(pattern = "HH:mm - dd/MM/yyyy", timezone = "Asia/Ho_Chi_Minh")
+    private Date updatedAt;
 
 
     public Order toOrder(){
-        return new Order()
+        return (Order) new Order()
                 .setId(id)
                 .setGrandTotal(grandTotal)
-                .setOrderDate(orderDate)
                 .setUser(user.toUser())
-                .setOrderStatus(orderStatus.toOrderStatus());
+                .setOrderStatus(orderStatus.toOrderStatus())
+                .setCreatedAt(createdAt)
+                .setUpdatedAt(updatedAt);
     }
 
 
-
-    public OrderDTO(Long id, BigDecimal grandTotal,Date orderDate, User user, OrderStatus orderStatus) {
+    public OrderDTO(Long id, BigDecimal grandTotal,Date createdAt, User user, OrderStatus orderStatus) {
         this.id = id;
         this.grandTotal = grandTotal;
-        this.orderDate = orderDate;
+        this.createdAt = createdAt;
         this.user = user.toUserDTO();
         this.orderStatus = orderStatus.toOrderStatusDTO();
     }

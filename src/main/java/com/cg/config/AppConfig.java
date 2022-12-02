@@ -101,7 +101,7 @@ public class AppConfig implements WebMvcConfigurer, ApplicationContextAware {
         dataSource.setUrl("jdbc:mysql://localhost:3306/");
         dataSource.setCatalog("c0222k1_shopping_shoes_module4");
         dataSource.setUsername("root");
-        dataSource.setPassword("153191Vn");
+        dataSource.setPassword("123456");
         return dataSource;
     }
 
