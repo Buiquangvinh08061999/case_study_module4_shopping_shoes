@@ -51,14 +51,6 @@
                     </div>
                 </div>
 
-<!--                <div class="row">-->
-<!--                    <div class="col-10 d-none d-sm-block" style="margin-bottom: 20px">-->
-<!--                        <form class="form-inline" action="/select/ListUser/search">-->
-<!--                            <input class="form-control col-3 mr-sm-2" type="search" placeholder="Search" aria-label="Search" id="searchUser2" name="keyword2">-->
-<!--                            <button class="btn btn-primary" id="btn-search2" type="submit"> <i class="fas fa-search"></i></button>-->
-<!--                        </form>-->
-<!--                    </div>-->
-<!--                </div>  &lt;!&ndash;end 2&ndash;&gt;-->
 
                 <div class="row">
                     <div class="col-9">
@@ -200,6 +192,7 @@
              $("#tbListUsers tbody tr td span").removeClass("selected").addClass("unselected");
 
              $(`#${id} span`).removeClass("unselected").addClass("selected");
+
 
              let temFooter = $.validator.format($.trim($('#tempFooter').val().toString()))
              $('.footer').html(temFooter)
@@ -429,11 +422,6 @@
              })
      }
 
-
-
-
-
-
      /*Hàm sắp xếp sort tất cả các trường theo id, username. fullname .v.v*/
      function getAllSortASCIdUser(){
          $.ajax({
@@ -534,19 +522,19 @@
                  role = user.role;
                  console.log(item);
                  let str = `
-                 <tr id="tr_${user.id}">
-                        <td><span id="span_${user.id}" class="select-tab unselected"></td>
-                        <td>${user.id}</td>
-                        <td><img src="/assets/img/${user.urlImage}" alt="" style="width: 90px; height:70px ; border-radius:50%"> </td>
-                        <td>${user.username}</td>
-                        <td>${user.fullName}</td>
-                        <td>${user.phone}</td>
-                        <td>${locationRegion.provinceName}</td>
-                        <td>${locationRegion.districtName}</td>
-                        <td>${locationRegion.wardName}</td>
-                        <td>${locationRegion.address}</td>
-                        <td>${role.code}</td>
-                 </tr>
+                     <tr id="tr_${user.id}">
+                            <td><span id="span_${user.id}" class="select-tab unselected"></td>
+                            <td>${user.id}</td>
+                            <td><img src="/assets/img/${user.urlImage}" alt="" style="width: 90px; height:70px ; border-radius:50%"> </td>
+                            <td>${user.username}</td>
+                            <td>${user.fullName}</td>
+                            <td>${user.phone}</td>
+                            <td>${locationRegion.provinceName}</td>
+                            <td>${locationRegion.districtName}</td>
+                            <td>${locationRegion.wardName}</td>
+                            <td>${locationRegion.address}</td>
+                            <td>${role.code}</td>
+                     </tr>
                  `;
                  $('#tbListUsers tbody').append(str);
 
@@ -615,19 +603,19 @@
                      role = user.role;
                      console.log(item);
                      let str = `
-                     <tr id="tr_${user.id}">
-                            <td><span id="span_${user.id}" class="select-tab unselected"></td>
-                            <td>${user.id}</td>
-                            <td><img src="/assets/img/${user.urlImage}" alt="" style="width: 90px; height:70px ; border-radius:50%"> </td>
-                            <td>${user.username}</td>
-                            <td>${user.fullName}</td>
-                            <td>${user.phone}</td>
-                            <td>${locationRegion.provinceName}</td>
-                            <td>${locationRegion.districtName}</td>
-                            <td>${locationRegion.wardName}</td>
-                            <td>${locationRegion.address}</td>
-                            <td>${role.code}</td>
-                     </tr>
+                         <tr id="tr_${user.id}">
+                                <td><span id="span_${user.id}" class="select-tab unselected"></td>
+                                <td>${user.id}</td>
+                                <td><img src="/assets/img/${user.urlImage}" alt="" style="width: 90px; height:70px ; border-radius:50%"> </td>
+                                <td>${user.username}</td>
+                                <td>${user.fullName}</td>
+                                <td>${user.phone}</td>
+                                <td>${locationRegion.provinceName}</td>
+                                <td>${locationRegion.districtName}</td>
+                                <td>${locationRegion.wardName}</td>
+                                <td>${locationRegion.address}</td>
+                                <td>${role.code}</td>
+                         </tr>
                      `;
                      $('#tbListUsers tbody').append(str);
 
@@ -655,19 +643,19 @@
                      role = user.role;
                      console.log(item);
                      let str = `
-                     <tr id="tr_${user.id}">
-                            <td><span id="span_${user.id}" class="select-tab unselected"></td>
-                            <td>${user.id}</td>
-                            <td><img src="/assets/img/${user.urlImage}" alt="" style="width: 90px; height:70px ; border-radius:50%"> </td>
-                            <td>${user.username}</td>
-                            <td>${user.fullName}</td>
-                            <td>${user.phone}</td>
-                            <td>${locationRegion.provinceName}</td>
-                            <td>${locationRegion.districtName}</td>
-                            <td>${locationRegion.wardName}</td>
-                            <td>${locationRegion.address}</td>
-                            <td>${role.code}</td>
-                     </tr>
+                         <tr id="tr_${user.id}">
+                                <td><span id="span_${user.id}" class="select-tab unselected"></td>
+                                <td>${user.id}</td>
+                                <td><img src="/assets/img/${user.urlImage}" alt="" style="width: 90px; height:70px ; border-radius:50%"> </td>
+                                <td>${user.username}</td>
+                                <td>${user.fullName}</td>
+                                <td>${user.phone}</td>
+                                <td>${locationRegion.provinceName}</td>
+                                <td>${locationRegion.districtName}</td>
+                                <td>${locationRegion.wardName}</td>
+                                <td>${locationRegion.address}</td>
+                                <td>${role.code}</td>
+                         </tr>
                      `;
                      $('#tbListUsers tbody').append(str);
 
@@ -718,8 +706,6 @@
      })
 
 
-
-
      let btnCreateCustomer = $("#btnCreateCustomer");
      btnCreateCustomer.on("click",function () {
          locationRegion.provinceId = $('#province').val();
@@ -736,8 +722,8 @@
          user.password = $("#ipnPassword").val();
          user.phone = $("#phone").val();
 
-         user.locationRegion = locationRegion;
-         user.role = role;
+         user.locationRegion = locationRegion; // gán vào user có dữ liệu location
+         user.role = role; // gán vào user có dữ liệu role
 
          $.ajax({
              "headers": {
@@ -908,7 +894,6 @@
                      $('#usernameUp').val(user.username);
                      $('#fullnameUp').val(user.fullName);
 
-                     // $('#ipnPasswordUp').val("");/*Tại vì mật khẩu đã bị mã hóa nên khi sổ ra dựa theo id, thì ta cho về chuỗi rỗng hết tất cả các ô*/
 
                      $('#phoneUp').val(user.phone);
 
@@ -951,7 +936,7 @@
 
              user.username = $("#usernameUp").val();
              user.fullName = $("#fullnameUp").val();
-             // user.password = $("#ipnPasswordUp").val();
+
              user.phone = $("#phoneUp").val();
 
              user.locationRegion = locationRegion;

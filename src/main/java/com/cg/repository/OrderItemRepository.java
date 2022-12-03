@@ -19,13 +19,14 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
                 "o.title," +
                 "o.price, " +
                 "o.quantity, " +
-                "o.totalPrice, o.urlImage, " +
+                "o.totalPrice," +
+                "o.urlImage, " +
                 "o.order" +
             ") " +
             "FROM OrderItem AS o ")
     List<OrderItemDTO> findAllOrderItemDTO();
 
-    /*trong o.order, có phần toOrderDTO, nằm trong Order lấy ra*/
+
 
     /*phần o.order, ta chỉ cần trỏ đến nó thì sẽ được tất cả giá trị, từ oderid, và sổ ra userid chứa trong nó, trong userid chưa role với location .*/
     @Query("SELECT NEW com.cg.model.dto.OrderItemDTO(" +

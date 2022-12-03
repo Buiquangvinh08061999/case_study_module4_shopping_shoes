@@ -49,12 +49,10 @@ public class CartRestController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getAllCartItem(@PathVariable long id) {
 
-        /*Tìm theo thứ tự, trong phần cartInfo, tìm thằng userDTO(id) có tồn tài không, còn thằng CartItemDTO, thì tìm xem thằng Cart(id) có tồn tại không, thành công thì trả về list CartItemDTO */
         Optional<UserDTO> userDTO = userService.findUserDTOById(id);
         if (!userDTO.isPresent()) {
             throw new ResourceNotFoundException("Không Tìm Thấy Người Dùng");
         }
-        /*Kiểm tra trong phần cartInfo, có userId, truyền vào kiểm tra có tồn tại id đó không, Ví dụ đăng nhập vào id 1, thì nó sẽ vượt qua bước đầu, vượt qua bước này luôn*/
         Long userId = userDTO.get().getId();
         Optional<CartInfoDTO> cartInfoDTO = cartService.findCartInfoDTOByUserId(userId);
 
@@ -65,11 +63,8 @@ public class CartRestController {
             return new ResponseEntity<>(result, HttpStatus.OK);
         }
 
-        /*Tìm thấy Id CartInfoDTO có tồn tại, thì truyền vào cartItem để kiểm tra, nếu có thì thực hiện thành công*/
-        /*CartInfoDTO là thằng cartDTO, tìm thấy id của nó tồn tại, thì gán vào, Trong CartItem có trường chứa trường cartid, nên phải lấy nó để truyền vào để so sánh khớp không, Từ cartItem nó lấy được cartId, thì sẽ lấy được luôn userId nằm trong phần cartId đó*/
         Long cartId = cartInfoDTO.get().getId();
 
-        /*Gán vào thằng CartItemDTO, nếu có tồn tại, thì ta sẽ return về tất các trường nằm trường CartItemDTO(title,url, price, totalPrice..v.v, lấy được tổng tiền ra, ta xử lí bên ajax để lấy số tiền đó ra và hiển thị) */
         List<CartItemDTO> cartItemDTOList = cartItemService.findCartItemDTOByCartId(cartId);
 
         return new ResponseEntity<>(cartItemDTOList, HttpStatus.OK);
@@ -264,7 +259,6 @@ public class CartRestController {
     }
 
 
-    /*hàm tăng số lượng lên 1, (kiểm tra tất cả điều kiện), tính giá tiền nhân với số lượng, khi tăng lên 1, và lấy tổng tiền + giá tiền cộng thêm*/
     /*Hàm tăng số lượng, cũng phải truyền vào userId, productId, để ta có giá trị, set lại tổng tiền ở phần cart, và các giá trị trong cartItem, price mặc đinh, thay đổi số lượng và totalPrice*/
     @PostMapping("/increase")
     public ResponseEntity<?> doIncreaseCart(@Valid @RequestBody CartDTO cartDTO, BindingResult bindingResult) {
@@ -414,7 +408,6 @@ public class CartRestController {
                 }
             }
         }
-        /*thành công vượt qua tất cả thì ta trả về result(trả về thông báo đã thành công)*/
         return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 

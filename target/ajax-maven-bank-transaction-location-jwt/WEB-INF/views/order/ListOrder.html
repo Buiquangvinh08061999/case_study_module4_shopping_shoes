@@ -28,10 +28,11 @@
                         <option value="value_300_500">Giá từ 300.000đ đến 500.000đ</option>
                     </select>
                 </li>
-                <li>            <a href="javascript:void(0);" style="color: #0995fd"  id="logOutListOrder" >
+                <li>
+                    <a href="javascript:void(0);" style="color: #0995fd"  id="logOutListOrder" >
                                         Đăng Xuất
-                                      <i class="fa-solid fa-right-from-bracket" title="LogOut" style="font-size: 20px"></i>
-                                </a>
+                      <i class="fa-solid fa-right-from-bracket" title="LogOut" style="font-size: 20px"></i>
+                    </a>
                 </li>
             </ul>
         </div>
@@ -524,8 +525,6 @@
                 cart.productId = productId;
                 cart.quantity = 1;
 
-                console.log(userId+ " userId")
-                console.log(productId + " productId")
                 $.ajax({
                     headers: {
                         "accept": "application/json",
@@ -541,7 +540,7 @@
                     cartItemIncrease = data.cartItemIncrease; /*Truyền vào data.cartItemIncrease, result.put trả về "cartItemIncrease" nên ta sử dụng để hứng được tất cả dữ liệu vừa được cập nhật lại*/
 
                     console.log(cartItemIncrease + "Sổ ra các thông tin, còn data thì không")
-                    $(`.input_${productId}`).val(cartItemIncrease.quantity);/*tăng thành công thì hiển thị số lượng hiện tại ra nơi ô input*/
+                    $(`.input_${productId}`).val(cartItemIncrease.quantity); /*tăng thành công thì hiển thị số lượng hiện tại ra nơi ô input*/
 
                     /*Tổng tiền cập nhật lại khi tăng số lượng lên, vẽ lại ở tổng tiền được tính ra*/
                     let grandTotal;
@@ -613,7 +612,7 @@
 
     doIncrease();
 
-    
+
     $('#logOutListOrder').on('click', function (){
         let message = confirm("Bạn có chắc muốn thoát ứng dụng không!")
         if(message === true){

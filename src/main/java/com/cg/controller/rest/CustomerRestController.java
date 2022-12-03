@@ -46,7 +46,6 @@ public class CustomerRestController {
 
     }
 
-
     @PostMapping("/search")
     public ResponseEntity<?> getSearchUserDTO(@RequestBody SearchDTO searchDTO, BindingResult bindingResult){
 
@@ -99,7 +98,7 @@ public class CustomerRestController {
 
         Optional<Role> roleId = roleService.findById(userDTO.getRole().getId());
         if(!roleId.isPresent()){
-            throw new EmailExistsException("ID ROLE không tồn tại,vui lòng không được chỉnh sửa");
+            throw new EmailExistsException("Không tìm thấy Id role");
         }
 
 
@@ -122,7 +121,7 @@ public class CustomerRestController {
         Optional<User> userOptional = userService.findById(id);
 
         if (!userOptional.isPresent()) {
-            throw new ResourceNotFoundException("Invalid customer ID");
+            throw new ResourceNotFoundException("Không tìm thấy Id user");
         }
 
         return new ResponseEntity<>(userOptional.get().toUserDTO(),  HttpStatus.OK);  /*ở hàm toUserDTO ta đã set lại các giá trị cần lấy ra, muốn lấy trường nào thí lấy, Bỏ qua các giá trị ngày tạo, ngày cập nhât,*/
@@ -140,7 +139,7 @@ public class CustomerRestController {
 
         Boolean exitsById = userService.existsById(userDTO.getId());
         if(!exitsById){
-            throw new EmailExistsException("ID không tồn tại!");
+            throw new EmailExistsException("ID user không tồn tại!");
         }
 
         Boolean exitsByUserName = userService.existsByUsernameAndIdIsNot(userDTO.getUsername(), userDTO.getId());
@@ -155,7 +154,7 @@ public class CustomerRestController {
 
         Optional<Role> roleId = roleService.findById(userDTO.getRole().getId());
         if(!roleId.isPresent()){
-            throw new EmailExistsException("ID ROLE không tồn tại!");
+            throw new EmailExistsException("Không tìm thấy Id role");
         }
 
         userDTO.getLocationRegion().setId(0L);

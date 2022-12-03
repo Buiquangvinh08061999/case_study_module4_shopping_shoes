@@ -60,7 +60,6 @@
 
                 </div>
 
-
                     <div class="row">
                         <div class="col-5" style="font-size: 20px">
                             <p><i class="mdi mdi-gift mdi-24px"></i>Tổng sản phẩm: <span name="span" id="span_count" style="color: #e24949"></span></p>  <!--giá trị data.id, số lượng , sẽ được truyền vào thẻ span có id tương ứng-->
@@ -355,7 +354,7 @@
             url: "http://localhost:8080/api/products/sortDESCId",
         })
         .done((data) => {
-            /*CHÚ Ý CHÚ Ý*/
+
             $('#tbListProducts tbody').html("");/*CHÚ Ý, Khi ta kích vào sắp xếp, khi nó vẽ lại phải xóa đi phần GetAllProduct trong tbody chứa Dữ Liệu ở đó đi, để đưa dữ liệu ta vừa sort vào*/
             $.each(data ,(i, item)=>{
                 product = item;
@@ -367,14 +366,16 @@
                         <td>${product.id}</td>
                         <td><img src="${product.urlImage}" alt="" style="width: 90px; height:70px ; border-radius:50%"> </td>
                         <td>${product.name}</td>
-                        <td>${new Intl.NumberFormat('vi-VN', {
+                        <td>
+                            ${new Intl.NumberFormat('vi-VN', {
                             style: 'currency',
                             currency: 'VND'
-                        }).format(product.price)}</td>
+                            }).format(product.price)}
+                        </td>
                         <td>${product.describe}</td>
                         <td>${category.title}</td>
                      </tr>
-             `;
+                `;
                 $('#tbListProducts tbody').append(str); /*thêm cuối*/
 
                 handleShowFooter();
@@ -404,19 +405,21 @@
                     product = item;
                     category = product.category;
                     let str =`
-                 <tr id="tr_${product.id}">
-                        <td><span id="span_${product.id}" class="select-tab unselected"></td>
-                        <td>${product.id}</td>
-                        <td><img src="${product.urlImage}" alt="" style="width: 90px; height:70px ; border-radius:50%"> </td>
-                        <td>${product.name}</td>
-                        <td>${new Intl.NumberFormat('vi-VN', {
-                        style: 'currency',
-                        currency: 'VND'
-                    }).format(product.price)}</td>
-                        <td>${product.describe}</td>
-                        <td>${category.title}</td>
-                 </tr>
-            `;
+                         <tr id="tr_${product.id}">
+                                <td><span id="span_${product.id}" class="select-tab unselected"></td>
+                                <td>${product.id}</td>
+                                <td><img src="${product.urlImage}" alt="" style="width: 90px; height:70px ; border-radius:50%"> </td>
+                                <td>${product.name}</td>
+                                <td>
+                                    ${new Intl.NumberFormat('vi-VN', {
+                                    style: 'currency',
+                                    currency: 'VND'
+                                    }).format(product.price)}
+                                </td>
+                                <td>${product.describe}</td>
+                                <td>${category.title}</td>
+                         </tr>
+                    `;
                     $('#tbListProducts tbody').append(str); /*thêm cuối*/
                     handleShowFooter();
 
@@ -438,8 +441,6 @@
             url: "http://localhost:8080/api/products/sortDESCName",
         })
         .done((data) => {
-
-            /*CHÚ Ý CHÚ Ý*/
             $('#tbListProducts tbody').html("");/*CHÚ Ý, Khi ta kích vào sắp xếp, khi nó vẽ lại phải xóa đi phần GetAllProduct trong tbody chứa Dữ Liệu ở đó đi, để đưa dữ liệu ta vừa sort vào*/
 
             $.each(data ,(i, item)=>{
@@ -448,19 +449,21 @@
                 category = product.category;
 
                 let str =`
-                 <tr id="tr_${product.id}">
-                        <td><span id="span_${product.id}" class="select-tab unselected"></td>
-                        <td>${product.id}</td>
-                        <td><img src="${product.urlImage}" alt="" style="width: 90px; height:70px ; border-radius:50%"> </td>
-                        <td>${product.name}</td>
-                        <td>${new Intl.NumberFormat('vi-VN', {
-                    style: 'currency',
-                    currency: 'VND'
-                }).format(product.price)}</td>
-                        <td>${product.describe}</td>
-                        <td>${category.title}</td>
-                 </tr>
-            `;
+                     <tr id="tr_${product.id}">
+                            <td><span id="span_${product.id}" class="select-tab unselected"></td>
+                            <td>${product.id}</td>
+                            <td><img src="${product.urlImage}" alt="" style="width: 90px; height:70px ; border-radius:50%"> </td>
+                            <td>${product.name}</td>
+                            <td>
+                                ${new Intl.NumberFormat('vi-VN', {
+                                style: 'currency',
+                                currency: 'VND'
+                                }).format(product.price)}
+                            </td>
+                            <td>${product.describe}</td>
+                            <td>${category.title}</td>
+                     </tr>
+                `;
                 $('#tbListProducts tbody').append(str); /*thêm cuối*/
                 handleShowFooter();
             })
@@ -492,10 +495,12 @@
                         <td>${product.id}</td>
                         <td><img src="${product.urlImage}" alt="" style="width: 90px; height:70px ; border-radius:50%"> </td>
                         <td>${product.name}</td>
-                        <td>${new Intl.NumberFormat('vi-VN', {
+                        <td>
+                            ${new Intl.NumberFormat('vi-VN', {
                             style: 'currency',
                             currency: 'VND'
-                        }).format(product.price)}</td>
+                            }).format(product.price)}
+                        </td>
                         <td>${product.describe}</td>
                         <td>${category.title}</td>
                      </tr>
@@ -511,7 +516,7 @@
         })
     }
 
-    /*Hàm tìm tất cả các trường theo giá giảm dần */
+
     function getAllSortDESCPrice(){
         $.ajax({
             headers: {
@@ -522,7 +527,7 @@
             url: "http://localhost:8080/api/products/sortDESCPrice",
         })
         .done((data) => {
-            $('#tbListProducts tbody').html("");/*CHÚ Ý, Khi ta kích vào sắp xếp, khi nó vẽ lại phải xóa đi phần GetAllProduct trong tbody chứa Dữ Liệu ở đó đi, để đưa dữ liệu ta vừa sort vào*/
+            $('#tbListProducts tbody').html("");
             $.each(data ,(i, item)=>{
                 product = item;
                 category = product.category;
@@ -533,10 +538,12 @@
                         <td>${product.id}</td>
                         <td><img src="${product.urlImage}" alt="" style="width: 90px; height:70px ; border-radius:50%"> </td>
                         <td>${product.name}</td>
-                        <td>${new Intl.NumberFormat('vi-VN', {
+                        <td>
+                            ${new Intl.NumberFormat('vi-VN', {
                             style: 'currency',
                             currency: 'VND'
-                        }).format(product.price)}</td>
+                            }).format(product.price)}
+                        </td>
                         <td>${product.describe}</td>
                         <td>${category.title}</td>
                      </tr>
@@ -618,19 +625,20 @@
                 category = product.category;
 
                 let str =`
-                 <tr id="tr_${product.id}">
-                        <td><span id="span_${product.id}" class="select-tab unselected"></td>
-                        <td>${product.id}</td>
-                        <td><img src="${product.urlImage}" alt="" style="width: 90px; height:70px ; border-radius:50%"> </td>
-                        <td>${product.name}</td>
-                        <td>${new Intl.NumberFormat('vi-VN', {
-                            style: 'currency',
-                            currency: 'VND'
-                        }).format(product.price)}</td>
-
-                        <td>${product.describe}</td>
-                        <td>${category.title}</td>
-                 </tr>
+                     <tr id="tr_${product.id}">
+                            <td><span id="span_${product.id}" class="select-tab unselected"></td>
+                            <td>${product.id}</td>
+                            <td><img src="${product.urlImage}" alt="" style="width: 90px; height:70px ; border-radius:50%"> </td>
+                            <td>${product.name}</td>
+                            <td>
+                                ${new Intl.NumberFormat('vi-VN', {
+                                style: 'currency',
+                                currency: 'VND'
+                                }).format(product.price)}
+                            </td>
+                            <td>${product.describe}</td>
+                            <td>${category.title}</td>
+                     </tr>
                 `;
                 $('#tbListProducts tbody').prepend(str);
 
@@ -659,15 +667,13 @@
 
                     $('#modalCreateProduct .modal-alert-danger').append(str);
                 }
-                //Nếu lỗi 403 thì chuyển qua trang lỗi
+
                 if (jqXHR.status === 403) {
                     window.location.href = "/select/403"
                 }
 
                 if (jqXHR.responseJSON.message) {
-
                     let msg = jqXHR.responseJSON.message;
-
                     let str = `<label id="message-error" class="error" for="message"> ${msg} </label>`;
 
                     $('#modalCreateProduct .modal-alert-danger').append(str);
@@ -705,7 +711,6 @@
 
             $('#categoryUp').append(str);
 
-
             App.SweetAlert.showSuccessAlert("Tạo Mới Danh Mục Sản Phẩm Thành Công");
 
             $('#modalCreateCategory').modal('hide')
@@ -738,7 +743,6 @@
         })
     })
 
-
     /*Clear mới tất cả khi thêm mới*/
     function clearInput(){
         $("#frmCreateProduct input").val("");
@@ -746,7 +750,6 @@
     function clearInputCategory(){
         $("#frmCreateCategory input").val("");
     }
-
 
 
     //Hiển thị dữ liệu của Id ra, phai viet ham tim Id o rest CustomerController
@@ -817,15 +820,16 @@
                         <td>${product.id}</td>
                         <td><img src="${product.urlImage}" alt="" style="width: 90px; height:70px ; border-radius:50%"> </td>
                         <td>${product.name}</td>
-                        <td>${new Intl.NumberFormat('vi-VN', {
-                                style: 'currency',
-                                currency: 'VND'
-                            }).format(product.price)}</td>
-
+                        <td>
+                            ${new Intl.NumberFormat('vi-VN', {
+                            style: 'currency',
+                            currency: 'VND'
+                            }).format(product.price)}
+                        </td>
                         <td>${product.describe}</td>
                         <td>${category.title}</td>
                  </tr>
-                `;
+            `;
 
             currentRow.replaceWith(str)
 
@@ -844,7 +848,7 @@
 
                 $('#modalUpdateProduct .modal-alert-danger').append(str);
             }
-            //Nếu lỗi 403 thì chuyển qua trang lỗi
+
             if (jqXHR.status === 403) {
                     window.location.href = "/select/403"
             }
@@ -883,7 +887,6 @@
                     product = data;
                     category = product.category;
 
-
                     $('#nameDet').text(product.name)
 
                     $('#priceDet').text(`${new Intl.NumberFormat('vi-VN', {
@@ -916,7 +919,7 @@
         search(keySearch);
     })
 
-    function search(keySearch) { /*truyền từ khóa vào, biến data truyền vào (Obj để lấy từ khóa vừa tìm kiếm)*/
+    function search(keySearch) {
         let obj = {
             "keySearch": keySearch
         }
@@ -944,11 +947,12 @@
                                 <td>${product.id}</td>
                                 <td><img src="${product.urlImage}" alt="" style="width: 90px; height:70px ; border-radius:50%"> </td>
                                 <td>${product.name}</td>
-                                <td>${new Intl.NumberFormat('vi-VN', {
+                                <td>
+                                    ${new Intl.NumberFormat('vi-VN', {
                                     style: 'currency',
                                     currency: 'VND'
-                                }).format(product.price)}</td>
-
+                                    }).format(product.price)}
+                                </td>
                                 <td>${product.describe}</td>
                                 <td>${category.title}</td>
                          </tr>
@@ -985,7 +989,7 @@
                             "data": JSON.stringify(product)
                         })
                         .done((data) => {
-                            $('#tr_' + productId).remove(); /*xóa sản phẩm đó ngay lập tức ở trang đấy*/
+                            $('#tr_' + productId).remove();
                             App.SweetAlert.showSuccessAlert("Xóa Thành Công")
 
                             /*Khi xóa thành công thì hiển thị lại tổng số sản phẩm lại*/

@@ -20,7 +20,6 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Accessors(chain = true)
-
 public class ProductDTO implements Validator {
 
     private Long id;

@@ -72,9 +72,6 @@ public class User extends BaseEntities {
 
 
 
-
-
-
     @Override
     public String toString() {
         return "User{" +

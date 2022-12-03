@@ -87,7 +87,7 @@ public class UserDTO implements Validator {
         this.role = role.toRoleDTO();
     }
 
-    /*Hàm Search Víp (theo cách của anh Minh- Không bị lỗi phông chữ như hàm Search ở trên)*/
+    /*Hàm Search (theo cách của anh Minh)*/
     public UserDTO(Long id, String username, String fullName, String phone, String urlImage , String provinceName, String districtName, String wardName, String address, String code) {
         this.id = id;
         this.username = username;

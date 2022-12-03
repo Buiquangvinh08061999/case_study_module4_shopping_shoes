@@ -102,18 +102,19 @@
                             <td>${product.id}</td>
                             <td><img src="${product.urlImage}" alt="" style="width: 90px; height:70px ; border-radius:50%"> </td>
                             <td>${product.name}</td>
-                            <td>${new Intl.NumberFormat('vi-VN', {
+                            <td>
+                                ${new Intl.NumberFormat('vi-VN', {
                                 style: 'currency',
                                 currency: 'VND'
-                            }).format(product.price)}</td>
+                                }).format(product.price)}
+                            </td>
                             <td>${product.describe}</td>
                             <td>${category.title}</td>
-
                             <td>
                                 <button type="button" data-id="${product.id}" class="btn btn-outline-primary restore"> Khôi Phục </button>
                             </td>
                      </tr>
-                    `;
+                `;
 
                 $('#tbListProducts tbody').append(str);
 
@@ -158,8 +159,6 @@
                 })
         })
     }
-
-
 
 
 

@@ -106,8 +106,6 @@
     let locationRegion = new LocationRegion();
     let role = new Role();
 
-    /*đã lấy được tất cả danh sách order ra, ta chỉ cần forEach, để vẽ lại giá trị vào, có chứa order(id để thao tác với orderItem, tìm theo orderId), ở đây có order chứa userid, nên sẽ có tất cả thông tin của user, user chưa location nên có các trường tĩnh.v,v*/
-    /*orderId đã được vẽ vào table, nên ta chỉ cần dùng $(this).data("id")  để lấy orderId ra và gán vào phương thực orderItem*/
     function getAllOrderID(){
         $.ajax({
             headers: {
@@ -124,8 +122,6 @@
                     user = order.user;
                     orderStatus = order.orderStatus;
 
-                    console.log(order.id +"id");
-                    console.log(user.fullName+"name");
 
                     let str =`
                           <tr id="tr_${order.id}">
@@ -240,7 +236,7 @@
                                     ${new Intl.NumberFormat('vi-VN', {
                                     style: 'currency',
                                     currency: 'VND'
-                                     }).format(orderItem.totalPrice)}
+                                    }).format(orderItem.totalPrice)}
                                 </td>
                             </tr>
                     `;
@@ -377,6 +373,7 @@
             })
     }
     getAllCountOrderStatus1();
+
     /*Đếm số lượng tổng đơn hàng đang giao hàng*/
     function getAllCountOrderStatus2(){
         $.ajax({
@@ -513,10 +510,10 @@
                         <td>${user.phone}</td>
                         <td>${order.createdAt}</td>
                         <td class="fw-bold">
-                        ${new Intl.NumberFormat('vi-VN', {
+                            ${new Intl.NumberFormat('vi-VN', {
                             style: 'currency',
                             currency: 'VND'
-                        }).format(order.grandTotal)}
+                            }).format(order.grandTotal)}
                         </td>
                         <td><i style="color: red">${orderStatus.title}</i> </td>
                         <td>

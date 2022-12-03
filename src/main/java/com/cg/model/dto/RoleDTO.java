@@ -20,9 +20,7 @@ import javax.validation.constraints.NotNull;
 public class RoleDTO implements Validator {
 
     private Long id;
-
     private String code;
-
     private String name;
 
 

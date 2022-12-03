@@ -11,14 +11,13 @@ import java.util.Optional;
 public interface CartItemRepository extends JpaRepository<CartItem, Long> {
 
     /*Phần này kiểm tra ở ( api/carts/add )*/
-    /*Trong phần cartItem có chứa trường cart(id) và product(id), ta phải truyền 2 giá trị đó vào để kiểm tra có tồn tại không*/
-    /*Lấy tất cả thông tin của cartItem(có chứa cart.id và product.id ( ta sử dụng hàm này và truyền 2 tham số id của 2 trường (kiểm tra điều kiện)*/
     @Query("SELECT NEW com.cg.model.dto.CartItemDTO(" +
                 "ci.id, " +
                 "ci.title, " +
                 "ci.price, " +
                 "ci.quantity, " +
-                "ci.totalPrice, ci.urlImage ," +
+                "ci.totalPrice, " +
+                "ci.urlImage ," +
                 "ci.product," +
                 "ci.cart" +
             ") " +

@@ -114,13 +114,6 @@ public class HomeController {
     }
 
 
-//    @GetMapping("/ListOrderDetail")
-//    public ModelAndView showListOrderDetail(){
-//        ModelAndView modelAndView = new ModelAndView();
-//        modelAndView.setViewName("/orderDashBoard/ListDetail");
-//        return modelAndView;
-//    }
-
 
     /*Hiển thị ở phần giỏ hàng tên người dùng và id người dùng ở giỏ này để xử lí*/
     @GetMapping("/ListCart")
@@ -135,19 +128,6 @@ public class HomeController {
 
 
 
-    /*Phân trang bằng modal and view,(để đây để tham khảo)*/
-//    @GetMapping("/findAll")
-//    public ModelAndView findAll(@PageableDefault(value = 2) Pageable pageable){
-//        ModelAndView modelAndView = new ModelAndView();
-//        modelAndView.setViewName("/list/text");
-//
-//
-//        Page<Product> products = productService.findAll(pageable);
-//
-//        modelAndView.addObject("products", products);
-//
-//        return modelAndView;
-//    }
 
 
 

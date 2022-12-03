@@ -18,12 +18,9 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 @Accessors(chain = true)
-
 public class CategoryDTO implements Validator {
 
-
     private Long id;
-
     private String title;
 
     public Category toCategory() {
