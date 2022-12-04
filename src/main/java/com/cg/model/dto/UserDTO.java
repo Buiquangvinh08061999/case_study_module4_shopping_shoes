@@ -167,14 +167,14 @@ public class UserDTO implements Validator {
             errors.rejectValue("fullName",  "fullName.isEmpty" ,"Vui lòng nhập vào fullName, fullName không được để trống");
             return;
         }
-        if(fullName.trim().replaceAll("\\s+", "").length() < 3 || fullName.trim().replaceAll("\\s+", "").length() > 255){
-            errors.rejectValue("fullName",  "fullName.length()" ,"Full Name phải nằm trong khoảng từ 3 đến 255 kí tự, Vui lòng nhập lại!");
-            return;
-        }
-        if(!fullName.matches("^([a-zA-Z0-9ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\\s]+)$")){
-            errors.rejectValue("fullName",  "fullName.matches" ,"Full Name không chứa kí tự đặt biệt, Vui lòng nhập lại theo đúng quy định!");
-            return;
-        }
+//        if(fullName.trim().replaceAll("\\s+", "").length() < 3 || fullName.trim().replaceAll("\\s+", "").length() > 255){
+//            errors.rejectValue("fullName",  "fullName.length()" ,"Full Name phải nằm trong khoảng từ 3 đến 255 kí tự, Vui lòng nhập lại!");
+//            return;
+//        }
+//        if(!fullName.matches("^([a-zA-Z0-9ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\\s]+)$")){
+//            errors.rejectValue("fullName",  "fullName.matches" ,"Full Name không chứa kí tự đặt biệt, Vui lòng nhập lại theo đúng quy định!");
+//            return;
+//        }
 
 
         if(password.trim().isEmpty()){

@@ -164,16 +164,15 @@ public class OrderRestController {
         }
 
         Optional<UserDTO> userDTOOptional = userService.findUserDTOById(Long.parseLong(orderDTO.getUserId()));
-//        if(!userDTOOptional.isPresent()){
-//            throw new ResourceNotFoundException("Không tìm thấy Id người dùng, từ bảng orderDTO có trường userId");
-//        }
+        if(!userDTOOptional.isPresent()){
+            throw new ResourceNotFoundException("Không tìm thấy Id user");
+        }
 
         /*Kiểm tra userId, trong trường cart(cartInfo có chứa trường userId, kiểm tra userId có tồn tại không)*/
         Long userId = userDTOOptional.get().getId();
         Optional<CartInfoDTO> cartInfoDTO = cartService.findCartInfoDTOByUserId(userId);
 
         Map<String , Object> result = new HashMap<>();
-
         String success;
 
         if(!cartInfoDTO.isPresent()){
@@ -200,14 +199,10 @@ public class OrderRestController {
 
     }
 
-
-    /*2 trường dưới này được bổ sung thêm, khi làm trạng thái orderStatus*/
-
-    /*Dùng cho lấy tất cả các trường, dựa vào order(id) ta truyền vào tương ứng, cập nhật lại trạng thái của order, có orderStatus*/
     @GetMapping("/{id}") /*truyền vào orderId đã tìm ra ở data-id:${order.id} truyền vào đây để lấy giá trị, phương thức hiển thị dữ liệu Edit theo id, ta chỉ lấy 1 trường orderStatus*/
     public ResponseEntity<?> getOrderStatusDTOById(@PathVariable long id) {
 
-        Optional<Order> orderOptional = orderService.findById(id); /*Hiển thị tất cả các trường trong order, dựa theo id của nó*/
+        Optional<Order> orderOptional = orderService.findById(id);
 
         if(!orderOptional.isPresent()){
             throw new ResourceNotFoundException("Id của order không tồn tại");
@@ -227,7 +222,7 @@ public class OrderRestController {
 
         Optional<OrderStatus> orderStatusId = orderStatusService.findById(orderDTO.getOrderStatus().getId());
         if(!orderStatusId.isPresent()){
-            throw new DataInputException("ID orderStatus không tồn tại!, vui lòng không chỉnh sửa value");
+            throw new DataInputException("ID orderStatus không tồn tại!");
         }
 
         try {

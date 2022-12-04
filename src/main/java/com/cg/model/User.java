@@ -39,7 +39,7 @@ public class User extends BaseEntities {
     private boolean deleted;
 
     @OneToOne
-    @JoinColumn(name ="location_region_id" )
+    @JoinColumn(name ="location_region_id")
     private LocationRegion locationRegion;
 
 

@@ -57,13 +57,13 @@ public class CustomerRestController {
         keySearch = "%" + keySearch + "%";
 
         System.out.println(keySearch);
-        List<UserDTO> userDTO = userService.searchAllUser(keySearch);
+        List<UserDTO> userDTOList = userService.searchAllUser(keySearch);
 
-        if(userDTO.isEmpty()){
+        if(userDTOList.isEmpty()){
             throw new DataInputException("Không tìm thấy từ khóa(  " + searchDTO.getKeySearch() + "   )vui lòng nhập lại!"); /*nếu từ khóa tìm kiếm rỗng sẽ bắn ra lỗi*/
         }
 
-        return new ResponseEntity<>(userDTO , HttpStatus.OK);/*nếu thành công trả về 1 danh sách userDTO*/
+        return new ResponseEntity<>(userDTOList , HttpStatus.OK);/*nếu thành công trả về 1 danh sách userDTO*/
     }
 
 
@@ -106,7 +106,7 @@ public class CustomerRestController {
             User user = userDTO.toUser();
             User newUser = userService.save(user);   /*trả về 1 thằng mới, nên ra phải User newUser đối tượng ra*/
 
-            return new ResponseEntity<>(newUser.toUserDTO(),  HttpStatus.CREATED); /*trả về dữ liệu lưu lại User, nhưng sẽ chuyển qua UserDTO để xử ls, set tất cả dữ liệu User, về UserDTO*/
+            return new ResponseEntity<>(newUser.toUserDTO(),  HttpStatus.CREATED);
 
         }catch (DataIntegrityViolationException e){
             throw new DataInputException("Thông tin tài khoản không hợp lệ ");
@@ -158,7 +158,6 @@ public class CustomerRestController {
         }
 
         userDTO.getLocationRegion().setId(0L);
-
 
         try {
 
@@ -316,14 +315,14 @@ public class CustomerRestController {
     @GetMapping("/historyUser")
     public ResponseEntity<?> getAllHistoryUserDTO() {
 
-        List<UserDTO> userDTO = userService.findAllUserDTOHistoryByDeletedIsTrue();
+        List<UserDTO> userDTOList = userService.findAllUserDTOHistoryByDeletedIsTrue();
 
-        /*Nếu rỗng bắn ra lỗi*/
-        if (userDTO.isEmpty()) {
+
+        if (userDTOList.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
 
-        return new ResponseEntity<>(userDTO, HttpStatus.OK);
+        return new ResponseEntity<>(userDTOList, HttpStatus.OK);
     }
 
 

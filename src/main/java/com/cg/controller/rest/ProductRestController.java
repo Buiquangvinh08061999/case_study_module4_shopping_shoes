@@ -82,7 +82,6 @@ public class ProductRestController {
         }
 
         try {
-//            Product product = productDTO.toProduct();
             Product newProduct = productService.save(productDTO.toProduct());
 
             return new ResponseEntity<>(newProduct.toProductDTO(), HttpStatus.CREATED);
@@ -95,12 +94,12 @@ public class ProductRestController {
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getCustomerById(@PathVariable long id) {
+    public ResponseEntity<?> getProductById(@PathVariable long id) {
 
         Optional<Product> productOptional = productService.findById(id);
 
         if (!productOptional.isPresent()) {
-            throw new ResourceNotFoundException("Invalid customer ID");
+            throw new ResourceNotFoundException("Không tìm thấy Id Product");
         }
 
         return new ResponseEntity<>(productOptional.get().toProductDTO(), HttpStatus.OK);
@@ -130,7 +129,6 @@ public class ProductRestController {
 
         try {
 
-//            Product product = productDTO.toProduct();
             Product UpdateProduct = productService.save(productDTO.toProduct());
 
             return new ResponseEntity<>(UpdateProduct.toProductDTO(), HttpStatus.CREATED);
@@ -152,13 +150,13 @@ public class ProductRestController {
         keySearch = "%" + keySearch + "%";
         System.out.println(keySearch);
 
-        List<ProductDTO> productDTO = productService.searchAllProduct(keySearch);
+        List<ProductDTO> productDTOList = productService.searchAllProduct(keySearch);
 
-        if (productDTO.isEmpty()) {
+        if (productDTOList.isEmpty()) {
             throw new DataInputException("Không tìm thấy từ khóa(  " + searchDTO.getKeySearch() + "   )vui lòng nhập lại!"); /*nếu từ khóa tìm kiếm rỗng sẽ bắn ra lỗi*/
         }
 
-        return new ResponseEntity<>(productDTO, HttpStatus.OK);
+        return new ResponseEntity<>(productDTOList, HttpStatus.OK);
     }
 
     //Hàm xóa mềm theo id
@@ -207,12 +205,12 @@ public class ProductRestController {
 
         Boolean existsById = categoryService.existsById(categoryDTO.getId());
         if(existsById){
-            throw new EmailExistsException("Category đã tồn tại Id này");
+            throw new EmailExistsException("Id Category đã tồn tại");
         }
 
         Boolean existsByTitle = categoryService.existsByTitle(categoryDTO.getTitle());
         if(existsByTitle){
-            throw new EmailExistsException("Tên danh mục của Category đã tồn tại, Vui Lòng Nhập Tên Khác!");
+            throw new EmailExistsException("Tên danh mục của Category đã tồn tại");
         }
 
         try {
@@ -241,54 +239,54 @@ public class ProductRestController {
     @GetMapping("/sortDESCName")
     public ResponseEntity<?> getAllSortDESCNameProductDTO() {
 
-        List<ProductDTO> productDTO = productService.findAllSortDESCNameProductDTO();
+        List<ProductDTO> productDTOList = productService.findAllSortDESCNameProductDTO();
 
-        if (productDTO.isEmpty()) {
+        if (productDTOList.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
 
-        return new ResponseEntity<>(productDTO, HttpStatus.OK);
+        return new ResponseEntity<>(productDTOList, HttpStatus.OK);
     }
     /*Sắp xếp theo id tăng dần từ 1->99*/
     @GetMapping("/sortASCId")
     public ResponseEntity<?> getAllSortASCIdProductDTO() {
 
-        List<ProductDTO> productDTO = productService.findAllSortASCIdProductDTO();
+        List<ProductDTO> productDTOList = productService.findAllSortASCIdProductDTO();
 
-        if (productDTO.isEmpty()) {
+        if (productDTOList.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        return new ResponseEntity<>(productDTO, HttpStatus.OK);
+        return new ResponseEntity<>(productDTOList, HttpStatus.OK);
     }
     /*giảm dần theo id 99->1*/
     @GetMapping("/sortDESCId")
     public ResponseEntity<?> getAllSortDESCIdProductDTO() {
 
-        List<ProductDTO> productDTO = productService.findAllSortDESCIdProductDTO();
-        if (productDTO.isEmpty()) {
+        List<ProductDTO> productDTOList = productService.findAllSortDESCIdProductDTO();
+        if (productDTOList.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        return new ResponseEntity<>(productDTO, HttpStatus.OK);
+        return new ResponseEntity<>(productDTOList, HttpStatus.OK);
     }
 
     /*Sắp xếp theo price từ 1->99*/
     @GetMapping("/sortASCPrice")
     public ResponseEntity<?> getAllSortASCPriceProductDTO() {
 
-        List<ProductDTO> productDTO = productService.findAllSortASCPriceProductDTO();
-        if (productDTO.isEmpty()) {
+        List<ProductDTO> productDTOList = productService.findAllSortASCPriceProductDTO();
+        if (productDTOList.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        return new ResponseEntity<>(productDTO, HttpStatus.OK);
+        return new ResponseEntity<>(productDTOList, HttpStatus.OK);
     }
     @GetMapping("/sortDESCPrice")
     public ResponseEntity<?> getAllSortDESCPriceProductDTO() {
 
-        List<ProductDTO> productDTO = productService.findAllSortDESCPriceProductDTO();
-        if (productDTO.isEmpty()) {
+        List<ProductDTO> productDTOList = productService.findAllSortDESCPriceProductDTO();
+        if (productDTOList.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        return new ResponseEntity<>(productDTO, HttpStatus.OK);
+        return new ResponseEntity<>(productDTOList, HttpStatus.OK);
     }
     /*Đếm số lượng sản phẩm*/
     @GetMapping("/count")
@@ -303,13 +301,13 @@ public class ProductRestController {
     @GetMapping("/historyProduct")
     public ResponseEntity<?> getAllHistoryProductDTO() {
 
-        List<ProductDTO> productDTO = productService.findAllHistoryProductDTO();
+        List<ProductDTO> productDTOList = productService.findAllHistoryProductDTO();
 
-        if (productDTO.isEmpty()) {
+        if (productDTOList.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
 
-        return new ResponseEntity<>(productDTO, HttpStatus.OK);
+        return new ResponseEntity<>(productDTOList, HttpStatus.OK);
 
     }
 
@@ -337,48 +335,48 @@ public class ProductRestController {
     @GetMapping("/betweenPrice50000and100000")
     public ResponseEntity<?> getAllBetWeenPriceProductDTO() {
 
-        List<ProductDTO> productDTO = productService.findAllBetWeenPriceProductDTO();
+        List<ProductDTO> productDTOList = productService.findAllBetWeenPriceProductDTO();
 
-        if (productDTO.isEmpty()) {
+        if (productDTOList.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
 
-        return new ResponseEntity<>(productDTO, HttpStatus.OK);
+        return new ResponseEntity<>(productDTOList, HttpStatus.OK);
     }
 
     @GetMapping("/betweenPrice100000and200000")
     public ResponseEntity<?> getAllBetWeenPrice100_200ProductDTO() {
 
-        List<ProductDTO> productDTO = productService.findAllBetWeenPrice100_200ProductDTO();
+        List<ProductDTO> productDTOList = productService.findAllBetWeenPrice100_200ProductDTO();
 
-        if (productDTO.isEmpty()) {
+        if (productDTOList.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
 
-        return new ResponseEntity<>(productDTO, HttpStatus.OK);
+        return new ResponseEntity<>(productDTOList, HttpStatus.OK);
     }
     @GetMapping("/betweenPrice200000and300000")
     public ResponseEntity<?> getAllBetWeenPrice200_300ProductDTO() {
 
-        List<ProductDTO> productDTO = productService.findAllBetWeenPrice200_300ProductDTO();
+        List<ProductDTO> productDTOList = productService.findAllBetWeenPrice200_300ProductDTO();
 
-        if (productDTO.isEmpty()) {
+        if (productDTOList.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
 
-        return new ResponseEntity<>(productDTO, HttpStatus.OK);
+        return new ResponseEntity<>(productDTOList, HttpStatus.OK);
     }
 
     @GetMapping("/betweenPrice300000and500000")
     public ResponseEntity<?> getAllBetWeenPrice300_500ProductDTO() {
 
-        List<ProductDTO> productDTO = productService.findAllBetWeenPrice300_500ProductDTO();
+        List<ProductDTO> productDTOList = productService.findAllBetWeenPrice300_500ProductDTO();
 
-        if (productDTO.isEmpty()) {
+        if (productDTOList.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
 
-        return new ResponseEntity<>(productDTO, HttpStatus.OK);
+        return new ResponseEntity<>(productDTOList, HttpStatus.OK);
     }
 
 

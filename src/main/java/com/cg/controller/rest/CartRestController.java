@@ -114,10 +114,10 @@ public class CartRestController {
             cart.setGrandTotal(grandTotal);
 
             cartItem = new CartItem();
-            cartItem.setPrice(price);/*Hiển thị giá*/
-            cartItem.setQuantity(Integer.parseInt(quantity));/*Hiển thị số lượng*/
+            cartItem.setPrice(price);
+            cartItem.setQuantity(Integer.parseInt(quantity));
             cartItem.setTitle(productDTO.get().getName());
-            cartItem.setTotalPrice(grandTotal);/*Tổng tiền*/
+            cartItem.setTotalPrice(grandTotal);
 
             cartItem.setUrlImage(productDTO.get().getUrlImage());
 
@@ -149,9 +149,9 @@ public class CartRestController {
                 String name = productDTO.get().getName();
                 System.out.println(name);
                 cartItem.setTitle(name);
-                cartItem.setTotalPrice(grandTotal);/*Tổng tiền*/
+                cartItem.setTotalPrice(grandTotal);
                 cartItem.setUrlImage(productDTO.get().getUrlImage());
-                cartItem.setProduct(productDTO.get().toProduct());/*cartItem có chưa product,  setProduct*/
+                cartItem.setProduct(productDTO.get().toProduct());
 
                 cart = cartInfoDTO.get().toCart();/*cartItem có chưa cart,lấy ra để setCart*/
                 cartItem.setCart(cart);
@@ -207,8 +207,6 @@ public class CartRestController {
             throw new ResourceNotFoundException("Không Tìm Thấy ID sản phẩm");
         }
 
-        /*Trong cartrepository có chứa phần user, triển khai tìm các trường theo điều kiện userId có tồn tại không, ta lấy userId để truyền trực tiếp vào nó*/
-        /*quan trọng, nó lấy ra được 3 trường, có trường tổng tiền hiện tại , để ta xử lí nó, khi xóa nó thì trả về lại giá tiền được tính, tức là trừ số tiền đó đi*/
         Long userId = userDTO.get().getId();
         Optional<CartInfoDTO> cartInfoDTO = cartService.findCartInfoDTOByUserId(userId);
 
@@ -280,7 +278,7 @@ public class CartRestController {
         }
 
         /*Tìm tất cả trường của cart theo userId truyền vào ở trên, ta lấy được tổng giá tiền grandTotal ở cart, nếu userId đó tồn tại trong cart, trong cart có trường userId*/
-        Long userId = userDTO.get().getId();/*userId được tìm thấy ở phía trên, ta gán lại vào đây*/
+        Long userId = userDTO.get().getId();
         Optional<CartInfoDTO> cartInfoDTO = cartService.findCartInfoDTOByUserId(userId);
 
         String quantity = "1";
@@ -288,7 +286,6 @@ public class CartRestController {
 
         /*Tổng tiền lấy giá nhân cho số lượng, mặc định tăng số lượng lên 1*/
         BigDecimal grandTotal = price.multiply(new BigDecimal(Long.parseLong(quantity)));
-
 
         CartItem cartItem = new CartItem();
         Cart cart = new Cart();
@@ -329,7 +326,7 @@ public class CartRestController {
                 }
             }
         }
-        /*thành công vượt qua tất cả thì ta trả về result(trả về thông báo đã thành công)*/
+
         return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 
