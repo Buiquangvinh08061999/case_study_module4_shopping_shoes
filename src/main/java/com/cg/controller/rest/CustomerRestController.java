@@ -326,7 +326,7 @@ public class CustomerRestController {
     }
 
 
-    //Hàm khôi phục theo id, chỉ gần set user.get().setDeleted(flase);
+    //Hàm khôi phục theo id, chỉ gần set user.get().setDeleted(false);
     @PostMapping("/restore/{id}")
 //    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<?> restoreAllUserDTO(@PathVariable Long id){

@@ -469,8 +469,8 @@
     /*Lấy id ở menu.html vì ta đã truyền userDTO id đó vào*/
     function doRemoveShowProductCart(){
         $('.cart--info--content--product a').on('click', function (){
-            let userId = $('.add_cart').attr('id');/*lấy userid ở phần menu có class add_cart ra, còn class add--cart là khác, nó dùng để để xử lí,*/
-            let productId = $(this).data("id");/*lấy id của product ra ở phần vẽ lại getAllProduct, có product.id của nó ra*/
+            let userId = $('.add_cart').attr('id');
+            let productId = $(this).data("id");
 
             cart.userId = userId;
             cart.productId = productId;
@@ -483,7 +483,7 @@
                 },
                 type: "POST",
                 url: "http://localhost:8080/api/carts/remove-cart-item",
-                data: JSON.stringify(cart)/*bắt buộc phải truyền các trường data vào, để thằng cartDTO nhận 3 giá trị vào, 3 giá trị nhận vào kiểu chuỗi*/
+                data: JSON.stringify(cart)
             })
             .done((data) => {
                 /*Xóa hết hỉnh ảnh có id product đấy ra, ở phần show giỏ hàng*/
@@ -530,7 +530,7 @@
                         "accept": "application/json",
                         "content-type": "application/json"
                     },
-                    type: "POST",
+                    type: "PUT",
                     url: "http://localhost:8080/api/carts/increase",
                     data: JSON.stringify(cart)
                 })
@@ -581,7 +581,7 @@
                         "accept": "application/json",
                         "content-type": "application/json"
                     },
-                    type: "POST",
+                    type: "PUT",
                     url: "http://localhost:8080/api/carts/reduce",
                     data: JSON.stringify(cart)
                 })

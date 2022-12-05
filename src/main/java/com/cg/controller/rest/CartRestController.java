@@ -102,8 +102,8 @@ public class CartRestController {
         BigDecimal grandTotal = price.multiply(new BigDecimal(Long.parseLong(quantity)));
 
 
-        CartItem cartItem = new CartItem();
         Cart cart = new Cart();
+        CartItem cartItem = new CartItem();
 
         Map<String, Object> result = new HashMap<>();
         String success, successFirst;
@@ -113,7 +113,7 @@ public class CartRestController {
             cart.setUser(userDTO.get().toUser());
             cart.setGrandTotal(grandTotal);
 
-            cartItem = new CartItem();
+
             cartItem.setPrice(price);
             cartItem.setQuantity(Integer.parseInt(quantity));
             cartItem.setTitle(productDTO.get().getName());
@@ -258,7 +258,7 @@ public class CartRestController {
 
 
     /*Hàm tăng số lượng, cũng phải truyền vào userId, productId, để ta có giá trị, set lại tổng tiền ở phần cart, và các giá trị trong cartItem, price mặc đinh, thay đổi số lượng và totalPrice*/
-    @PostMapping("/increase")
+    @PutMapping("/increase")
     public ResponseEntity<?> doIncreaseCart(@Valid @RequestBody CartDTO cartDTO, BindingResult bindingResult) {
 
         new CartDTO().validate(cartDTO, bindingResult);
@@ -332,7 +332,7 @@ public class CartRestController {
 
 
     /*hàm giảm số lượng xuống 1, (kiểm tra tất cả điều kiện), tính giá tiền nhân với số lượng, khi giảm xuống 1, và lấy tổng tiền - giá tiền giảm đi*/
-    @PostMapping("/reduce")
+    @PutMapping("/reduce")
     public ResponseEntity<?> doReduceCart(@Valid @RequestBody CartDTO cartDTO, BindingResult bindingResult) {
 
         new CartDTO().validate(cartDTO, bindingResult);
@@ -377,6 +377,7 @@ public class CartRestController {
                 if (Integer.parseInt(cartItemDTO.get().getQuantity()) == 1) {
                     throw new DataInputException("Số Lượng Tối Thiểu Là 1");
                 }
+
                 else {
                     String quantity = "1";
                     BigDecimal price = new BigDecimal(Long.parseLong(productDTO.get().getPrice()));
@@ -385,7 +386,7 @@ public class CartRestController {
                     BigDecimal grandTotal = price.multiply(new BigDecimal(Long.parseLong(quantity)));
 
                     cartItem = cartItemDTO.get().toCartItem();
-                    cartItem.setQuantity(cartItem.getQuantity() - Integer.parseInt(quantity)); /*lấy số lượng hiện tại + thêm số lượng 1, ta mặc định quantity là 1*/
+                    cartItem.setQuantity(cartItem.getQuantity() - Integer.parseInt(quantity)); /*lấy số lượng hiện tại - thêm số lượng 1, ta mặc định quantity là 1*/
                     cartItem.setTotalPrice(cartItem.getTotalPrice().subtract(grandTotal));  /*Tổng tiền hiện tại + thêm với tổng tiền số lượng lên*/
 
                     cart = cartInfoDTO.get().toCart();
@@ -405,6 +406,7 @@ public class CartRestController {
                 }
             }
         }
+
         return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 

@@ -15,7 +15,6 @@ import java.util.Optional;
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
 
-    /*o.user, lay tat ca thong tin cua truong user ra, nó là thằng con của order, GetAPI, lấy tất cả thông tin order ra để hiển thị trong listOrderADMIN*/
     @Query("SELECT NEW com.cg.model.dto.OrderDTO (" +
                 "o.id, " +
                 "o.grandTotal, " +
