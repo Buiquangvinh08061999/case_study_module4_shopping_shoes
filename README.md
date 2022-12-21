@@ -1,2 +1,8 @@
-# case_study_module4_shopping_shoes
-aa
+# SHOPSHOES DASHBOARD AND CILENT
+## Project builds on: 
+MySQL
+Spring
+Jquery
+Bootstrap
+
+
